@@ -30,7 +30,12 @@ This
 
 ### Testing
 
-<!---## Help-->
+## Help
+
+To get more informations about this repository, I would recomment you to read the [documentation](./documentation/documentation.md).
+
+
+
 
 ## Contributors 
 
