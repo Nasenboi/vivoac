@@ -18,7 +18,10 @@
     - [Honorable Code(ers)](#honorable-codeers)
 
 ## Description
-This 
+This project will bring the power of AI Voice Cloning right to the hands of any dubbing studio!  
+It will embed any possible Voice Cloning service into its API using a custom built module. Then users can upload IDs of scriptlines, or the text itself and watch as the API does the rest of the work until they recieve an audio file of the spoken text from the automatically trained Voice Clone.  
+
+The user has all the power over the API, choosing which AI-Service to use, what text to generate and which files to use as a voice reference, and maybe even changing the script text or the audio file, if the generated output was not as required.  
 
 ## Getting Started
 
