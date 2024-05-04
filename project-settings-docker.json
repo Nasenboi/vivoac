@@ -6,7 +6,7 @@
         "formatters": {
             "colored": {
                 "()": "colorlog.ColoredFormatter",
-                "format": "%(log_color)s%(asctime)s_%(filename)15s:[%(lineno)d]_%(levelname)-8s> %(message)s",
+                "format": "%(log_color)s%(levelname)8s:%(asctime)s:[%(lineno)03d]_%(filename)-15s> %(message)s",
                 "datefmt": "%d.%m.%y_%H:%M",
                 "log_colors": {
                     "DEBUG":    "cyan",
@@ -24,11 +24,11 @@
                 "stream": "ext://sys.stdout"
             },
             "file": {
-                "class": "logging.handlers.RotatingFileHandler",
+                "class": "logging.handlers.TimedRotatingFileHandler",
                 "formatter": "colored",
-                "filename": "/var/log/vivoac.log",
-                "maxBytes": 10000,
-                "backupCount": 10
+                "when": "D",
+                "backupCount": 0,
+                "filename": "./logs/vivoac.log"
             }
         },
         "loggers": {
