@@ -1,4 +1,14 @@
 {
+    "metadata": {
+        "name": "vivoac",
+        "description": "ViVoAC API",
+        "version": "0.0.0",
+        "author": "Christian Böndgen"
+    },
+    "fastapi-settings": {
+
+        
+    },
     "logging-config": {
         "version": 1,
         "disable_existing_loggers": false,
@@ -17,17 +27,17 @@
             }
         },
         "handlers": {
-            "stdout": {
-                "class": "logging.StreamHandler",
-                "formatter": "colored",
-                "stream": "ext://sys.stdout"
-            },
             "file": {
                 "class": "logging.handlers.TimedRotatingFileHandler",
                 "formatter": "colored",
                 "when": "D",
                 "backupCount": 0,
                 "filename": "/var/log/vivoac/vivoac.log"
+            },
+            "stdout": {
+                "class": "logging.StreamHandler",
+                "formatter": "colored",
+                "stream": "ext://sys.stdout"
             }
         },
         "loggers": {
