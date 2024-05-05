@@ -73,7 +73,7 @@ _Be sure the docker daemon is running, open up your console and then type_
 ```sh
 docker build -t <cool_name:tag> . 
 ```
-_. . . wait a second . . ._
+_. . . wait a second . . ._  
 And then run the container on a computer or server of your choice:
 ```sh
 docker run -itd -p 80:<80> <cool_name:tag>
