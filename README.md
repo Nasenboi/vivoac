@@ -24,12 +24,70 @@ It will embed any possible Voice Cloning service into its API using a custom bui
 The user has all the power over the API, choosing which AI-Service to use, what text to generate and which files to use as a voice reference, and maybe even changing the script text or the audio file, if the generated output was not as required.  
 
 ## Getting Started
-
+In this chapter you will learn how to set up this code, what dependencies you need to install and how to deploy the API-Server.
 ### Dependencies
+Here ist just a fancy list of dependencies, check, if you have everything you need:
+The code is tested using the listed verions, others may work, or not you may dare to try!
+
+| Name  | Version | Link |
+| ------------- | ------------- |------------- |
+| Python  | 3.10.x  | [here](https://www.python.org/downloads/) |
+| Docker  | 24.x | [here](https://docs.docker.com/get-docker/) |
+| Git | 2.44.x | [here](https://git-scm.com/downloads) |
+| GitHub Desktop (recommendation) | 3.3.x | [here](https://desktop.github.com/) |
+| | | [here]() |
 
 ### Installing
+When you have installed all the dependencies open up a terminal and create a new python environment:  
+**unix:**
+```sh
+python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
+```
+**windows**
+```sh
+python -m venv venv && venv\Scripts\activate && pip install -r requirements.txt
+```
+Wait a minute until all the packages are installed . . .
 
 ### Deployment
+Here are the two options to deploy the API-Server.
+One way is to do it locally, on you machine.
+The other uses the Dockerfile, to create a Docker Image, so that you can containerize this application.
+#### Local
+Be sure to activate the Python env:
+**unix**
+```sh
+source venv/bin/activate
+``` 
+**windows**
+```sh
+venv\Scripts\activate
+```
+And then just run the main.py file and the server will (should) start up.
+```sh
+python main.py
+```
+#### Docker Image
+To run the server as a Docker container you first have to build the docker image:  
+_Be sure the docker daemon is running, open up your console and then type_
+```sh
+docker build -t <cool_name:tag> . 
+```
+_. . . wait a second . . ._
+And then run the container on a computer or server of your choice:
+```sh
+docker run -itd -p 80:<80> <cool_name:tag>
+```
+
+If you want local access to the log files you can append a volume mapping:
+```sh
+docker run -itd -p 80:<80> -v <your_log_foler>:/var/logs/vivoac <cool_name:tag>
+```
+The same goes for the settings, if you want to edit them later on, just mount the DOCKER settings file to the running container:
+_Keep in mind, that you need to resart the docker container for the changes to apply!_
+```sh
+docker run -itd -p 80:<80> -v <cwd>/project-settings-docker.json:/vivoac/project-settings.json <cool_name:tag>
+```
 
 ### Testing
 
