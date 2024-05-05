@@ -4,12 +4,15 @@
 # Project / vivoac
 logs
 project-settings.json
+tests/
+documentation/
+README.md
+logs/
 
 # Git
 .git
 .gitignore
 .gitattributes
-
 
 # CI
 .codeclimate.yml
