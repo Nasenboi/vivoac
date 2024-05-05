@@ -7,6 +7,7 @@ In here are all the global variables and objects that are used throughout the pr
 import json
 import logging.config
 import colorlog
+import os
 
 
 # Firstly load the settings for the project, they should be in a json file
@@ -20,5 +21,10 @@ SETTINGS_GLOBAL = load_project_settings()
 
 
 # Logger with its config:
+# create log file if it does not exist, logger will get angry if it does not exist
+filename = SETTINGS_GLOBAL.get("logging-config")["handlers"]["file"]["filename"]
+os.makedirs(os.path.dirname(filename), exist_ok=True)
+with open(filename, "w") as f:
+    pass
 logging.config.dictConfig(SETTINGS_GLOBAL.get("logging-config"))
 LOGGER = colorlog.getLogger("main")
