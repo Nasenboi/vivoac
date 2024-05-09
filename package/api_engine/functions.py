@@ -10,7 +10,7 @@ from threading import Thread
 from time import sleep
 
 ########################################################################################
-# inner custom classes
+# Inner custom classes
 
 class UvicornThread(Thread):
     def __init__(self, uvicorn_server: Server, *args, **kwargs):
@@ -22,8 +22,12 @@ class UvicornThread(Thread):
 
 
 ########################################################################################
-# class functions
+# Class functions
 
+
+
+########################################
+# Essentials:
 
 def init(self) -> None:
     LOGGER.debug("api engine - init")
@@ -62,14 +66,22 @@ def run(self) -> None:
         LOGGER.error(f"An error while running fastapi:\n{e}")
         raise Warning("Restarting...")
 
+    # let the uvicorn thread run and do its thing . . .
     while self.uvicorn_thread.is_alive():
         pass
 
 def stop(self) -> None:
     LOGGER.debug("api engine - stop")
-    # stopping uviorn thread
+    # stopping uviorn server
     self.uvicorn_server.should_exit = True
     self.uvicorn_server = None
+    # and then the thread
     self.uvicorn_thread.join()
     self.uvicorn_thread = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
+
+
+########################################
+# Initialize API-Routes for the engine functions
+
+
