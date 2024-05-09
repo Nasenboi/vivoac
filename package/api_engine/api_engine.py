@@ -5,11 +5,17 @@ This engine will manage all the sub - components and is responsible for the main
 ########################################################################################'''
 # import package globals from ../package/globals.py
 from .functions import *
-from fastapi import FastAPI
+#from fastapi import FastAPI
+from ..globals import *
+#from threading import Thread
 
 class ApiEngine:
     # define class variables
-    app = FastAPI()
+    app = None
+    config = None
+    uvicorn_server = None
+    uvicorn_thread = None
+        
 
     def __init__(self):
         init(self)
