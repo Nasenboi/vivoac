@@ -1,13 +1,16 @@
 '''########################################################################################
-To reduce the file size of the class file, all the functions that this class has
-and executes are defined here, similar to a ceader and cpp file in c++.
-
-########################################################################################'''
+Name: api_engine/functions.py
+Description: This file contains the functions for the ApiEngine class in api_engine.py
+Imports:
+'''
 from ..globals import *
 from fastapi import FastAPI
 from uvicorn import Config, Server
 from threading import Thread
 from time import sleep
+'''
+########################################################################################'''
+
 
 ########################################################################################
 # Inner custom classes

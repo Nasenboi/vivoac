@@ -1,7 +1,15 @@
-
+'''########################################################################################
+Name: main.py
+Description: This file is the first file to be executed when the program is run.
+It will set up the next important files: globals and api_engine.
+It also handles all exceptions on the top level and tries to keep the program ALIVE!
+Imports:
+'''
 import package as p
 from importlib import reload
 from logging.handlers import  TimedRotatingFileHandler 
+'''
+########################################################################################'''
 
 if __name__ == "__main__":
     # securely grab the app name and the logger streamhandler
