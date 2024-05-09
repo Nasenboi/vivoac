@@ -2,7 +2,7 @@ FROM python:3.10
 
 WORKDIR /vivoac
 
-EXPOSE 80
+EXPOSE 8080
 
 COPY project-settings-docker.json project-settings.json
 

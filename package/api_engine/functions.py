@@ -4,14 +4,16 @@ and executes are defined here, similar to a ceader and cpp file in c++.
 
 ########################################################################################'''
 from package.globals import *
-import fastapi
-
+from fastapi import FastAPI
+import uvicorn
 
 def init(self) -> None:
-    LOGGER.debug("init")
+    LOGGER.debug("api engine - init")
+    uvicorn.run(self.app, **SETTINGS_GLOBAL.get("uvicorn-settings"))
+
 
 def run(self) -> None:
-    LOGGER.debug("run")
+    LOGGER.debug("api engine - run")
 
 def stop(self) -> None:
-    LOGGER.debug("stop")
+    LOGGER.debug("api engine - stop")
