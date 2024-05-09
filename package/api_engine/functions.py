@@ -68,7 +68,8 @@ def run(self) -> None:
 def stop(self) -> None:
     LOGGER.debug("api engine - stop")
     # stopping uviorn thread
+    self.uvicorn_server.should_exit = True
+    self.uvicorn_server = None
     self.uvicorn_thread.join()
     self.uvicorn_thread = None
-    self.uvicorn_server = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
