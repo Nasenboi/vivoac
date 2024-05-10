@@ -7,7 +7,7 @@ Imports:
 '''
 import package as p
 from importlib import reload
-from logging.handlers import  TimedRotatingFileHandler 
+from logging.handlers import TimedRotatingFileHandler 
 '''
 ########################################################################################'''
 
