@@ -1,54 +1,11 @@
 {
     "metadata": {
-        "name": "vivoac",
-        "description": "ViVoAC API",
-        "version": "0.0.0",
-        "author": "Christian Böndgen",
         "settings-theme": "docker"
     },
-    "fastapi-settings": {
-
-        
-    },
-    "uvicorn-settings": {
-        "host": "0.0.0.0",
-        "port": 8080
-    },
     "logging-config": {
-        "version": 1,
-        "disable_existing_loggers": false,
-        "formatters": {
-            "colored": {
-                "()": "colorlog.ColoredFormatter",
-                "format": "%(log_color)s%(levelname)8s:%(asctime)s:[%(lineno)03d]_%(filename)-15s> %(message)s",
-                "datefmt": "%d.%m.%y_%H:%M",
-                "log_colors": {
-                    "DEBUG":    "cyan",
-                    "INFO":     "green",
-                    "WARNING":  "yellow",
-                    "ERROR":    "purple",
-                    "CRITICAL": "red"
-                }
-            }
-        },
         "handlers": {
             "file": {
-                "class": "logging.handlers.TimedRotatingFileHandler",
-                "formatter": "colored",
-                "when": "D",
-                "backupCount": 0,
                 "filename": "/var/log/vivoac/vivoac.log"
-            },
-            "stdout": {
-                "class": "logging.StreamHandler",
-                "formatter": "colored",
-                "stream": "ext://sys.stdout"
-            }
-        },
-        "loggers": {
-            "": {
-                "handlers": ["stdout", "file"],
-                "level": "INFO"
             }
         }
     }

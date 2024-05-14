@@ -5,7 +5,7 @@ and looking for possible errors
 Imports:
 '''
 import os
-os.environ["PROJECT_SETTINGS_PATH"] = "./project-settings-test.json"
+os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
 from fastapi.testclient import TestClient
 import package as p
 from logging.handlers import  TimedRotatingFileHandler 

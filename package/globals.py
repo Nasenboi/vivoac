@@ -1,26 +1,39 @@
 '''########################################################################################
 In here are all the global variables and objects that are used throughout the project.
 
-########################################################################################'''
 
-# Imports
+
+Imports:
+'''
 import json
 import logging.config
 import colorlog
 import os
+from .utils.functions import json_update
+'''
+########################################################################################'''
 
 
 # Firstly load the settings for the project, they should be in a json file
 # and most of the settings are globals anyway so lets read them in here
 # Please read the documentation on what variables the settings file could contain
-if "PROJECT_SETTINGS_PATH" in os.environ:
-    PROJECT_SETTINGS_PATH = os.environ["PROJECT_SETTINGS_PATH"]
-else:
-    PROJECT_SETTINGS_PATH = "./project-settings.json"
+PROJECT_SETTINGS_PATH = "./project-settings.json"
+
+
+if "SETTINGS_VARIATION_PATH" in os.environ:
+    SETTINGS_VARIATION_PATH = os.environ["SETTINGS_VARIATION_PATH"]
 
 def load_project_settings() -> dict:
     with open(PROJECT_SETTINGS_PATH, "r") as file:
-        return json.load(file)
+        settings = json.load(file)
+
+    if "SETTINGS_VARIATION_PATH" in globals():
+        with open(SETTINGS_VARIATION_PATH, "r") as file:
+            settings_variation = json.load(file)
+        settings = json_update(settings, settings_variation)
+
+    return settings
+
 SETTINGS_GLOBAL = load_project_settings()
 
 
