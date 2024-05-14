@@ -4,6 +4,7 @@
 # Project / vivoac
 logs
 project-settings.json
+project-settings-test.json
 tests/
 documentation/
 README.md
