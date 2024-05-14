@@ -1,5 +1,5 @@
 '''########################################################################################
-Name: tests/test_main.py
+Name: test_main.py
 Description: This will start the test run going through all API endpoints
 and looking for possible errors 
 Imports:
@@ -9,6 +9,7 @@ os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
 from fastapi.testclient import TestClient
 import package as p
 from logging.handlers import  TimedRotatingFileHandler 
+import tests
 '''
 ########################################################################################'''
 
@@ -28,10 +29,14 @@ if __name__ == "__main__":
         apiEngine = p.API_Engine()
         apiEngine.run()
 
-        TestClient(
+        client = TestClient(
             apiEngine.app,
             base_url="http://localhost:8000"
         )
+
+        # start the tests
+        tests.Script_Test(client).test_script()
+
 
 
     except KeyboardInterrupt:
