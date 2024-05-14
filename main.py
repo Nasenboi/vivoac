@@ -21,7 +21,7 @@ if __name__ == "__main__":
     p.LOGGER.info(f"Starting {name}, hello world!")
     while True:
         try:
-            apiEngine = p.ApiEngine()
+            apiEngine = p.API_Engine()
             apiEngine.run()
         except KeyboardInterrupt:
             p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")

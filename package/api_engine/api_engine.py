@@ -13,7 +13,7 @@ from ..globals import *
 ########################################################################################'''
 
 
-class ApiEngine:
+class API_Engine:
     # define class variables
     app = None
     config = None

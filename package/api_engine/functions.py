@@ -1,6 +1,6 @@
 '''########################################################################################
 Name: api_engine/functions.py
-Description: This file contains the functions for the ApiEngine class in api_engine.py
+Description: This file contains the functions for the API_Engine class in api_engine.py
 Imports:
 '''
 from ..globals import *
