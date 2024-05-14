@@ -76,17 +76,17 @@ docker build -t <cool_name:tag> .
 _. . . wait a second . . ._  
 And then run the container on a computer or server of your choice:
 ```sh
-docker run -itd -p 8080:<8080> <cool_name:tag>
+docker run -itd -p 8080:<8080> --name <cool_container_name> <cool_name:tag>
 ```
 
 If you want local access to the log files you can append a volume mapping:
 ```sh
-docker run -itd -p 8080:<8080> -v <your_log_foler>:/var/logs/vivoac <cool_name:tag>
+docker run -itd -p 8080:<8080> --name <cool_container_name> -v <your_log_foler>:/var/logs/vivoac <cool_name:tag>
 ```
 The same goes for the settings, if you want to edit them later on, just mount the DOCKER settings file to the running container:
 _Keep in mind, that you need to resart the docker container for the changes to apply!_
 ```sh
-docker run -itd -p 8080:<8080> -v <cwd>/project-settings-docker.json:/vivoac/project-settings.json <cool_name:tag>
+docker run -itd -p 8080:<8080>  --name <cool_container_name> -v <cwd>/project-settings-docker.json:/vivoac/project-settings.json <cool_name:tag>
 ```
 
 ### Testing
