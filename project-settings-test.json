@@ -4,7 +4,7 @@
         "description": "ViVoAC API",
         "version": "0.0.0",
         "author": "Christian Böndgen",
-        "settings-theme": "main"
+        "settings-theme": "test"
     },
     "fastapi-settings": {
 
@@ -37,7 +37,7 @@
                 "formatter": "colored",
                 "when": "D",
                 "backupCount": 0,
-                "filename": "./logs/vivoac.log"
+                "filename": "./logs/vivoac-tests.log"
             },
             "stdout": {
                 "class": "logging.StreamHandler",

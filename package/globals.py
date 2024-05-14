@@ -13,7 +13,11 @@ import os
 # Firstly load the settings for the project, they should be in a json file
 # and most of the settings are globals anyway so lets read them in here
 # Please read the documentation on what variables the settings file could contain
-PROJECT_SETTINGS_PATH = "./project-settings.json"
+if "PROJECT_SETTINGS_PATH" in os.environ:
+    PROJECT_SETTINGS_PATH = os.environ["PROJECT_SETTINGS_PATH"]
+else:
+    PROJECT_SETTINGS_PATH = "./project-settings.json"
+
 def load_project_settings() -> dict:
     with open(PROJECT_SETTINGS_PATH, "r") as file:
         return json.load(file)
