@@ -16,6 +16,9 @@ class Script(BaseModel):
     time_restriction: Optional[Union[str, int]]
     voice_talent: Optional[str]
     character: Optional[str]
+    reference_audio_path: Optional[str]
+    delivery_audio_path: Optional[str]
+    generatied_audio_path: Optional[str]
 
     def is_empty(self):
         return not self.__dict__
