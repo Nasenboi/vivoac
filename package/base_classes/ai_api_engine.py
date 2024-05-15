@@ -16,7 +16,10 @@ class AI_API_Engine():
     base_url: str = None # the base url of the api
     model: str = None # the model to use for the api
 
-    def __init__(self):
+    def __init__(self, api_key: str = None, base_url: str = None, model: str = None):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.model = model
         pass
 
     ############################################################
