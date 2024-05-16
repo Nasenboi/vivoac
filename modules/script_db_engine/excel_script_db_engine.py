@@ -1,6 +1,8 @@
 """########################################################################################
 Name: excel_script_db_engine.py
-Description: 
+Description: This script db engine will be used for excel "databases"
+it tries to convert the given excel database into a pandas dataframe and do all operations
+using the given dataframe.
 Imports:
 """
 
