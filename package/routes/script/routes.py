@@ -26,5 +26,5 @@ script_router = APIRouter(
 
 # complete a script model by the given parameters
 @script_router.get("/{script}")
-def get_script_route(script: Script) -> Union[List, Script, dict]:
-    return get_script(script)
+def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
+    return get_script_lines(script)

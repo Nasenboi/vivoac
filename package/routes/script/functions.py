@@ -15,7 +15,7 @@ from .models import *
 ########################################################################################"""
 
 
-def get_script(script: Script) -> Union[List[Union[Script]], Script]:
+def get_script_lines(script: Script) -> Union[List[Union[Script]], Script]:
     LOGGER.debug(f"Getting script: {script}")
 
     if script.is_empty():
