@@ -50,8 +50,18 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     # getter functions:
 
     def get_script_names(self) -> List[str]:
-        if not self.__check_excel_script():
+        if not os.path.exists(self.script_path):
+            LOGGER.warning("The given path does not exist!")
             return []
+
+        scripts = [
+            file for file in os.listdir(self.script_path) if file.endswith(".xlsx")
+        ]
+
+        if len(scripts) < 1:
+            LOGGER.warning("No scripts found in the given path!")
+            return []
+        return scripts
 
     def get_script_lines(
         self, script: Script = Script()
@@ -60,8 +70,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         if not self.__check_excel_script():
             return Script()
         if script.is_empty():
-            LOGGER.warning("The given Script is empty!")
-            return Script()
+            LOGGER.warning("The given Script is empty, returning all script lines!")
 
         # Get all fitting script lines from the database:
         filtered_database = self.__filter_database(script)
@@ -71,14 +80,8 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             LOGGER.warning("No lines found in the database!")
             return Script()
         elif len(filtered_database) == 1:
-            reverse_mapper = {v: k for k, v in self.field_name_mapping.items()}
             return Script(
-                {
-                    {
-                        reverse_mapper[key]: value
-                        for key, value in filtered_database.iloc[0].items()
-                    }
-                }
+                {{key: value for key, value in filtered_database.iloc[0].items()}}
             )
         else:
             return [
@@ -91,6 +94,21 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     ) -> Union[List[Character_Info], Character_Info]:
         if not self.__check_excel_script():
             return Character_Info()
+        if character_info.is_empty():
+            LOGGER.warning(
+                "The given Character_Info is empty returning infos to all characters!"
+            )
+
+        character_names = self.__get_character_names(character_info)
+        if character_info.character_name is not None or len(character_names) == 1:
+            return self.__gather_character_info(character_info)
+
+        character_info_list = []
+        for name in character_names:
+            character_info_list.append(
+                self.__gather_character_info(Character_Info(character_name=name))
+            )
+        return character_info_list
 
     ############################################################
     # set class variables, expanding the base function to reload the excel script:
@@ -121,14 +139,64 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             raise FileNotFoundError("Excel file does not exist!")
 
         self.excel_data_frame = pd.read_excel(self.script_path + self.script_file_name)
+        self.__apply_field_mapping()
+
+    def __apply_field_mapping(self):
+        # apply the field mapping and additionally check if fields even exist:
+        for script_field, excel_field in self.field_name_mapping.items():
+            if excel_field not in self.excel_data_frame.columns:
+                LOGGER.warning(f"Excel field '{excel_field}' does not exist!")
+                self.field_name_mapping[script_field] = None
+
+            self.excel_data_frame.rename(
+                columns={excel_field: script_field}, inplace=True
+            )
 
     def __filter_database(self, script: Script) -> pd.DataFrame:
         # filter the database with the given script parameters:
         query = pd.Series([True] * len(self.excel_data_frame))
         for key, value in script.model_dump():
             if value is not None:
-                query &= self.excel_data_frame[self.field_name_mapping[key]] == value
+                query &= self.excel_data_frame[key] == value
 
         filtered_database = self.excel_data_frame[query]
-
         return filtered_database
+
+    def __get_character_names(self, character_info: Character_Info) -> List[str]:
+        return (
+            self.excel_data_frame[
+                character_info.voice_talent == self.excel_data_frame["voice_talent"]
+            ]["character_name"]
+            .unique()
+            .tolist()
+        )
+
+    def __gather_character_info(self, character_info: Character_Info) -> Character_Info:
+        # gather all character info from the excel script
+        # using search parameters from the given character_info object
+        character_info.voice_talent = self.excel_data_frame[
+            self.excel_data_frame["character_name"] == character_info.character_name
+        ]["voice_talent"].unique()[0]
+        character_info.script_name = (
+            self.script_file_name.split(".")[0]
+            if character_info.script_name is None
+            else character_info.script_name
+        )
+        character_info.number_of_lines = (
+            len(
+                self.excel_data_frame[
+                    self.excel_data_frame["character_name"]
+                    == character_info.character_name
+                ]
+            )
+            if character_info.number_of_lines is None
+            else character_info.number_of_lines
+        )
+        character_info.gender = (
+            self.excel_data_frame[
+                self.excel_data_frame["character_name"] == character_info.character_name
+            ]["gender"].unique()[0]
+            if character_info.gender is None
+            else character_info.gender
+        )
+        return character_info

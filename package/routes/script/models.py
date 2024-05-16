@@ -21,6 +21,9 @@ class Character_Info(BaseModel):
     number_of_lines: Optional[int]
     gender: Optional[str]
 
+    def is_empty(self):
+        return not self.__dict__
+
 
 # script model
 class Script(BaseModel):
