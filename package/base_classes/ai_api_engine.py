@@ -38,6 +38,10 @@ class AI_API_Engine():
         pass
 
     @virtual
+    def get_character_voice(self, api_key: str = None, name: str = None) -> str:
+        pass
+
+    @virtual
     def get_voice_settings(self, api_key: str = None,
                            voice_id: str = None) -> dict:
         pass

@@ -17,10 +17,8 @@ class Audio_File_Engine():
     def __init__(self, target_format: Audio_Format = None):
         self.target_format = target_format
 
-
     ############################################################
     # getter functions:
-
 
     @virtual
     def get_audio_files(self, file_paths = Union[List[str], str]) -> Union[List[bytes], bytes]:
