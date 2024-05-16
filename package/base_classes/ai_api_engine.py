@@ -46,6 +46,16 @@ class AI_API_Engine():
                            voice_id: str = None) -> dict:
         pass
 
+    def get_class_variables(self):
+        return self.__annotations__
+
+    ############################################################
+    # set class variables:
+
+    def set_class_variables(self, *kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+    
     ############################################################
     # Voice editing functions:
 

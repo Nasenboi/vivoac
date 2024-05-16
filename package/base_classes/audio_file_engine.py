@@ -24,6 +24,16 @@ class Audio_File_Engine():
     def get_audio_files(self, file_paths = Union[List[str], str]) -> Union[List[bytes], bytes]:
         pass
 
+    def get_class_variables(self):
+        return self.__annotations__
+
+    ############################################################
+    # set class variables:
+
+    def set_class_variables(self, *kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
     ############################################################
     # Audio file functions:
 

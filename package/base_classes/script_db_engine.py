@@ -5,7 +5,9 @@ Imports:
 '''
 from ..routes.script.models import Script, Character_Info
 from ..utils.decorators import virtual
-from typing import List, Union
+from typing import Annotated, List, Union
+from pydantic import confloat
+from annotated_types import Ge, Le
 '''
 ########################################################################################'''
 
@@ -30,3 +32,13 @@ class Script_DB_Engine():
     @virtual
     def get_character_infos(self, character_info: Character_Info = Character_Info()) -> Union[List[Character_Info], Character_Info]:
         pass
+
+    def get_class_variables(self):
+        return self.__annotations__
+
+    ############################################################
+    # set class variables:
+
+    def set_class_variables(self, *kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
