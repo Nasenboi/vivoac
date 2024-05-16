@@ -1,6 +1,6 @@
-from .ai_api_handler.routes import ai_api_handler_router
-from .audio.routes import audio_router
-from .script.routes import script_router
-from .session.routes import session_router
+from .ai_api_handler.routes import AI_API_Handler_Router
+from .audio.routes import Audio_Router
+from .script.routes import Script_Router
+from .session.routes import Session_Router
 
-__all__ = ["ai_api_handler_router", "audio_router", "script_router", "session_router"]
+__all__ = ["AI_API_Handler_Router", "Audio_Router", "Script_Router", "Session_Router"]

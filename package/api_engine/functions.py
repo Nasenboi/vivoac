@@ -52,10 +52,10 @@ def init(self) -> None:
 
         # add routes
         self.routes = [
-            session_router,
-            audio_router,
-            ai_api_handler_router,
-            script_router,
+            Session_Router(api_engine=self),
+            Audio_Router(api_engine=self),
+            AI_API_Handler_Router(api_engine=self),
+            Script_Router(api_engine=self),
         ]
         for route in self.routes:
             self.app.include_router(route)

@@ -27,7 +27,7 @@ class Script_Router(APIRouter):
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)
-        super().__init__(self.route_parameters)
+        super().__init__(**self.route_parameters)
         self.api_engine = api_engine
         self.add_api_route(
             path="/", endpoint=self.get_script_lines_route, methods=["GET"]
