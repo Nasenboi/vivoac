@@ -119,17 +119,6 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
 
     ############################################################
     # excel specific functions:
-    def __check_excel_script(self) -> bool:
-        if self.excel_data_frame is not None:
-            return True
-
-        try:
-            self.__load_excel_script()
-            return True
-        except Exception as e:
-            LOGGER.warning(f"Error loading excel script: {e}")
-            return False
-
     def __load_excel_script(self) -> pd.DataFrame:
         # check if excel paths are given and the excel file exists:
         if self.script_path == None or self.script_file_name == None:
@@ -151,6 +140,17 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             self.excel_data_frame.rename(
                 columns={excel_field: script_field}, inplace=True
             )
+
+    def __check_excel_script(self) -> bool:
+        if self.excel_data_frame is not None:
+            return True
+
+        try:
+            self.__load_excel_script()
+            return True
+        except Exception as e:
+            LOGGER.warning(f"Error loading excel script: {e}")
+            return False
 
     def __filter_database(self, script: Script) -> pd.DataFrame:
         # filter the database with the given script parameters:
