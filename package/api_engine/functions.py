@@ -103,7 +103,3 @@ def stop(self) -> None:
     self.uvicorn_thread.join()
     self.uvicorn_thread = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
-
-
-########################################
-# Initialize API-Routes for the engine functions
