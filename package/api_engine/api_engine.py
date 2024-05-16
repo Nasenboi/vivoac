@@ -5,10 +5,11 @@ This engine will manage all the sub - components and is responsible for the main
 Imports:
 """
 
-# from fastapi import FastAPI
-from ..globals import *
+from typing import List
 
-# import package globals from ../package/globals.py
+from fastapi import APIRouter
+
+from ..globals import *
 from .functions import *
 
 # from threading import Thread
@@ -19,6 +20,7 @@ from .functions import *
 class API_Engine:
     # define class variables
     app = None
+    routes: List[APIRouter] = []
     config = None
     uvicorn_server = None
     uvicorn_thread = None

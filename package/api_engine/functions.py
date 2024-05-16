@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from uvicorn import Config, Server
 
 from ..globals import *
+from ..routes import *
 
 """
 ########################################################################################"""
@@ -48,6 +49,17 @@ def init(self) -> None:
             daemon=True,
             uvicorn_server=self.uvicorn_server,
         )
+
+        # add routes
+        self.routes = [
+            session_router,
+            audio_router,
+            ai_api_handler_router,
+            script_router,
+        ]
+        for route in self.routes:
+            self.app.include_router(route)
+
         self.uvicorn_thread.setDaemon(True)
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
