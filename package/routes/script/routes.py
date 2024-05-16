@@ -17,14 +17,23 @@ from .models import *
 
 
 # create a new router
-script_router = APIRouter(
-    prefix="/script",
-    tags=["script"],
-    responses={404: {"description": "Not found"}},
-)
+class Script_Router(APIRouter):
+    api_engine = None
+    route_parameters: dict = {
+        "prefix": "/script",
+        "tags": ["script"],
+        "responses": {404: {"description": "Not found"}},
+    }
 
+    def __init__(self, api_engine, **kwargs):
+        self.route_parameters.update(kwargs)
+        super().__init__(self.route_parameters)
+        self.api_engine = api_engine
+        self.add_api_route(
+            path="/", endpoint=self.get_script_lines_route, methods=["GET"]
+        )
 
-# complete a script model by the given parameters
-@script_router.get("/")
-def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
-    return get_script_lines(script)
+    @staticmethod
+    def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
+        # <call function from myApiEngine>
+        return get_script_lines(script)
