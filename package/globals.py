@@ -1,17 +1,21 @@
-'''########################################################################################
+"""########################################################################################
 In here are all the global variables and objects that are used throughout the project.
 
 
 
 Imports:
-'''
+"""
+
 import json
 import logging.config
-import colorlog
 import os
+
+import colorlog
+
 from .utils.functions import json_update
-'''
-########################################################################################'''
+
+"""
+########################################################################################"""
 
 
 # Firstly load the settings for the project, they should be in a json file
@@ -23,6 +27,7 @@ PROJECT_SETTINGS_PATH = "./project-settings.json"
 if "SETTINGS_VARIATION_PATH" in os.environ:
     SETTINGS_VARIATION_PATH = os.environ["SETTINGS_VARIATION_PATH"]
 
+
 def load_project_settings() -> dict:
     with open(PROJECT_SETTINGS_PATH, "r") as file:
         settings = json.load(file)
@@ -33,6 +38,7 @@ def load_project_settings() -> dict:
         settings = json_update(settings, settings_variation)
 
     return settings
+
 
 SETTINGS_GLOBAL = load_project_settings()
 

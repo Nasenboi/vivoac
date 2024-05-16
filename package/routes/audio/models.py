@@ -1,12 +1,15 @@
-'''########################################################################################
+"""########################################################################################
 Name: audio/models.py
 Description: In here are the dictionary models that will be used for the audio routes.
 Imports:
-'''
-from pydantic import BaseModel
+"""
+
 from typing import Optional, Union
-'''
-########################################################################################'''
+
+from pydantic import BaseModel
+
+"""
+########################################################################################"""
 
 
 # audio model

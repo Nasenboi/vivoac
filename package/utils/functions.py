@@ -1,11 +1,14 @@
-'''########################################################################################
+"""########################################################################################
 Name: utils/functions.py
 Description: This file contains useful functions that are used throughout the project.
 Imports:
-'''
+"""
+
 from typing import Any, List
-'''
-########################################################################################'''
+
+"""
+########################################################################################"""
+
 
 def json_update(json_obj: dict, new_json_obj: dict) -> dict:
     """
@@ -14,6 +17,7 @@ def json_update(json_obj: dict, new_json_obj: dict) -> dict:
     :param new_json_obj: The new json object
     :return: The updated json object
     """
+
     def update_or_recursion(current_obj: dict, new_obj: dict):
         for key, value in new_obj.items():
             if isinstance(value, dict):

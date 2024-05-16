@@ -1,16 +1,19 @@
-'''########################################################################################
+"""########################################################################################
 Name: audio_file_engine.py
 Description: 
 Imports:
-'''
-from ..utils.decorators import virtual
+"""
+
 from typing import List, Union
+
 from ..routes.audio.models import Audio_Format
-'''
-########################################################################################'''
+from ..utils.decorators import virtual
+
+"""
+########################################################################################"""
 
 
-class Audio_File_Engine():
+class Audio_File_Engine:
     # class variables:
     target_format: Audio_Format = None
 
@@ -21,7 +24,9 @@ class Audio_File_Engine():
     # getter functions:
 
     @virtual
-    def get_audio_files(self, file_paths = Union[List[str], str]) -> Union[List[bytes], bytes]:
+    def get_audio_files(
+        self, file_paths=Union[List[str], str]
+    ) -> Union[List[bytes], bytes]:
         pass
 
     def get_class_variables(self):
@@ -40,7 +45,6 @@ class Audio_File_Engine():
     @virtual
     def save_audio_file(self, file_path: str, audio_data: bytes) -> None:
         pass
-
 
     @virtual
     def delete_audio_file(self, file_path: str) -> None:

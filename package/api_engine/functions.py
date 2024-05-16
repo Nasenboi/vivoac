@@ -1,19 +1,24 @@
-'''########################################################################################
+"""########################################################################################
 Name: api_engine/functions.py
 Description: This file contains the functions for the API_Engine class in api_engine.py
 Imports:
-'''
-from ..globals import *
-from fastapi import FastAPI
-from uvicorn import Config, Server
+"""
+
 from threading import Thread
 from time import sleep
-'''
-########################################################################################'''
+
+from fastapi import FastAPI
+from uvicorn import Config, Server
+
+from ..globals import *
+
+"""
+########################################################################################"""
 
 
 ########################################################################################
 # Inner custom classes
+
 
 class UvicornThread(Thread):
     def __init__(self, uvicorn_server: Server, *args, **kwargs):
@@ -28,9 +33,9 @@ class UvicornThread(Thread):
 # Class functions
 
 
-
 ########################################
 # Essentials:
+
 
 def init(self) -> None:
     LOGGER.debug("api engine - init")
@@ -38,8 +43,11 @@ def init(self) -> None:
         self.app = FastAPI()
         self.config = Config(self.app, **SETTINGS_GLOBAL.get("uvicorn-settings"))
         self.uvicorn_server = Server(self.config)
-        self.uvicorn_thread = UvicornThread(target=self.uvicorn_server.run,
-                                            daemon=True, uvicorn_server=self.uvicorn_server)
+        self.uvicorn_thread = UvicornThread(
+            target=self.uvicorn_server.run,
+            daemon=True,
+            uvicorn_server=self.uvicorn_server,
+        )
         self.uvicorn_thread.setDaemon(True)
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
@@ -58,10 +66,10 @@ def run(self) -> None:
         LOGGER.debug("api engine - waiting for uvicorn server to start")
         while not self.uvicorn_server.started and i < 10:
             sleep(1e-3)
-            LOGGER.debug("."*i)
+            LOGGER.debug("." * i)
             i += 1
         LOGGER.debug("api engine - uvicorn server started successfully")
-            
+
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
         raise KeyboardInterrupt
@@ -72,6 +80,7 @@ def run(self) -> None:
     # let the uvicorn thread run and do its thing . . .
     while self.uvicorn_thread.is_alive():
         pass
+
 
 def stop(self) -> None:
     LOGGER.debug("api engine - stop")
@@ -86,5 +95,3 @@ def stop(self) -> None:
 
 ########################################
 # Initialize API-Routes for the engine functions
-
-

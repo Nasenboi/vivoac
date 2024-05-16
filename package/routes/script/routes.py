@@ -1,15 +1,19 @@
-'''########################################################################################
+"""########################################################################################
 Name: script/routes.py
 Description: 
 Imports:
-'''
+"""
+
+from typing import List, Union
+
 from fastapi import APIRouter
-from .models import *
+
+from ...globals import LOGGER, SETTINGS_GLOBAL
 from .functions import *
-from ...globals import SETTINGS_GLOBAL, LOGGER
-from typing import Union, List
-'''
-########################################################################################'''
+from .models import *
+
+"""
+########################################################################################"""
 
 
 # create a new router
@@ -18,6 +22,7 @@ script_router = APIRouter(
     tags=["script"],
     responses={404: {"description": "Not found"}},
 )
+
 
 # complete a script model by the given parameters
 @script_router.get("/{script}")

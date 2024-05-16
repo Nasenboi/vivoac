@@ -1,12 +1,16 @@
-'''########################################################################################
+"""########################################################################################
 Name: script/models.py
 Description: In here are the dictionary models that will be used for the script routes.
 Imports:
-'''
-from pydantic import BaseModel
+"""
+
 from typing import Optional, Union
-'''
-########################################################################################'''
+
+from pydantic import BaseModel
+
+"""
+########################################################################################"""
+
 
 # character into model
 class Character_Info(BaseModel):
@@ -16,6 +20,7 @@ class Character_Info(BaseModel):
     script_name: Optional[str]
     number_of_lines: Optional[int]
     gender: Optional[str]
+
 
 # script model
 class Script(BaseModel):

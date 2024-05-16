@@ -1,17 +1,22 @@
-'''########################################################################################
+"""########################################################################################
 Name: script_db_engine.py
 Description: 
 Imports:
-'''
-from ..routes.script.models import Script, Character_Info
-from ..utils.decorators import virtual
-from typing import Annotated, List, Union
-from pydantic import confloat
-from annotated_types import Ge, Le
-'''
-########################################################################################'''
+"""
 
-class Script_DB_Engine():
+from typing import Annotated, List, Union
+
+from annotated_types import Ge, Le
+from pydantic import confloat
+
+from ..routes.script.models import Character_Info, Script
+from ..utils.decorators import virtual
+
+"""
+########################################################################################"""
+
+
+class Script_DB_Engine:
     # class variables:
     script_name: str = None
 
@@ -26,11 +31,15 @@ class Script_DB_Engine():
         pass
 
     @virtual
-    def get_script_lines(self, script: Script = Script()) -> Union[List[Script], Script]:
+    def get_script_lines(
+        self, script: Script = Script()
+    ) -> Union[List[Script], Script]:
         pass
 
     @virtual
-    def get_character_infos(self, character_info: Character_Info = Character_Info()) -> Union[List[Character_Info], Character_Info]:
+    def get_character_infos(
+        self, character_info: Character_Info = Character_Info()
+    ) -> Union[List[Character_Info], Character_Info]:
         pass
 
     def get_class_variables(self):
