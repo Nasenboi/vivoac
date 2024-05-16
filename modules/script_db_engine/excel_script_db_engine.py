@@ -5,7 +5,7 @@ Imports:
 """
 
 import os
-from typing import List, Union
+from typing import Annotated, Dict, List, Union
 
 import pandas as pd
 
@@ -22,6 +22,17 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     script_path: str = None
     script_file_name: str = None
     excel_data_frame: pd.DataFrame = None
+    field_name_mapping: Annotated[Dict[str, str], "'Script field': 'Excel field'"] = {
+        "id": "id",
+        "source_text": "source_text",
+        "translation": "translation",
+        "time_restriction": "time_restriction",
+        "voice_talent": "voice_talent",
+        "character_name": "character_name",
+        "reference_audio_path": "reference_audio_path",
+        "delivery_audio_path": "delivery_audio_path",
+        "generatied_audio_path": "generatied_audio_path",
+    }
 
     def __init__(
         self, script_path: str = None, script_file_name: str = None, *args, **kwargs
@@ -31,7 +42,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         self.script_file_name = script_file_name
 
         try:
-            self.load_excel_script()
+            self.__load_excel_script()
         except Exception as e:
             LOGGER.info(f"Error loading excel script on initialization: {e}")
 
@@ -39,19 +50,46 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     # getter functions:
 
     def get_script_names(self) -> List[str]:
-        if not self.check_excel_script():
+        if not self.__check_excel_script():
             return []
 
     def get_script_lines(
         self, script: Script = Script()
     ) -> Union[List[Script], Script]:
-        if not self.check_excel_script():
+        # Checks before we search the database:
+        if not self.__check_excel_script():
             return Script()
+        if script.is_empty():
+            LOGGER.warning("The given Script is empty!")
+            return Script()
+
+        # Get all fitting script lines from the database:
+        filtered_database = self.__filter_database(script)
+
+        # Return the results properly:
+        if len(filtered_database) < 1:
+            LOGGER.warning("No lines found in the database!")
+            return Script()
+        elif len(filtered_database) == 1:
+            reverse_mapper = {v: k for k, v in self.field_name_mapping.items()}
+            return Script(
+                {
+                    {
+                        reverse_mapper[key]: value
+                        for key, value in filtered_database.iloc[0].items()
+                    }
+                }
+            )
+        else:
+            return [
+                Script({{key: value for key, value in line.to_dict().items()}})
+                for line in filtered_database
+            ]
 
     def get_character_infos(
         self, character_info: Character_Info = Character_Info()
     ) -> Union[List[Character_Info], Character_Info]:
-        if not self.check_excel_script():
+        if not self.__check_excel_script():
             return Character_Info()
 
     ############################################################
@@ -59,12 +97,22 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
 
     def set_class_variables(self, *kwargs):
         super().set_class_variables(*kwargs)
-        self.load_excel_script()
+        self.__load_excel_script()
 
     ############################################################
     # excel specific functions:
+    def __check_excel_script(self) -> bool:
+        if self.excel_data_frame is not None:
+            return True
 
-    def load_excel_script(self) -> pd.DataFrame:
+        try:
+            self.__load_excel_script()
+            return True
+        except Exception as e:
+            LOGGER.warning(f"Error loading excel script: {e}")
+            return False
+
+    def __load_excel_script(self) -> pd.DataFrame:
         # check if excel paths are given and the excel file exists:
         if self.script_path == None or self.script_file_name == None:
             raise ValueError("Excel file path or name not given!")
@@ -74,13 +122,13 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
 
         self.excel_data_frame = pd.read_excel(self.script_path + self.script_file_name)
 
-    def check_excel_script(self) -> bool:
-        if self.excel_data_frame is not None:
-            return True
+    def __filter_database(self, script: Script) -> pd.DataFrame:
+        # filter the database with the given script parameters:
+        query = pd.Series([True] * len(self.excel_data_frame))
+        for key, value in script.model_dump():
+            if value is not None:
+                query &= self.excel_data_frame[self.field_name_mapping[key]] == value
 
-        try:
-            self.load_excel_script()
-            return True
-        except Exception as e:
-            LOGGER.warning(f"Error loading excel script: {e}")
-            return False
+        filtered_database = self.excel_data_frame[query]
+
+        return filtered_database
