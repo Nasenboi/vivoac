@@ -4,9 +4,9 @@ WORKDIR /vivoac
 
 EXPOSE 8080
 
-COPY project-settings-docker.json project-settings.json
-
 COPY . .
+
+ENV SETTINGS_VARIATION_PATH="./project-settings-docker.json"
 
 RUN pip install -r requirements.txt
 

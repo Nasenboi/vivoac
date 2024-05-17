@@ -3,7 +3,8 @@
 
 # Project / vivoac
 logs
-project-settings.json
+project-settings-test.json
+test_main.py
 tests/
 documentation/
 README.md

@@ -1,11 +1,11 @@
 {
     "metadata": {
-        "settings-theme": "docker"
+        "settings-theme": "test"
     },
     "logging-config": {
         "handlers": {
             "file": {
-                "filename": "/var/log/vivoac/vivoac.log"
+                "filename": "./logs/vivoac-tests.log"
             }
         }
     }

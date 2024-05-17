@@ -1,5 +1,5 @@
 """########################################################################################
-Name: ai_api_handler/routes.py
+Name: audio/routes.py
 Description: 
 Imports:
 """
@@ -10,11 +10,11 @@ from fastapi import APIRouter
 ########################################################################################"""
 
 
-class AI_API_Handler_Router(APIRouter):
+class Audio_Router(APIRouter):
     api_engine = None
     route_parameters: dict = {
-        "prefix": "/ai_api_handler",
-        "tags": ["ai_api_handler"],
+        "prefix": "/audio",
+        "tags": ["audio"],
         "responses": {404: {"description": "Not found"}},
     }
 

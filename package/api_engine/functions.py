@@ -1,19 +1,25 @@
-'''########################################################################################
+"""########################################################################################
 Name: api_engine/functions.py
-Description: This file contains the functions for the ApiEngine class in api_engine.py
+Description: This file contains the functions for the API_Engine class in api_engine.py
 Imports:
-'''
-from ..globals import *
-from fastapi import FastAPI
-from uvicorn import Config, Server
+"""
+
 from threading import Thread
 from time import sleep
-'''
-########################################################################################'''
+
+from fastapi import FastAPI
+from uvicorn import Config, Server
+
+from ..globals import *
+from ..routes import *
+
+"""
+########################################################################################"""
 
 
 ########################################################################################
 # Inner custom classes
+
 
 class UvicornThread(Thread):
     def __init__(self, uvicorn_server: Server, *args, **kwargs):
@@ -28,9 +34,9 @@ class UvicornThread(Thread):
 # Class functions
 
 
-
 ########################################
 # Essentials:
+
 
 def init(self) -> None:
     LOGGER.debug("api engine - init")
@@ -38,8 +44,22 @@ def init(self) -> None:
         self.app = FastAPI()
         self.config = Config(self.app, **SETTINGS_GLOBAL.get("uvicorn-settings"))
         self.uvicorn_server = Server(self.config)
-        self.uvicorn_thread = UvicornThread(target=self.uvicorn_server.run,
-                                            daemon=True, uvicorn_server=self.uvicorn_server)
+        self.uvicorn_thread = UvicornThread(
+            target=self.uvicorn_server.run,
+            daemon=True,
+            uvicorn_server=self.uvicorn_server,
+        )
+
+        # add routes
+        self.routes = [
+            Session_Router(api_engine=self),
+            Audio_Router(api_engine=self),
+            AI_API_Handler_Router(api_engine=self),
+            Script_Router(api_engine=self),
+        ]
+        for route in self.routes:
+            self.app.include_router(route)
+
         self.uvicorn_thread.setDaemon(True)
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
@@ -58,10 +78,10 @@ def run(self) -> None:
         LOGGER.debug("api engine - waiting for uvicorn server to start")
         while not self.uvicorn_server.started and i < 10:
             sleep(1e-3)
-            LOGGER.debug("."*i)
+            LOGGER.debug("." * i)
             i += 1
         LOGGER.debug("api engine - uvicorn server started successfully")
-            
+
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
         raise KeyboardInterrupt
@@ -73,6 +93,7 @@ def run(self) -> None:
     while self.uvicorn_thread.is_alive():
         pass
 
+
 def stop(self) -> None:
     LOGGER.debug("api engine - stop")
     # stopping uviorn server
@@ -82,9 +103,3 @@ def stop(self) -> None:
     self.uvicorn_thread.join()
     self.uvicorn_thread = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
-
-
-########################################
-# Initialize API-Routes for the engine functions
-
-
