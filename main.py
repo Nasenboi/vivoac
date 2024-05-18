@@ -7,12 +7,12 @@ Imports:
 '''
 import package as p
 from importlib import reload
-from logging.handlers import  TimedRotatingFileHandler 
+from logging.handlers import TimedRotatingFileHandler 
 '''
 ########################################################################################'''
 
 if __name__ == "__main__":
-    # securely grab the app name and the logger streamhandler
+    # grab the app name and the logger streamhandler
     name = p.SETTINGS_GLOBAL.get("metadata", {}).get("name", "app")
     streamhandler = p.LOGGER.parent.handlers[ [index for index, obj in enumerate(p.LOGGER.parent.handlers) if isinstance(obj, TimedRotatingFileHandler)][0]]
     streamhandler.doRollover()
