@@ -1,0 +1,12 @@
+{
+    "CmajorVersion":    1,
+    "ID":               "de.christian_boendgen.vivoac",
+    "version":          "0.0.0",
+    "name":             "vivoac",
+    "description":      "Virtual Voice Actor, an user front end for the vivoac api in AU plugin format",
+    "category":         "generator",
+    "manufacturer":     "Christian Böndgen",
+    "isInstrument":     true,
+
+    "source":           "vivoac.cmajor"
+}
