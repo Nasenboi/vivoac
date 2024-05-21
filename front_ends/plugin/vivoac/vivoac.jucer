@@ -30,12 +30,12 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" extraLinkerFlags="-lcurl">
+    <VS2022 targetFolder="Builds/VisualStudio2022" extraLinkerFlags="-lcurl -lcpr -lnlohmann">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="vivoac" libraryPath="C:\Program Files\CLibs\curl\x64 Debug\lib&#10;"
-                       headerPath="C:\Program Files\CLibs\curl\x64 Debug\include"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="vivoac" libraryPath="C:\Program Files\CLibs\curl\x64 Release\lib"
-                       headerPath="C:\Program Files\CLibs\curl\x64 Release\include"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="vivoac" libraryPath="C:\Program Files\CLibs\curl\x64 Debug\lib;&#10;C:\Program Files\CLibs\cpr\Debug&#10;"
+                       headerPath="C:\Program Files\CLibs\curl\x64 Debug\include;&#10;C:\Program Files\CLibs\cpr\include;&#10;C:\Program Files\CLibs\nlohmann\include"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="vivoac" libraryPath="C:\Program Files\CLibs\curl\x64 Release\lib;&#10;C:\Program Files\CLibs\cpr\Release"
+                       headerPath="C:\Program Files\CLibs\curl\x64 Release\include;&#10;C:\Program Files\CLibs\cpr\include;&#10;C:\Program Files\CLibs\nlohmann\include"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../../../Programme/JUCE/modules"/>

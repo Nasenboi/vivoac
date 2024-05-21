@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "curl/curl.h"
+#include "cpr/cpr.h"
+#include "nlohmann/json.hpp"
 
 //==============================================================================
 /**
