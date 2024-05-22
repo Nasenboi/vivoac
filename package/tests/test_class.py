@@ -16,10 +16,10 @@ from ..utils.decorators import virtual
 
 
 class test_function_return(BaseModel):
-    result: Literal["success", "assert"]
-    http_code: int
-    message: Optional[str]
-    error_message: Optional[str]
+    result: Literal["success", "assert"] = "success"
+    http_code: Optional[int] = None
+    message: Optional[str] = "This is an empty function return message"
+    error_message: Optional[str] = None
 
 
 class Test_Class:

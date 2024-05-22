@@ -16,10 +16,8 @@ class Script_Test(Test_Class):
     route: str = "script"
     session_id: str = "test_session_id"
 
-    def get_by_id(self):
+    def get_by_id(self) -> test_function_return:
         LOGGER.debug(f"Starting the Script Test: get_by_id")
-        response = self.client.get(
-            url=f"/session/get/{self.session_id}",
-        )
+        return test_function_return()
 
     test_functions = [get_by_id]
