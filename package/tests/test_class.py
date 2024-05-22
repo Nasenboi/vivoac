@@ -9,7 +9,6 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel
 
 from ..globals import LOGGER
-from ..utils.decorators import virtual
 
 """
 ########################################################################################"""
@@ -36,13 +35,6 @@ class Test_Class:
         LOGGER.debug(f"Starting the Script Tests for route: {self.route}")
 
         for function in self.test_functions:
-            self.results.append(function(self.client))
+            self.results.append(function(self))
 
         LOGGER.debug(f"Finished the Script Tests for route: {self.route}")
-
-        # Get the count of successfull and assert results
-        success_count = sum(1 for result in self.results if result.result == "success")
-        assertion_count = sum(1 for result in self.results if result.result == "assert")
-        LOGGER.info(
-            f"Results: {success_count} successfully, {assertion_count} assertions"
-        )

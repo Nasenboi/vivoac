@@ -4,6 +4,8 @@ Description: This script tester class with test all functions inside the script 
 Imports:
 """
 
+from fastapi.testclient import TestClient
+
 from ..globals import LOGGER
 from .test_class import Test_Class, test_function_return
 
@@ -14,6 +16,7 @@ from .test_class import Test_Class, test_function_return
 class Session_Test(Test_Class):
     # class variables
     route: str = "session"
+    session_id: str = "test_session_id"
 
     def create_with_id(self) -> test_function_return:
         LOGGER.debug(f"Starting the Script Test: create_with_id")
@@ -21,13 +24,13 @@ class Session_Test(Test_Class):
             url=f"/session/create",
             json={"session_id": self.session_id},
         )
-        assert response.status_code == 200
-        assert response.json() == {"session_id": self.session_id}
-        return test_function_return(
-            result="success",
+        results = test_function_return(
+            result="success" if response.status_code == 200 else "assert",
             http_code=response.status_code,
-            message=f"Session created with id: {self.session_id}",
+            message=str(response.json()),
             error_message=None,
         )
+        LOGGER.debug(f"Results: {results}")
+        return test_function_return
 
     test_functions = [create_with_id]

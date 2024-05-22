@@ -14,7 +14,6 @@ from .test_class import Test_Class, test_function_return
 class Script_Test(Test_Class):
     # class variables
     route: str = "script"
-    session_id: str = "test_session_id"
 
     def get_by_id(self) -> test_function_return:
         LOGGER.debug(f"Starting the Script Test: get_by_id")

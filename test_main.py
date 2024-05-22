@@ -45,7 +45,10 @@ if __name__ == "__main__":
         client = TestClient(apiEngine.app, base_url="http://localhost:8000")
 
         # start the tests
-        session_test = tests.Session_Test(client=client)
+        test_classes = [tests.Session_Test(client=client)]
+
+        for test_class in test_classes:
+            test_class.test_script()
 
     except KeyboardInterrupt:
         p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")
