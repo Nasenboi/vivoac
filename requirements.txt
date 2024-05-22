@@ -8,6 +8,7 @@ dnspython==2.6.1
 email_validator==2.1.1
 exceptiongroup==1.2.1
 fastapi==0.110.3
+fastapi-sessions==0.3.2
 h11==0.14.0
 httpcore==1.0.5
 httptools==0.6.1
