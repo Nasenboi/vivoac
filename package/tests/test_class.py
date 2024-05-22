@@ -24,6 +24,7 @@ class test_function_return(BaseModel):
 
 class Test_Class:
     # class variables
+    route: str = None
     client = None
     test_functions: List = []
     results: List[test_function_return] = []
@@ -32,12 +33,12 @@ class Test_Class:
         self.client = client
 
     def test_script(self):
-        LOGGER.debug(f"Starting the Script Tests for route: {self.__name__}")
+        LOGGER.debug(f"Starting the Script Tests for route: {self.route}")
 
         for function in self.test_functions:
             self.results.append(function(self.client))
 
-        LOGGER.debug(f"Finished the Script Tests for route: {self.__name__}")
+        LOGGER.debug(f"Finished the Script Tests for route: {self.route}")
 
         # Get the count of successfull and assert results
         success_count = sum(1 for result in self.results if result.result == "success")

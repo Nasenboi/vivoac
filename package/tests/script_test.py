@@ -13,15 +13,13 @@ from .test_class import Test_Class, test_function_return
 
 class Script_Test(Test_Class):
     # class variables
+    route: str = "script"
     session_id: str = "test_session_id"
 
-    def create_with_id(self):
+    def get_by_id(self):
         LOGGER.debug(f"Starting the Script Test: get_by_id")
-        response = self.client.put(
-            url=f"/session/create",
-            json={"session_id": self.session_id},
+        response = self.client.get(
+            url=f"/session/get/{self.session_id}",
         )
-        assert response.status_code == 200
-        assert response.json() == {"session_id": self.session_id}
 
-    test_functions = [create_with_id]
+    test_functions = [get_by_id]

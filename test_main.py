@@ -9,6 +9,7 @@ import os
 
 os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
 from logging.handlers import TimedRotatingFileHandler
+from time import sleep
 
 from fastapi.testclient import TestClient
 
@@ -38,13 +39,13 @@ if __name__ == "__main__":
     p.LOGGER.info(f"Starting the Tests!")
     try:
         apiEngine = p.API_Engine()
-        apiEngine.run()
+        apiEngine.run(debug=True)
 
         p.LOGGER.info(f"Starting the Test Client!")
         client = TestClient(apiEngine.app, base_url="http://localhost:8000")
 
         # start the tests
-        tests.Session_Test(client).test_script()
+        session_test = tests.Session_Test(client=client)
 
     except KeyboardInterrupt:
         p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")

@@ -74,18 +74,23 @@ def init(self) -> None:
         raise Warning("Restarting...")
 
 
-def run(self) -> None:
+def run(self, debug: bool = False) -> None:
     LOGGER.debug("api engine - run")
     try:
         LOGGER.debug("api engine - starting uvicorn thread")
         self.uvicorn_thread.start()
         i = 0
         LOGGER.debug("api engine - waiting for uvicorn server to start")
-        while not self.uvicorn_server.started and i < 10:
+        while not self.uvicorn_server.started:
             sleep(1e-3)
             LOGGER.debug("." * i)
             i += 1
+            if i > 3:
+                i = 0
         LOGGER.debug("api engine - uvicorn server started successfully")
+
+        while self.uvicorn_thread.is_alive() and not debug:
+            pass
 
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this

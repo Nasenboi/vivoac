@@ -26,11 +26,11 @@ class API_Engine:
     uvicorn_thread = None
     session_backend = None
 
-    def __init__(self):
-        init(self)
+    def __init__(self, *args, **kwargs):
+        init(self, *args, **kwargs)
 
-    def run(self):
-        run(self)
+    def run(self, *args, **kwargs):
+        run(self, *args, **kwargs)
 
-    def stop(self):
-        stop(self)
+    def stop(self, *args, **kwargs):
+        stop(self, *args, **kwargs)

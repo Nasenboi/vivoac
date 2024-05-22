@@ -28,17 +28,17 @@ if __name__ == "__main__":
 
     # start the application loop
     p.LOGGER.info(f"Starting {name}, hello world!")
-    apiEngine = p.API_Engine()
-    apiEngine.run()
     while True:
         try:
-            pass
+            apiEngine = p.API_Engine()
+            apiEngine.run()
         except KeyboardInterrupt:
             p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")
             apiEngine.stop()
             break
         except Exception as e:
             p.LOGGER.error(f"An error occured:\n{e}\nRestarting {name}")
+            apiEngine.stop()
             reload(p)
             apiEngine = p.API_Engine()
             apiEngine.run()
