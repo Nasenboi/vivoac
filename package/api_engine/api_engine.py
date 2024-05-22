@@ -24,6 +24,7 @@ class API_Engine:
     config = None
     uvicorn_server = None
     uvicorn_thread = None
+    session_backend = None
 
     def __init__(self):
         init(self)

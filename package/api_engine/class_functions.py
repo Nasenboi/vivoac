@@ -8,6 +8,7 @@ from threading import Thread
 from time import sleep
 
 from fastapi import FastAPI
+from fastapi_sessions.backends.implementations import InMemoryBackend
 from uvicorn import Config, Server
 
 from ..globals import *
@@ -63,6 +64,8 @@ def init(self) -> None:
             self.app.include_router(route)
 
         self.uvicorn_thread.setDaemon(True)
+
+        self.session_backend = InMemoryBackend()
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
         raise KeyboardInterrupt
@@ -90,10 +93,6 @@ def run(self) -> None:
     except Exception as e:
         LOGGER.error(f"An error while running fastapi:\n{e}")
         raise Warning("Restarting...")
-
-    # let the uvicorn thread run and do its thing . . .
-    while self.uvicorn_thread.is_alive():
-        pass
 
 
 def stop(self) -> None:
