@@ -1,6 +1,6 @@
 """########################################################################################
 Name: script/models.py
-Description: In here are the dictionary models that will be used for the script routes.
+Description: 
 Imports:
 """
 
