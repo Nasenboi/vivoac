@@ -35,7 +35,7 @@ class Script(BaseModel):
     character_name: Optional[str]
     reference_audio_path: Optional[str]
     delivery_audio_path: Optional[str]
-    generatied_audio_path: Optional[str]
+    generated_audio_path: Optional[str]
 
     def is_empty(self):
         return not self.__dict__

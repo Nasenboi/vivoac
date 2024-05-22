@@ -4,7 +4,7 @@ Description: In here are the dictionary models that will be used for the audio r
 Imports:
 """
 
-from typing import Optional, Union
+from typing import Literal, Optional
 
 from pydantic import BaseModel
 
@@ -14,12 +14,12 @@ from pydantic import BaseModel
 
 # audio model
 class Audio_Format(BaseModel):
-    format: Optional[str]
-    codec: Optional[str]
-    sample_rate: Optional[int]
-    channels: Optional[int]
-    bit_rate: Optional[int]
-    normalization_type: Optional[str]
+    codec: Optional[Literal["wav", "mp3", "ogg", "aiff"]] = "wav"
+    sample_rate: Optional[int] = 192_000
+    channels: Optional[int] = 2
+    bit_depth: Optional[int] = 16
+    bit_rate: Optional[int] = 1411
+    normalization_type: Optional[Literal["None", "Peak", "Loudness"]] = "None"
 
     def is_empty(self):
         return not self.__dict__
