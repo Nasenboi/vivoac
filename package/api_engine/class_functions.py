@@ -12,6 +12,7 @@ from uvicorn import Config, Server
 
 from ..globals import *
 from ..routes import *
+from .routes import API_Engine_Router
 
 """
 ########################################################################################"""
@@ -52,6 +53,7 @@ def init(self) -> None:
 
         # add routes
         self.routes = [
+            API_Engine_Router(api_engine=self),
             Session_Router(api_engine=self),
             Audio_Router(api_engine=self),
             AI_API_Handler_Router(api_engine=self),

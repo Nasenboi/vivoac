@@ -10,7 +10,7 @@ from typing import List
 from fastapi import APIRouter
 
 from ..globals import *
-from .functions import *
+from .class_functions import *
 
 # from threading import Thread
 """
