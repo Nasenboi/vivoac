@@ -8,8 +8,8 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel
 
-from ..package.globals import LOGGER
-from ..package.utils.decorators import virtual
+from ..globals import LOGGER
+from ..utils.decorators import virtual
 
 """
 ########################################################################################"""
@@ -25,7 +25,7 @@ class test_function_return(BaseModel):
 class Test_Class:
     # class variables
     client = None
-    test_functions: List[function] = []
+    test_functions: List = []
     results: List[test_function_return] = []
 
     def __init__(self, client):

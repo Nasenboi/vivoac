@@ -4,15 +4,14 @@ Description: This script tester class with test all functions inside the script 
 Imports:
 """
 
-from test_class import Test_Class, test_function_return
-
-from ..package.globals import LOGGER
+from ..globals import LOGGER
+from .test_class import Test_Class, test_function_return
 
 """
 ########################################################################################"""
 
 
-class Script_Test(Test_Class):
+class Session_Test(Test_Class):
     # class variables
 
     def get_by_id(self, client):
