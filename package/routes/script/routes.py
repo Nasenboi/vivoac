@@ -34,6 +34,6 @@ class Script_Router(APIRouter):
         )
 
     @staticmethod
-    def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
+    async def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
         # <call function from myApiEngine>
         return get_script_lines(script)
