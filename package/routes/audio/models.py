@@ -18,7 +18,7 @@ class Audio_Format(BaseModel):
     sample_rate: Optional[int] = 192_000
     channels: Optional[int] = 2
     bit_depth: Optional[int] = 16
-    bit_rate: Optional[int] = 1411
+    bit_rate: Optional[int] = 320_000
     normalization_type: Optional[Literal["None", "Peak", "Loudness"]] = "None"
 
     def is_empty(self):
