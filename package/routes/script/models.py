@@ -14,28 +14,28 @@ from pydantic import BaseModel
 
 # character into model
 class Character_Info(BaseModel):
-    id: Optional[Union[int, str]]
-    character_name: Optional[str]
-    voice_talent: Optional[str]
-    script_name: Optional[str]
-    number_of_lines: Optional[int]
-    gender: Optional[str]
+    id: Optional[Union[int, str]] = None
+    character_name: Optional[str] = None
+    voice_talent: Optional[str] = None
+    script_name: Optional[str] = None
+    number_of_lines: Optional[int] = None
+    gender: Optional[str] = None
 
     def is_empty(self):
         return not self.__dict__
 
 
 # script model
-class Script(BaseModel):
-    id: Optional[Union[int, str]]
-    source_text: Optional[str]
-    translation: Optional[str]
-    time_restriction: Optional[Union[str, int]]
-    voice_talent: Optional[str]
-    character_name: Optional[str]
-    reference_audio_path: Optional[str]
-    delivery_audio_path: Optional[str]
-    generated_audio_path: Optional[str]
+class Script_Line(BaseModel):
+    id: Optional[Union[int, str]] = None
+    source_text: Optional[str] = None
+    translation: Optional[str] = None
+    time_restriction: Optional[Union[str, int]] = None
+    voice_talent: Optional[str] = None
+    character_name: Optional[str] = None
+    reference_audio_path: Optional[str] = None
+    delivery_audio_path: Optional[str] = None
+    generated_audio_path: Optional[str] = None
 
     def is_empty(self):
         return not self.__dict__

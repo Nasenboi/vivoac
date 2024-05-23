@@ -4,11 +4,13 @@ Description:
 Imports:
 """
 
-from typing import List, Union
+from typing import Annotated, List, Optional, Union
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Body, Header
 
 from ...globals import LOGGER, SETTINGS_GLOBAL
+from ...utils.decorators import session_fetch
+from ..session.models import Session
 from .functions import *
 from .models import *
 
@@ -30,10 +32,17 @@ class Script_Router(APIRouter):
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
         self.add_api_route(
-            path="/", endpoint=self.get_script_lines_route, methods=["GET"]
+            path="/get",
+            endpoint=self.get_script_lines_route,
+            methods=["GET"],
         )
 
-    @staticmethod
-    async def get_script_lines_route(script: Script) -> Union[List, Script, dict]:
-        # <call function from myApiEngine>
-        return get_script_lines(script)
+    @session_fetch
+    async def get_script_lines_route(
+        self,
+        script_line: Script_Line,
+        session_id: Annotated[str, Header()],
+        session: Optional[Session] = None,
+    ) -> Union[List[Script_Line | dict], Script_Line, dict]:
+        LOGGER.debug(f"Getting script lines for {script_line}")
+        return await get_script_lines(script_line=script_line, session=session)

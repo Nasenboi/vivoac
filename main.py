@@ -30,18 +30,18 @@ if __name__ == "__main__":
     p.LOGGER.info(f"Starting {name}, hello world!")
     while True:
         try:
-            apiEngine = p.API_Engine()
-            apiEngine.run()
+            api_engine = p.API_Engine()
+            api_engine.run()
         except KeyboardInterrupt:
             p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")
-            apiEngine.stop()
+            api_engine.stop()
             break
         except Exception as e:
             p.LOGGER.error(f"An error occured:\n{e}\nRestarting {name}")
-            apiEngine.stop()
+            api_engine.stop()
             reload(p)
-            apiEngine = p.API_Engine()
-            apiEngine.run()
+            api_engine = p.API_Engine()
+            api_engine.run()
 
     # say a final goodbye
     p.LOGGER.info(f"Stopping {name}, goodbye!")

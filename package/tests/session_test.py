@@ -25,7 +25,7 @@ class Session_Test(Test_Class):
     }
 
     def create_session(self) -> test_function_return:
-        LOGGER.debug(f"creat_session")
+        LOGGER.debug(f"create_session")
         response = self.client.put(
             url=f"/session/create",
             json={"session_id": self.session_id},
@@ -83,4 +83,13 @@ class Session_Test(Test_Class):
         LOGGER.debug(f"Results: {results}")
         return results
 
-    test_functions = [create_session, get_session, update_session, delete_session]
+    def create_test_session(self):
+        self.create_session()
+
+    test_functions = [
+        create_session,
+        get_session,
+        update_session,
+        delete_session,
+        create_test_session,
+    ]

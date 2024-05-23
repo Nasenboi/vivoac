@@ -11,10 +11,9 @@ os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
 from logging.handlers import TimedRotatingFileHandler
 from time import sleep
 
-from fastapi.testclient import TestClient
-
 import package as p
 import package.tests as tests
+from package.utils.classes.test_client import CustomTestClient
 
 """
 ########################################################################################"""
@@ -38,24 +37,27 @@ if __name__ == "__main__":
     # start the application loop
     p.LOGGER.info(f"Starting the Tests!")
     try:
-        apiEngine = p.API_Engine()
-        apiEngine.run(debug=True)
+        api_engine = p.API_Engine()
+        api_engine.run(debug=True)
 
         p.LOGGER.info(f"Starting the Test Client!")
-        client = TestClient(apiEngine.app, base_url="http://localhost:8000")
+        client = CustomTestClient(api_engine.app, base_url="http://localhost:8000")
 
         # start the tests
-        test_classes = [tests.Session_Test(client=client)]
+        test_classes = [
+            tests.Session_Test(client=client),
+            tests.Script_Test(client=client),
+        ]
 
         for test_class in test_classes:
             test_class.test_script()
 
     except KeyboardInterrupt:
         p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")
-        apiEngine.stop()
+        api_engine.stop()
     except Exception as e:
         p.LOGGER.error(f"An error occured:\n{e}")
-        apiEngine.stop()
+        api_engine.stop()
 
     # say a final goodbye
     p.LOGGER.info(f"Stopping Tests!")
