@@ -1,5 +1,5 @@
 """########################################################################################
-Name: script_db_engine.py
+Name: base_classes/script_db_engine.py
 Description: 
 Imports:
 """
@@ -11,12 +11,13 @@ from pydantic import confloat
 
 from ..routes.script.models import Character_Info, Script_Line
 from ..utils.decorators import virtual
+from .base_engine import Base_Engine
 
 """
 ########################################################################################"""
 
 
-class Script_DB_Engine:
+class Script_DB_Engine(Base_Engine):
     # class variables:
     script_name: str = None
 
@@ -41,13 +42,3 @@ class Script_DB_Engine:
         self, character_info: Character_Info = Character_Info()
     ) -> Union[List[Character_Info], Character_Info]:
         pass
-
-    def get_class_variables(self):
-        return self.__annotations__
-
-    ############################################################
-    # set class variables:
-
-    def set_class_variables(self, *kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)

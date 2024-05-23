@@ -1,5 +1,5 @@
 """########################################################################################
-Name: audio_file_engine.py
+Name: base_classes/audio_file_engine.py
 Description: 
 Imports:
 """
@@ -8,12 +8,13 @@ from typing import List, Union
 
 from ..routes.audio.models import Audio_Format
 from ..utils.decorators import virtual
+from .base_engine import Base_Engine
 
 """
 ########################################################################################"""
 
 
-class Audio_File_Engine:
+class Audio_File_Engine(Base_Engine):
     # class variables:
     target_format: Audio_Format = None
 
@@ -28,16 +29,6 @@ class Audio_File_Engine:
         self, file_paths=Union[List[str], str]
     ) -> Union[List[bytes], bytes]:
         pass
-
-    def get_class_variables(self):
-        return self.__annotations__
-
-    ############################################################
-    # set class variables:
-
-    def set_class_variables(self, *kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     ############################################################
     # Audio file functions:

@@ -1,5 +1,5 @@
 """########################################################################################
-Name: ai_api_engine.py
+Name: base_classes/ai_api_engine.py
 Description: The base class for all AI API Engine classes
 Most of the functions are build after the ElevenLabs API but can be adapted to other APIs,
 because thats what the modular child classes are for!
@@ -9,12 +9,13 @@ Imports:
 from typing import List
 
 from ..utils import virtual
+from .base_engine import Base_Engine
 
 """
 ########################################################################################"""
 
 
-class AI_API_Engine:
+class AI_API_Engine(Base_Engine):
     # class variables:
     api_key: str = None  # the api token or key to use the service
     base_url: str = None  # the base url of the api
@@ -48,16 +49,6 @@ class AI_API_Engine:
     @virtual
     def get_voice_settings(self, api_key: str = None, voice_id: str = None) -> dict:
         pass
-
-    def get_class_variables(self):
-        return self.__annotations__
-
-    ############################################################
-    # set class variables:
-
-    def set_class_variables(self, *kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     ############################################################
     # Voice editing functions:
