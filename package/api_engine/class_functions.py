@@ -67,6 +67,7 @@ def init(self) -> None:
         self.uvicorn_thread.setDaemon(True)
 
         self.session_backend = InMemoryBackend()
+        self.engine_backend = Engine_Backend()
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
         raise KeyboardInterrupt

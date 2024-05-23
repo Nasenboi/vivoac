@@ -8,7 +8,7 @@ Imports:
 
 from typing import List
 
-from ..utils import virtual
+from ..utils.decorators import virtual
 from .base_engine import Base_Engine
 
 """

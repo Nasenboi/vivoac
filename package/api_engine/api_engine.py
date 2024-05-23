@@ -25,6 +25,7 @@ class API_Engine:
     uvicorn_server = None
     uvicorn_thread = None
     session_backend = None
+    engine_backend = None
 
     def __init__(self, *args, **kwargs):
         init(self, *args, **kwargs)

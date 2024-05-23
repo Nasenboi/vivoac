@@ -14,6 +14,7 @@ from .models import Session
 async def create_session(api_engine, session: Session) -> Session:
     LOGGER.debug(f"Creating session: {session.session_id}")
     await api_engine.session_backend.create(session_id=session.session_id, data=session)
+    api_engine.engine_backend.add_session_engines(session_id=session.session_id)
     return session
 
 
