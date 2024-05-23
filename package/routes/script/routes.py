@@ -42,7 +42,7 @@ class Script_Router(APIRouter):
         self,
         script_line: Script_Line,
         session_id: Annotated[str, Header()],
-        session: Optional[Session] = None,
+        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Union[List[Script_Line | dict], Script_Line, dict]:
         LOGGER.debug(f"Getting script lines for {script_line}")
         return await get_script_lines(script_line=script_line, session=session)
