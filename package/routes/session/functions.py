@@ -21,6 +21,7 @@ async def create_session(api_engine, session: Session) -> Session:
 async def close_session(api_engine, session: Session) -> Session:
     LOGGER.debug(f"Closing session: {session.session_id}")
     await api_engine.session_backend.delete(session.session_id)
+    api_engine.engine_backend.close_session_engines(session_id=session.session_id)
     return session
 
 
