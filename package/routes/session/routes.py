@@ -43,10 +43,10 @@ class Session_Router(APIRouter):
         return await create_session(api_engine=self.api_engine, session=session)
 
     async def close_session_route(self, session: Session = Session()) -> Session:
-        return close_session(api_engine=self.api_engine, session=session)
+        return await close_session(api_engine=self.api_engine, session=session)
 
     async def get_session_route(self, session_id: str | int) -> Session:
-        return get_session(api_engine=self.api_engine, session_id=session_id)
+        return await get_session(api_engine=self.api_engine, session_id=session_id)
 
     async def update_session_route(self, session: Session = Session()) -> Session:
-        return update_session(api_engine=self.api_engine, session=session)
+        return await update_session(api_engine=self.api_engine, session=session)

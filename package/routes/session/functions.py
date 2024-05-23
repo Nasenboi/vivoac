@@ -17,19 +17,19 @@ async def create_session(api_engine, session: Session) -> Session:
     return session
 
 
-def close_session(api_engine, session: Session) -> Session:
+async def close_session(api_engine, session: Session) -> Session:
     LOGGER.debug(f"Closing session: {session.session_id}")
-    api_engine.session_backend.delete(session.session_id)
+    await api_engine.session_backend.delete(session.session_id)
     return session
 
 
-def get_session(api_engine, session_id: str | int) -> Session:
+async def get_session(api_engine, session_id: str | int) -> Session:
     LOGGER.debug(f"Fetching session: {session_id}")
-    session = api_engine.session_backend.read(session_id)
+    session = await api_engine.session_backend.read(session_id=session_id)
     return session
 
 
-def update_session(api_engine, session: Session) -> Session:
+async def update_session(api_engine, session: Session) -> Session:
     LOGGER.debug(f"Updating session: {session.session_id}")
-    api_engine.session_backend.update(session_id=session.session_id, data=session)
+    await api_engine.session_backend.update(session_id=session.session_id, data=session)
     return session
