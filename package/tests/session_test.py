@@ -4,8 +4,6 @@ Description: This script tester class with test all functions inside the script 
 Imports:
 """
 
-from fastapi.testclient import TestClient
-
 from ..globals import LOGGER
 from .test_class import Test_Class, test_function_return
 
@@ -17,9 +15,17 @@ class Session_Test(Test_Class):
     # class variables
     route: str = "session"
     session_id: str = "test_session_id"
+    setting_updates = {
+        "sesstion_settings": {
+            "audio_format": {
+                "sample_rate": 44100,
+                "bit_depth": 24,
+            }
+        }
+    }
 
-    def create_with_id(self) -> test_function_return:
-        LOGGER.debug(f"create_with_id")
+    def create_session(self) -> test_function_return:
+        LOGGER.debug(f"creat_session")
         response = self.client.put(
             url=f"/session/create",
             json={"session_id": self.session_id},
@@ -33,8 +39,8 @@ class Session_Test(Test_Class):
         LOGGER.debug(f"Results: {results}")
         return results
 
-    def get_with_id(self) -> test_function_return:
-        LOGGER.debug(f"get_with_id")
+    def get_session(self) -> test_function_return:
+        LOGGER.debug(f"get_session")
         response = self.client.get(
             url=f"/session/get/{self.session_id}",
         )
@@ -47,8 +53,23 @@ class Session_Test(Test_Class):
         LOGGER.debug(f"Results: {results}")
         return results
 
-    def delete_with_id(self) -> test_function_return:
-        LOGGER.debug(f"delete_with_id")
+    def update_session(self) -> test_function_return:
+        LOGGER.debug(f"update_session")
+        response = self.client.post(
+            url=f"/session/update",
+            json={"session_id": self.session_id, **self.setting_updates},
+        )
+        results = test_function_return(
+            result="success" if response.status_code == 200 else "assert",
+            http_code=response.status_code,
+            message=str(response.json()),
+            error_message=None,
+        )
+        LOGGER.debug(f"Results: {results}")
+        return results
+
+    def delete_session(self) -> test_function_return:
+        LOGGER.debug(f"delete_session")
         response = self.client.post(
             url=f"/session/close",
             json={"session_id": self.session_id},
@@ -62,4 +83,4 @@ class Session_Test(Test_Class):
         LOGGER.debug(f"Results: {results}")
         return results
 
-    test_functions = [create_with_id, get_with_id, delete_with_id]
+    test_functions = [create_session, get_session, update_session, delete_session]
