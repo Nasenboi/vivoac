@@ -32,9 +32,9 @@ class Test_Class:
         self.client = client
 
     def test_script(self):
-        LOGGER.debug(f"Starting the Script Tests for route: {self.route}")
+        LOGGER.info(f"Starting the Script Tests for route: {self.route}")
 
         for function in self.test_functions:
             self.results.append(function(self))
 
-        LOGGER.debug(f"Finished the Script Tests for route: {self.route}")
+        LOGGER.info(f"Finished the Script Tests for route: {self.route}")
