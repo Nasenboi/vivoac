@@ -11,9 +11,9 @@ from typing import Annotated, Dict, List, Union
 
 import pandas as pd
 
-from ...package.base_classes.script_db_engine import Script_DB_Engine
-from ...package.globals import LOGGER
-from ...package.routes.script.models import Character_Info, Script
+from ...base_classes import Script_DB_Engine
+from ...globals import LOGGER
+from ...routes.script.models import Character_Info, Script_Line
 
 """
 ########################################################################################"""
@@ -66,11 +66,11 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         return scripts
 
     def get_script_lines(
-        self, script: Script = Script()
-    ) -> Union[List[Script], Script]:
+        self, script: Script_Line = Script_Line()
+    ) -> Union[List[Script_Line], Script_Line]:
         # Checks before we search the database:
         if not self.__check_excel_script():
-            return Script()
+            return Script_Line()
         if script.is_empty():
             LOGGER.warning("The given Script is empty, returning all script lines!")
 
@@ -80,14 +80,14 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         # Return the results properly:
         if len(filtered_database) < 1:
             LOGGER.warning("No lines found in the database!")
-            return Script()
+            return Script_Line()
         elif len(filtered_database) == 1:
-            return Script(
+            return Script_Line(
                 {{key: value for key, value in filtered_database.iloc[0].items()}}
             )
         else:
             return [
-                Script({{key: value for key, value in line.to_dict().items()}})
+                Script_Line({{key: value for key, value in line.to_dict().items()}})
                 for line in filtered_database
             ]
 
@@ -154,7 +154,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             LOGGER.warning(f"Error loading excel script: {e}")
             return False
 
-    def __filter_database(self, script: Script) -> pd.DataFrame:
+    def __filter_database(self, script: Script_Line) -> pd.DataFrame:
         # filter the database with the given script parameters:
         query = pd.Series([True] * len(self.excel_data_frame))
         for key, value in script.model_dump():

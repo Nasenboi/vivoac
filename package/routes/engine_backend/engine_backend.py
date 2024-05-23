@@ -6,6 +6,7 @@ Imports:
 
 from typing import List
 
+from ...modules import *
 from .models import *
 
 """
