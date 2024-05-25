@@ -36,7 +36,7 @@ class Engine_Backend:
             )
         )
 
-    def change_session_engines(
+    def update_session_engines(
         self,
         session_id: str | int,
         engine_modules: Engine_Modules,
