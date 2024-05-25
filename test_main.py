@@ -9,7 +9,6 @@ import os
 
 os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
 from logging.handlers import TimedRotatingFileHandler
-from time import sleep
 
 import package as p
 import package.tests as tests
@@ -45,8 +44,9 @@ if __name__ == "__main__":
 
         # start the tests
         test_classes = [
-            tests.Session_Test(client=client),
-            tests.Script_Test(client=client),
+            tests.Session_Tests(client=client),
+            tests.Engine_Tests(client=client),
+            tests.Script_Tests(client=client),
         ]
 
         for test_class in test_classes:

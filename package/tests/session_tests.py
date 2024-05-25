@@ -11,7 +11,7 @@ from .test_class import Test_Class, test_function_return
 ########################################################################################"""
 
 
-class Session_Test(Test_Class):
+class Session_Tests(Test_Class):
     # class variables
     route: str = "session"
     session_id: str = "test_session_id"
