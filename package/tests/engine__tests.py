@@ -19,7 +19,8 @@ class Engine_Tests(Test_Class):
     def get_engines(self) -> test_function_return:
         LOGGER.debug(f"Starting the Engine Test: get_engines")
         response = self.client.get(
-            url=f"/engine/get/{self.session_id}",
+            url=f"/engine/get/",
+            headers={"session-id": self.session_id},
         )
         results = test_function_return(
             result="success" if response.status_code == 200 else "assert",
@@ -30,4 +31,4 @@ class Engine_Tests(Test_Class):
         LOGGER.debug(f"Results: {results}")
         return results
 
-    test_functions = []
+    test_functions = [get_engines]

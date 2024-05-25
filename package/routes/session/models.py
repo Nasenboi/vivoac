@@ -16,9 +16,20 @@ from ..audio.models import Audio_Format
 
 
 class SessionSettings(BaseModel):
-    audio_format: Audio_Format = Audio_Format()
+    audio_format: Optional[Audio_Format] = None
+
+    def fill_default_values(self):
+        self.audio_format = self.audio_format or Audio_Format().fill_default_values()
+        return self
 
 
 class Session(BaseModel):
-    sesstion_settings: Optional[SessionSettings] = SessionSettings()
-    session_id: Optional[str] = uuid4()
+    session_settings: Optional[SessionSettings] = None
+    session_id: Optional[str] = None
+
+    def fill_default_values(self):
+        self.session_settings = (
+            self.session_settings or SessionSettings().fill_default_values()
+        )
+        self.session_id = self.session_id or uuid4()
+        return self

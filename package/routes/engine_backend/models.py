@@ -30,11 +30,19 @@ script_db_engine_modules: Dict[str, Type[Script_DB_Engine]] = {
 class Engine_Modules(BaseModel):
     ai_api_engine_module: Optional[
         Literal["AI_API_Engine", "Excel_Script_DB_Engine"]
-    ] = "AI_API_Engine"
-    audio_file_engine_module: Optional[Literal["Audio_File_Engine"]] = (
-        "Audio_File_Engine"
-    )
-    script_db_engine_module: Optional[Literal["Script_DB_Engine"]] = "Script_DB_Engine"
+    ] = None
+    audio_file_engine_module: Optional[Literal["Audio_File_Engine"]] = None
+    script_db_engine_module: Optional[Literal["Script_DB_Engine"]] = None
+
+    def fill_default_values(self):
+        self.ai_api_engine_module = self.ai_api_engine_module or "AI_API_Engine"
+        self.audio_file_engine_module = (
+            self.audio_file_engine_module or "Audio_File_Engine"
+        )
+        self.script_db_engine_module = (
+            self.script_db_engine_module or "Script_DB_Engine"
+        )
+        return self
 
     def is_empty(self):
         return not self.__dict__

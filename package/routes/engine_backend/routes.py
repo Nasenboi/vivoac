@@ -37,15 +37,15 @@ class Engine_Router(APIRouter):
     async def get_session_engines_route(
         self,
         session_id: Annotated[str, Header()],
-    ) -> API_Sub_Engines:
-        return await self.api_engine.engine_backend.get_session_engines(
+    ) -> Engine_Modules:
+        return await self.api_engine.engine_backend.get_session_engine_names(
             session_id=session_id
         )
 
     async def update_session_engines_route(
         self,
         session_id: Annotated[str, Header()],
-        engine_modules: Engine_Modules = Engine_Modules(),
+        engine_modules: Engine_Modules,
     ) -> str | int:
         return await self.api_engine.engine_backend.update_session_engines(
             session_id=session_id, engine_modules=engine_modules

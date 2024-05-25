@@ -16,11 +16,14 @@ from .models import *
 class Engine_Backend:
     session_sub_engines: List[API_Sub_Engines] = []
 
-    def add_session_engines(
+    async def add_session_engines(
         self,
         session_id: str | int,
-        engine_modules: Optional[Engine_Modules] = Engine_Modules(),
+        engine_modules: Optional[
+            Engine_Modules
+        ] = Engine_Modules().fill_default_values(),
     ):
+        LOGGER.debug(f"Adding session engines: {session_id}")
         self.session_sub_engines.append(
             API_Sub_Engines(
                 session_id=session_id,
@@ -36,7 +39,7 @@ class Engine_Backend:
             )
         )
 
-    def update_session_engines(
+    async def update_session_engines(
         self,
         session_id: str | int,
         engine_modules: Engine_Modules,
@@ -58,14 +61,27 @@ class Engine_Backend:
                         engine_modules.script_db_engine_module
                     ]()
                 return session_id
+        raise ValueError(f"Session ID not found: {session_id}")
 
-    def get_session_engines(self, session_id: str | int) -> API_Sub_Engines:
+    async def get_session_engines(self, session_id: str | int) -> API_Sub_Engines:
         for engine in self.session_sub_engines:
             if engine.session_id == session_id:
                 return engine
+        raise ValueError(f"Session ID not found: {session_id}")
 
-    def close_session_engines(self, session_id: str | int) -> str | int:
+    async def get_session_engine_names(self, session_id: str | int) -> Engine_Modules:
+        for engine in self.session_sub_engines:
+            if engine.session_id == session_id:
+                return Engine_Modules(
+                    ai_api_engine_module=engine.ai_api_engine.__class__.__name__,
+                    audio_file_engine_module=engine.audio_file_engine.__class__.__name__,
+                    script_db_engine_module=engine.script_db_engine.__class__.__name__,
+                )
+        raise ValueError(f"Session ID not found: {session_id}")
+
+    async def close_session_engines(self, session_id: str | int) -> str | int:
         for engine in self.session_sub_engines:
             if engine.session_id == session_id:
                 self.session_sub_engines.remove(engine)
                 return session_id
+        raise ValueError(f"Session ID not found: {session_id}")

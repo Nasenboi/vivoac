@@ -17,7 +17,7 @@ from .models import *
 
 
 async def get_script_lines(
-    script_line: Script_Line, session: Session = Session()
+    script_line: Script_Line, session: Session
 ) -> Union[List[Union[Script_Line | dict]], Script_Line, dict]:
     LOGGER.debug(f"Getting script: {script_line}")
     return script_line

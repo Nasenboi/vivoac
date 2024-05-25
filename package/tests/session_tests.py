@@ -16,7 +16,7 @@ class Session_Tests(Test_Class):
     route: str = "session"
     session_id: str = "test_session_id"
     setting_updates = {
-        "sesstion_settings": {
+        "session_settings": {
             "audio_format": {
                 "sample_rate": 44100,
                 "bit_depth": 24,
@@ -43,7 +43,7 @@ class Session_Tests(Test_Class):
         LOGGER.debug(f"get_session")
         response = self.client.get(
             url=f"/session/get/",
-            headers={"session_id": self.session_id},
+            headers={"session-id": self.session_id},
         )
         results = test_function_return(
             result="success" if response.status_code == 200 else "assert",
@@ -58,7 +58,8 @@ class Session_Tests(Test_Class):
         LOGGER.debug(f"update_session")
         response = self.client.post(
             url=f"/session/update",
-            json={"session_id": self.session_id, **self.setting_updates},
+            headers={"session-id": self.session_id},
+            json={**self.setting_updates},
         )
         results = test_function_return(
             result="success" if response.status_code == 200 else "assert",
@@ -73,7 +74,7 @@ class Session_Tests(Test_Class):
         LOGGER.debug(f"delete_session")
         response = self.client.post(
             url=f"/session/close",
-            json={"session_id": self.session_id},
+            headers={"session-id": self.session_id},
         )
         results = test_function_return(
             result="success" if response.status_code == 200 else "assert",

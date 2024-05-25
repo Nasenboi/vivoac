@@ -12,17 +12,18 @@ from .models import Session
 
 
 async def create_session(api_engine, session: Session) -> Session:
+    session.fill_default_values()
     LOGGER.debug(f"Creating session: {session.session_id}")
     await api_engine.session_backend.create(session_id=session.session_id, data=session)
-    api_engine.engine_backend.add_session_engines(session_id=session.session_id)
+    await api_engine.engine_backend.add_session_engines(session_id=session.session_id)
     return session
 
 
-async def close_session(api_engine, session: Session) -> Session:
-    LOGGER.debug(f"Closing session: {session.session_id}")
-    await api_engine.session_backend.delete(session.session_id)
-    api_engine.engine_backend.close_session_engines(session_id=session.session_id)
-    return session
+async def close_session(api_engine, session_id: str | int) -> Session:
+    LOGGER.debug(f"Closing session: {session_id}")
+    await api_engine.session_backend.delete(session_id)
+    await api_engine.engine_backend.close_session_engines(session_id=session_id)
+    return session_id
 
 
 async def get_session(api_engine, session_id: str | int) -> Session:
@@ -31,7 +32,11 @@ async def get_session(api_engine, session_id: str | int) -> Session:
     return session
 
 
-async def update_session(api_engine, session: Session) -> Session:
-    LOGGER.debug(f"Updating session: {session.session_id}")
-    await api_engine.session_backend.update(session_id=session.session_id, data=session)
+async def update_session(
+    api_engine, session_id: str | int, session: Session
+) -> Session:
+    LOGGER.debug(f"Updating session: {session_id}")
+    if session.session_id is not None and session_id != session.session_id:
+        raise ValueError(f"Session ID mismatch: {session_id} != {session.session_id}")
+    await api_engine.session_backend.update(session_id=session_id, data=session)
     return session

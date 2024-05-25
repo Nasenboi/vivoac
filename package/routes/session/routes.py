@@ -44,8 +44,11 @@ class Session_Router(APIRouter):
     async def create_session_route(self, session: Session = Session()) -> Session:
         return await create_session(api_engine=self.api_engine, session=session)
 
-    async def close_session_route(self, session: Session = Session()) -> Session:
-        return await close_session(api_engine=self.api_engine, session=session)
+    async def close_session_route(
+        self,
+        session_id: Annotated[str, Header()],
+    ) -> str | int:
+        return await close_session(api_engine=self.api_engine, session_id=session_id)
 
     async def get_session_route(
         self,
@@ -53,5 +56,9 @@ class Session_Router(APIRouter):
     ) -> Session:
         return await get_session(api_engine=self.api_engine, session_id=session_id)
 
-    async def update_session_route(self, session: Session = Session()) -> Session:
-        return await update_session(api_engine=self.api_engine, session=session)
+    async def update_session_route(
+        self, session_id: Annotated[str, Header()], session: Session
+    ) -> Session:
+        return await update_session(
+            api_engine=self.api_engine, session_id=session_id, session=session
+        )
