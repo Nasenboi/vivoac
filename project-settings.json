@@ -20,7 +20,7 @@
         "formatters": {
             "colored": {
                 "()": "colorlog.ColoredFormatter",
-                "format": "%(log_color)s%(levelname)8s:%(asctime)s_[%(lineno)03d]_%(filename)-15s> %(message)s",
+                "format": "%(log_color)s%(levelname)8s:%(asctime)s_[%(lineno)03d]_%(filename)-20s> %(message)s",
                 "datefmt": "%d.%m.%y_%H:%M",
                 "log_colors": {
                     "DEBUG":    "cyan",
