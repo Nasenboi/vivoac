@@ -42,7 +42,8 @@ class Session_Tests(Test_Class):
     def get_session(self) -> test_function_return:
         LOGGER.debug(f"get_session")
         response = self.client.get(
-            url=f"/session/get/{self.session_id}",
+            url=f"/session/get/",
+            headers={"session_id": self.session_id},
         )
         results = test_function_return(
             result="success" if response.status_code == 200 else "assert",

@@ -4,7 +4,9 @@ Description:
 Imports:
 """
 
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Header
 
 from .functions import *
 from .models import *
@@ -33,7 +35,7 @@ class Session_Router(APIRouter):
             path="/close", endpoint=self.close_session_route, methods=["POST"]
         )
         self.add_api_route(
-            path="/get/{session_id}", endpoint=self.get_session_route, methods=["GET"]
+            path="/get", endpoint=self.get_session_route, methods=["GET"]
         )
         self.add_api_route(
             path="/update", endpoint=self.update_session_route, methods=["POST"]
@@ -45,7 +47,10 @@ class Session_Router(APIRouter):
     async def close_session_route(self, session: Session = Session()) -> Session:
         return await close_session(api_engine=self.api_engine, session=session)
 
-    async def get_session_route(self, session_id: str | int) -> Session:
+    async def get_session_route(
+        self,
+        session_id: Annotated[str, Header()],
+    ) -> Session:
         return await get_session(api_engine=self.api_engine, session_id=session_id)
 
     async def update_session_route(self, session: Session = Session()) -> Session:
