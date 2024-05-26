@@ -15,12 +15,13 @@
 //==============================================================================
 v_MenuBar::v_MenuBar(juce::Button::Listener& buttonListener)
 {
-    buttons[0].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight);
-    buttons[1].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight+juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft);
-    buttons[2].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight+juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft);
-    buttons[3].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft);
 
-    for (int i = 0; i < 4; ++i) {
+
+    for (int i = 0; i < num_menu_buttons; ++i) {
+        if (i==0) buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight);
+        else if (i == num_menu_buttons-1) buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft); 
+        else buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight + juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft);
+
         buttons[i].setColour(juce::TextButton::ColourIds::buttonColourId, colors.midnight_green);
         buttons[i].setColour(juce::TextButton::ColourIds::buttonOnColourId, colors.rich_black);
         buttons[i].setColour(juce::ComboBox::ColourIds::outlineColourId, colors.verdigris);
@@ -45,11 +46,16 @@ void v_MenuBar::paint (juce::Graphics& g)
 
     juce::ColourGradient gradient = juce::ColourGradient(colors.rich_black, 0, getHeight()-10, colors.midnight_green, 0, getHeight(), false);
 
+    int x1 = 0.0f;
+    int y1 = (float)getHeight() - 10;
+    int x2 = (float)getWidth();
+    int y2 = (float)getHeight();
+
     juce::Path p;
-    p.startNewSubPath(0.0f, (float)getHeight() - 10);
-    p.lineTo((float)getWidth(), (float)getHeight() - 10);
-    p.lineTo((float)getWidth(), (float)getHeight());
-    p.lineTo(0.0f, (float)getHeight());
+    p.startNewSubPath(x1, y1);
+    p.lineTo(x1, y2);
+    p.lineTo(x2, y2);
+    p.lineTo(x2, y1);
     p.closeSubPath();
     g.setGradientFill(gradient);
     g.fillPath(p);
@@ -57,7 +63,7 @@ void v_MenuBar::paint (juce::Graphics& g)
 
 void v_MenuBar::resized()
 {
-    for (int i = 0; i <  4; ++i) {
+    for (int i = 0; i < num_menu_buttons; ++i) {
         if (MenuOptions(i) == currentMenu) {
             buttons[i].setToggleState(true, false);
         }

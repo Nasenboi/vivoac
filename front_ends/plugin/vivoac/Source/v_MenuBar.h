@@ -40,9 +40,9 @@ private:
     juce::Image logo;
 
     // Menu Options
+    const int num_menu_buttons = 4;
     v_MenuBar::MenuOptions currentMenu = v_MenuBar::MenuOptions::Menu1;
-
-    juce::TextButton buttons[4] = { juce::TextButton("Menu1"), juce::TextButton("Menu2"),
+    juce::TextButton buttons[4] = {juce::TextButton("Menu1"), juce::TextButton("Menu2"),
         juce::TextButton("Menu3"), juce::TextButton("Menu4")};
 
     // Sizes
