@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="lxTn9K" name="vivoac" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              pluginCharacteristicsValue="pluginWantsMidiIn" version="0.0.0"
+              pluginManufacturer="Christian B&#246;ndgen">
   <MAINGROUP id="VFAJSV" name="vivoac">
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
+      <GROUP id="{89B02A1B-9E94-DE57-ED01-EBA5C6E8E79F}" name="Processors"/>
+      <GROUP id="{EB831702-14DF-1FB9-4483-2D4C4AEE79D0}" name="Components">
+        <FILE id="KmvU7S" name="v_MenuBar.cpp" compile="1" resource="0" file="Source/v_MenuBar.cpp"/>
+        <FILE id="AzZLjW" name="v_MenuBar.h" compile="0" resource="0" file="Source/v_MenuBar.h"/>
+      </GROUP>
+      <GROUP id="{99BB4DED-7F6C-5038-AD85-F5A46ACF9B38}" name="Assets">
+        <FILE id="o6MovQ" name="ViVoAc_Logo_1.0.png" compile="0" resource="1"
+              file="../../../../../../ViVoAc_Logo_1.0.png"/>
+      </GROUP>
+      <FILE id="RJOYdk" name="v_LookAndFeel.h" compile="0" resource="0" file="Source/v_LookAndFeel.h"/>
+      <FILE id="M4DwjK" name="v_Colors.h" compile="0" resource="0" file="Source/v_Colors.h"/>
       <FILE id="c3w6tk" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="Xd8LfV" name="PluginProcessor.h" compile="0" resource="0"
