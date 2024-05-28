@@ -20,11 +20,6 @@ v_MenuBar::v_MenuBar(juce::Button::Listener& buttonListener)
         else if (i == num_menu_buttons-1) buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft); 
         else buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight + juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft);
 
-        buttons[i].setColour(juce::TextButton::ColourIds::buttonColourId, colors.midnight_green);
-        buttons[i].setColour(juce::TextButton::ColourIds::buttonOnColourId, colors.rich_black);
-        buttons[i].setColour(juce::ComboBox::ColourIds::outlineColourId, colors.verdigris);
-        buttons[i].setColour(juce::TextButton::ColourIds::textColourOffId, colors.true_white);
-        buttons[i].setColour(juce::TextButton::ColourIds::textColourOnId, colors.true_white);
         buttons[i].addListener(&buttonListener);
         addAndMakeVisible(buttons[i]);
     }

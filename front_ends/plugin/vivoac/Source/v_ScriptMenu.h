@@ -26,6 +26,14 @@ public:
     void resized() override;
 
 private:
+    // UI Sizes
+    int margin = 10;
+    int defaultLength = 100, defaultHeight = 50;
+
+
+    // UI components
+    juce::TextButton prevButton{ "<" }, nextButton{ ">" };
+    juce::TableListBox scriptTable {"Script", nullptr};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_ScriptMenu)
 };

@@ -14,9 +14,10 @@
 //==============================================================================
 v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p) : v_BaseMenuComponent(p)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    addAndMakeVisible(prevButton);
+    addAndMakeVisible(nextButton);
 
+    addAndMakeVisible(scriptTable);
 }
 
 v_ScriptMenu::~v_ScriptMenu()
@@ -30,7 +31,8 @@ void v_ScriptMenu::paint (juce::Graphics& g)
 
 void v_ScriptMenu::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+    scriptTable.setBounds(margin, margin, 2 * margin + 3 * defaultLength, getHeight() - (2*margin + defaultHeight));
 
+    prevButton.setBounds(margin, getHeight() - margin - defaultHeight, defaultLength, defaultHeight);
+    nextButton.setBounds(3*margin + 2*defaultLength, getHeight() - margin - defaultHeight, defaultLength, defaultHeight);
 }

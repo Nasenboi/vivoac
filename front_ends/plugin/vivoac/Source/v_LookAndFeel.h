@@ -5,7 +5,23 @@
 
 class CostumLookAndFeel : public juce::LookAndFeel_V4 {
 public:
-    CostumLookAndFeel() { mainColor = colors.midnight_green; accentColor = colors.light_sky_blue; }
+    CostumLookAndFeel() { 
+        setColour(juce::ComboBox::ColourIds::outlineColourId, colors.verdigris);
+
+        setColour(juce::TextButton::ColourIds::buttonColourId, colors.midnight_green);
+        setColour(juce::TextButton::ColourIds::buttonOnColourId, colors.rich_black);
+        setColour(juce::TextButton::ColourIds::textColourOffId, colors.true_white);
+        setColour(juce::TextButton::ColourIds::textColourOnId, colors.true_white);
+
+        setColour(juce::TableListBox::ColourIds::backgroundColourId, colors.rich_black);
+        setColour(juce::TableListBox::ColourIds::outlineColourId, colors.verdigris);
+        setColour(juce::TableListBox::ColourIds::textColourId, colors.true_white);
+        setColour(juce::TableHeaderComponent::ColourIds::backgroundColourId, colors.midnight_green);
+        setColour(juce::TableHeaderComponent::ColourIds::highlightColourId, colors.electric_blue);
+        setColour(juce::TableHeaderComponent::ColourIds::outlineColourId, colors.verdigris);
+        setColour(juce::TableHeaderComponent::ColourIds::textColourId, colors.true_white);
+
+    }
     CostumLookAndFeel(juce::Colour mc, juce::Colour ac) { mainColor = mc; accentColor = ac; }
     ~CostumLookAndFeel() {}
 
@@ -36,8 +52,8 @@ public:
         g.fillEllipse(dialPointer);
     }
 
-
 private:
+
     v_Colors colors;
-    juce::Colour mainColor, accentColor;
+    juce::Colour mainColor = colors.midnight_green, accentColor = colors.light_sky_blue;;
 };
