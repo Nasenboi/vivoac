@@ -8,6 +8,10 @@
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
       <GROUP id="{89B02A1B-9E94-DE57-ED01-EBA5C6E8E79F}" name="Processors"/>
       <GROUP id="{EB831702-14DF-1FB9-4483-2D4C4AEE79D0}" name="Components">
+        <FILE id="cUTXb8" name="v_BaseMenuComponent.cpp" compile="1" resource="0"
+              file="Source/v_BaseMenuComponent.cpp"/>
+        <FILE id="dz8JTE" name="v_BaseMenuComponent.h" compile="0" resource="0"
+              file="Source/v_BaseMenuComponent.h"/>
         <FILE id="GtghdO" name="v_GeneratorMenu.cpp" compile="1" resource="0"
               file="Source/v_GeneratorMenu.cpp"/>
         <FILE id="kYoIQs" name="v_GeneratorMenu.h" compile="0" resource="0"

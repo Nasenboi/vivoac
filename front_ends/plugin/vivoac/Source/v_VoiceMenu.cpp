@@ -12,7 +12,7 @@
 #include "v_VoiceMenu.h"
 
 //==============================================================================
-v_VoiceMenu::v_VoiceMenu()
+v_VoiceMenu::v_VoiceMenu(VivoacAudioProcessor& p) : v_BaseMenuComponent(p)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

@@ -11,22 +11,21 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "v_Colors.h"
+#include "v_BaseMenuComponent.h"
 
 //==============================================================================
 /*
 */
-class v_GeneratorMenu  : public juce::Component
+class v_GeneratorMenu  : public v_BaseMenuComponent
 {
 public:
-    v_GeneratorMenu();
+    v_GeneratorMenu(VivoacAudioProcessor& p);
     ~v_GeneratorMenu() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
-    v_Colors colors;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_GeneratorMenu)
 };
