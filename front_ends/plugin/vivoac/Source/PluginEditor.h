@@ -13,6 +13,10 @@
 #include "v_Colors.h"
 #include "v_LookAndFeel.h"
 #include "v_MenuBar.h"
+#include "v_ScriptMenu.h"
+#include "v_GeneratorMenu.h"
+#include "v_VoiceMenu.h"
+#include "v_SettingsMenu.h"
 
 //==============================================================================
 /**
@@ -36,6 +40,13 @@ private:
     VivoacAudioProcessor& audioProcessor;
     CostumLookAndFeel newLookAndFeel;
     const v_Colors colors;
+
+    std::unique_ptr <juce::Component> menuComponents[4] = {
+        std::make_unique<v_ScriptMenu>(),
+        std::make_unique<v_GeneratorMenu>(),
+        std::make_unique<v_VoiceMenu>(),
+        std::make_unique<v_SettingsMenu>()
+    };
 
     // UI Components
     const int ui_width = 800, ui_height = 600;

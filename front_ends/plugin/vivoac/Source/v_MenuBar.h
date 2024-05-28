@@ -13,7 +13,6 @@
 #include <JuceHeader.h>
 #include "v_Colors.h"
 
-
 //==============================================================================
 /*
 */
@@ -27,7 +26,7 @@ public:
     void resized() override;
 
     enum MenuOptions {
-        Menu1, Menu2, Menu3, Menu4
+        Script, Generator, Voice, Settings
     };
 
     juce::TextButton& getMenuButton(int num) { return buttons[num]; };
@@ -35,15 +34,16 @@ public:
     MenuOptions& getCurrentMenu() { return currentMenu; }
     void setCurrentMenu(MenuOptions newMenu);
 
+    const int num_menu_buttons = 4;
+
 private:
     const v_Colors colors;
     juce::Image logo;
 
     // Menu Options
-    const int num_menu_buttons = 4;
-    v_MenuBar::MenuOptions currentMenu = v_MenuBar::MenuOptions::Menu1;
-    juce::TextButton buttons[4] = {juce::TextButton("Menu1"), juce::TextButton("Menu2"),
-        juce::TextButton("Menu3"), juce::TextButton("Menu4")};
+    v_MenuBar::MenuOptions currentMenu = v_MenuBar::MenuOptions::Script;
+    juce::TextButton buttons[4] = {juce::TextButton("Script"), juce::TextButton("Generator"),
+        juce::TextButton("Voice"), juce::TextButton("Settings")};
 
     // Sizes
     const int button_length = 90;

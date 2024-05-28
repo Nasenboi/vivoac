@@ -15,8 +15,6 @@
 //==============================================================================
 v_MenuBar::v_MenuBar(juce::Button::Listener& buttonListener)
 {
-
-
     for (int i = 0; i < num_menu_buttons; ++i) {
         if (i==0) buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnRight);
         else if (i == num_menu_buttons-1) buttons[i].setConnectedEdges(juce::TextButton::ConnectedEdgeFlags::ConnectedOnLeft); 
