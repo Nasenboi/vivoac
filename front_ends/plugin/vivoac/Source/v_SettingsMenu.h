@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "v_Colors.h"
 
 //==============================================================================
 /*
@@ -25,5 +26,7 @@ public:
     void resized() override;
 
 private:
+    v_Colors colors;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_SettingsMenu)
 };
