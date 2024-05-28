@@ -13,6 +13,8 @@
 #include "cpr/cpr.h"
 #include "nlohmann/json.hpp"
 
+typedef juce::AudioProcessorValueTreeState japvts;
+
 //==============================================================================
 /**
 */
@@ -56,7 +58,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    japvts apvts;
+
 private:
     //==============================================================================
+    japvts::ParameterLayout createParameters();
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VivoacAudioProcessor)
 };
