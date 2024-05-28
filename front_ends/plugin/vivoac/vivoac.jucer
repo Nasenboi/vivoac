@@ -8,8 +8,21 @@
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
       <GROUP id="{89B02A1B-9E94-DE57-ED01-EBA5C6E8E79F}" name="Processors"/>
       <GROUP id="{EB831702-14DF-1FB9-4483-2D4C4AEE79D0}" name="Components">
+        <FILE id="GtghdO" name="v_GeneratorMenu.cpp" compile="1" resource="0"
+              file="Source/v_GeneratorMenu.cpp"/>
+        <FILE id="kYoIQs" name="v_GeneratorMenu.h" compile="0" resource="0"
+              file="Source/v_GeneratorMenu.h"/>
         <FILE id="KmvU7S" name="v_MenuBar.cpp" compile="1" resource="0" file="Source/v_MenuBar.cpp"/>
         <FILE id="AzZLjW" name="v_MenuBar.h" compile="0" resource="0" file="Source/v_MenuBar.h"/>
+        <FILE id="HsjquY" name="v_ScriptMenu.cpp" compile="1" resource="0"
+              file="Source/v_ScriptMenu.cpp"/>
+        <FILE id="mpcVjB" name="v_ScriptMenu.h" compile="0" resource="0" file="Source/v_ScriptMenu.h"/>
+        <FILE id="lBuaXz" name="v_SettingsMenu.cpp" compile="1" resource="0"
+              file="Source/v_SettingsMenu.cpp"/>
+        <FILE id="gHCfcV" name="v_SettingsMenu.h" compile="0" resource="0"
+              file="Source/v_SettingsMenu.h"/>
+        <FILE id="y5Cgoj" name="v_VoiceMenu.cpp" compile="1" resource="0" file="Source/v_VoiceMenu.cpp"/>
+        <FILE id="wIjLUz" name="v_VoiceMenu.h" compile="0" resource="0" file="Source/v_VoiceMenu.h"/>
       </GROUP>
       <GROUP id="{99BB4DED-7F6C-5038-AD85-F5A46ACF9B38}" name="Assets">
         <FILE id="o6MovQ" name="ViVoAc_Logo_1.0.png" compile="0" resource="1"
