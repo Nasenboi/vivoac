@@ -4,7 +4,11 @@ Description:
 Imports:
 """
 
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Header
+
+from ...utils.decorators import session_fetch
 
 """
 ########################################################################################"""
@@ -22,3 +26,27 @@ class AI_API_Handler_Router(APIRouter):
         self.route_parameters.update(kwargs)
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
+
+    ############################################################
+    # getter functions:
+
+    @session_fetch
+    async def text_to_speech(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        data: TextToSpeech,
+    ):
+        return await self.api_engine.text_to_speech(text=text, session_id=session_id)
+
+    ############################################################
+    # setter functions:
+
+    ############################################################
+    # post functions:
+
+    ############################################################
+    # put functions:
+
+    ############################################################
+    # delete functions:
