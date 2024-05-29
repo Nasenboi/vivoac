@@ -6,6 +6,9 @@
               pluginManufacturer="Christian B&#246;ndgen">
   <MAINGROUP id="VFAJSV" name="vivoac">
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
+      <FILE id="Xe9iTi" name="v_HTTPClient.cpp" compile="1" resource="0"
+            file="Source/v_HTTPClient.cpp"/>
+      <FILE id="sqXhRm" name="v_HTTPClient.h" compile="0" resource="0" file="Source/v_HTTPClient.h"/>
       <GROUP id="{89B02A1B-9E94-DE57-ED01-EBA5C6E8E79F}" name="Processors"/>
       <GROUP id="{EB831702-14DF-1FB9-4483-2D4C4AEE79D0}" name="Components">
         <FILE id="cUTXb8" name="v_BaseMenuComponent.cpp" compile="1" resource="0"
