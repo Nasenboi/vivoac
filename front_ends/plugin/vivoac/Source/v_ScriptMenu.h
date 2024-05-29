@@ -13,6 +13,26 @@
 #include <JuceHeader.h>
 #include "v_BaseMenuComponent.h"
 
+
+//==============================================================================
+/*
+*/
+class ScriptTableModel : public juce::TableListBoxModel {
+public:
+    int getNumRows() override {
+        return numRows;
+    }
+
+    void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override {
+    };
+
+    void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override {
+
+    };
+private:
+    const int numRows = 15;
+};
+
 //==============================================================================
 /*
 */
@@ -30,10 +50,10 @@ private:
     int margin = 10;
     int defaultLength = 100, defaultHeight = 50;
 
-
     // UI components
     juce::TextButton prevButton{ "<" }, nextButton{ ">" };
-    juce::TableListBox scriptTable {"Script", nullptr};
-
+    ScriptTableModel scriptTableModel;
+    juce::TableListBox scriptTable {"Script", &scriptTableModel };
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_ScriptMenu)
 };

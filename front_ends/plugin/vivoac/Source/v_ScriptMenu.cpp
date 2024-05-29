@@ -18,6 +18,9 @@ v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p) : v_BaseMenuComponent(p)
     addAndMakeVisible(nextButton);
 
     addAndMakeVisible(scriptTable);
+
+    scriptTable.getHeader().addColumn("ID", 1, defaultLength);
+    scriptTable.getHeader().addColumn("Script Line", 2, 2 * (defaultLength+margin));
 }
 
 v_ScriptMenu::~v_ScriptMenu()
