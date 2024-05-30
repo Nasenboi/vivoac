@@ -25,6 +25,5 @@ class TextToSpeech(BaseModel):
     text: str = None
     voice: str = None
     voice_settings: VoiceSettings = None
-    sem
     model: Optional[str] = None
     seed: Optional[int] = -1

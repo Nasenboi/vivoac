@@ -9,6 +9,7 @@ from typing import Annotated
 from fastapi import APIRouter, Header
 
 from ...utils.decorators import session_fetch
+from .models import *
 
 """
 ########################################################################################"""

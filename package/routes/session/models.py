@@ -31,5 +31,5 @@ class Session(BaseModel):
         self.session_settings = (
             self.session_settings or SessionSettings().fill_default_values()
         )
-        self.session_id = self.session_id or uuid4()
+        self.session_id = self.session_id or str(uuid4())
         return self

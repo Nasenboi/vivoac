@@ -9,9 +9,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "curl/curl.h"
-#include "cpr/cpr.h"
-
 
 typedef juce::AudioProcessorValueTreeState japvts;
 
