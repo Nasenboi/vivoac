@@ -28,6 +28,9 @@ public:
         if (rowIsSelected) {
             g.fillAll(colors.light_sky_blue);
         }
+        else if (rowNumber % 2 == 0) {
+            g.fillAll(colors.rich_black.brighter(0.15f));
+        }
     };
 
     void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override {

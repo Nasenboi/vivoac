@@ -9,3 +9,8 @@
 */
 
 #include "v_HTTPClient.h"
+
+
+void HTTPClient::parameterChanged(const juce::String& parameterID, float newValue) {
+
+};

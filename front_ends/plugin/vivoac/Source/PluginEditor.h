@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "v_HTTPClient.h"
 #include "v_Colors.h"
 #include "v_LookAndFeel.h"
 #include "v_MenuBar.h"
@@ -18,6 +19,7 @@
 #include "v_GeneratorMenu.h"
 #include "v_VoiceMenu.h"
 #include "v_SettingsMenu.h"
+
 
 //==============================================================================
 /**
@@ -38,8 +40,11 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    // access the processor object that created it.
+    // Backend classes    
     VivoacAudioProcessor& audioProcessor;
+    HTTPClient client;
+
+    // Frontend stuff
     CostumLookAndFeel newLookAndFeel;
     const v_Colors colors;
 
