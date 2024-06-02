@@ -13,7 +13,7 @@
 #include "v_BaseMenuComponent.h"
 
 //==============================================================================
-v_BaseMenuComponent::v_BaseMenuComponent(VivoacAudioProcessor& p): processor(p)
+v_BaseMenuComponent::v_BaseMenuComponent(VivoacAudioProcessor& p, HTTPClient& c): processor(p), client(c)
 {
 
 

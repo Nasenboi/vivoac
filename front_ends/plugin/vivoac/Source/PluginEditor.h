@@ -49,10 +49,10 @@ private:
     const v_Colors colors;
 
     std::unique_ptr <v_BaseMenuComponent> menuComponents[4] = {
-        std::make_unique<v_ScriptMenu>(audioProcessor),
-        std::make_unique<v_GeneratorMenu>(audioProcessor),
-        std::make_unique<v_VoiceMenu>(audioProcessor),
-        std::make_unique<v_SettingsMenu>(audioProcessor)
+        std::make_unique<v_ScriptMenu>(audioProcessor, client),
+        std::make_unique<v_GeneratorMenu>(audioProcessor, client),
+        std::make_unique<v_VoiceMenu>(audioProcessor, client),
+        std::make_unique<v_SettingsMenu>(audioProcessor, client)
     };
 
     // UI Components

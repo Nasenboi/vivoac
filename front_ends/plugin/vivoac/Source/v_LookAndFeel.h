@@ -21,6 +21,13 @@ public:
         setColour(juce::TableHeaderComponent::ColourIds::outlineColourId, colors.verdigris);
         setColour(juce::TableHeaderComponent::ColourIds::textColourId, colors.true_white);
 
+        setColour(juce::TextEditor::ColourIds::backgroundColourId, colors.rich_black);
+        setColour(juce::TextEditor::ColourIds::focusedOutlineColourId, colors.midnight_green);
+        setColour(juce::TextEditor::ColourIds::highlightColourId, colors.midnight_green);
+        setColour(juce::TextEditor::ColourIds::highlightedTextColourId, colors.true_white);
+        setColour(juce::TextEditor::ColourIds::outlineColourId, colors.verdigris);
+        setColour(juce::TextEditor::ColourIds::shadowColourId, colors.true_black);
+        setColour(juce::TextEditor::ColourIds::textColourId, colors.true_white);
     }
     CostumLookAndFeel(juce::Colour mc, juce::Colour ac) { mainColor = mc; accentColor = ac; }
     ~CostumLookAndFeel() {}

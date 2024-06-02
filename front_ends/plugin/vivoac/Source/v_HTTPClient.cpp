@@ -70,9 +70,6 @@ void HTTPClient::parameterChanged(const juce::String& parameterID, float newValu
     
 };
 
-
-
-
 //==============================================================================
 /* Actual API Functions
 */
@@ -104,11 +101,45 @@ void HTTPClient::initSession() {
 
 // == Script functions ==
 
+void HTTPClient::updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey) {
+    switch (scriptLineKey) {
+    case id:
+        currentScriptLine.id = text;
+        break;
+    case source_text:
+        currentScriptLine.source_text = text;
+        break;
+    case translation:
+        currentScriptLine.translation = text;
+        break;
+    case time_restriction:
+        currentScriptLine.time_restriction = text;
+        break;
+    case voice_talent:
+        currentScriptLine.voice_talent = text;
+        break;
+    case character_name:
+        currentScriptLine.character_name = text;
+        break;
+    case reference_audio_path:
+        currentScriptLine.reference_audio_path = text;
+        break;
+    case delivery_audio_path:
+        currentScriptLine.delivery_audio_path = text;
+        break;
+    case generated_audio_path:
+        currentScriptLine.generated_audio_path = text;
+        break;
+    };
+};
+
+void HTTPClient::fetchScriptLines() {
+
+};
+
 // == Audio functions ==
 
 // == ai api functions ==
-
-
 
 
 //==============================================================================

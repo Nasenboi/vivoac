@@ -17,10 +17,7 @@
 //==============================================================================
 VivoacAudioProcessorEditor::VivoacAudioProcessorEditor(VivoacAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p), menuBar(*this)
-{
-    DBG("Henlo!");
-    client.initSession();
-    
+{    
     setLookAndFeel(&newLookAndFeel);
 
     addAndMakeVisible(menuBar);

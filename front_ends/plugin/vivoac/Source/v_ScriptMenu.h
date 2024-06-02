@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "v_HTTPClient.h"
 #include "v_BaseMenuComponent.h"
 #include "v_Colors.h"
 
@@ -40,12 +41,12 @@ public:
 
         switch (columnId) {
         case 1:
-            id = juce::String(scriptLines[rowNumber][0]);
+            id = juce::String("");
             g.drawText(id, juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
             break;
         case 2:
-            text = juce::String(scriptLines[rowNumber][1]);
-            if (scriptLines[rowNumber][1].length() > 35) { text.append("...", 3); }
+            text = juce::String("");
+            if (text.length() > 35) { text.append("...", 3); }
             g.drawText(text, juce::Rectangle(margin, 0, width-2*margin, height), juce::Justification::left, true);
             break;
         default:
@@ -58,44 +59,21 @@ public:
     };
 
     int getScriptLength() {
-        return scriptLines.size();
+        return 0;
     };
 
 private:
-    const int numRows = 20;
+    int numRows = 0;
     const v_Colors colors;
-
-    const std::vector<std::array<juce::String, 2>> scriptLines = {
-        {"0", "A cool script line that is also very long and detailed!"},
-        {"1", "A cool script line that is also very long and detailed!"},
-        {"2", "A cool script line that is also very long and detailed!"},
-        {"3", "A cool script line that is also very long and detailed!"},
-        {"4", "A cool script line that is also very long and detailed!"},
-        {"5", "A cool script line that is also very long and detailed!"},
-        {"6", "A cool script line that is also very long and detailed!"},
-        {"7", "A cool script line that is also very long and detailed!"},
-        {"8", "A cool script line that is also very long and detailed!"},
-        {"9", "A cool script line that is also very long and detailed!"},
-        {"10", "A cool script line that is also very long and detailed!"},
-        {"11", "A cool script line that is also very long and detailed!"},
-        {"12", "A cool script line that is also very long and detailed!"},
-        {"13", "A cool script line that is also very long and detailed!"},
-        {"14", "A cool script line that is also very long and detailed!"},
-        {"15", "A cool script line that is also very long and detailed!"},
-        {"16", "A cool script line that is also very long and detailed!"},
-        {"17", "A cool script line that is also very long and detailed!"},
-        {"18", "A cool script line that is also very long and detailed!"},
-        {"19", "A cool script line that is also very long and detailed!"}
-    };
 };
 
 //==============================================================================
 /*
 */
-class v_ScriptMenu  : public v_BaseMenuComponent, public juce::Button::Listener
+class v_ScriptMenu  : public v_BaseMenuComponent, public juce::Button::Listener, public juce::TextEditor::Listener
 {
 public:
-    v_ScriptMenu(VivoacAudioProcessor& p);
+    v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c);
     ~v_ScriptMenu() override;
 
     void paint (juce::Graphics&) override;
@@ -103,8 +81,8 @@ public:
 
 
     void buttonClicked(juce::Button* button) override;
-
     void buttonStateChanged(juce::Button* button) override {};
+    void textEditorTextChanged(juce::TextEditor& editor) override;
 
 private:
     // UI Sizes
@@ -112,9 +90,11 @@ private:
     int defaultLength = 100, defaultHeight = 50;
 
     // UI components
-    juce::TextButton prevButton{ "<" }, nextButton{ ">" };
+    juce::TextButton prevButton{ "<" }, nextButton{ ">" }, clearButton{ "x" }, loadButton{ "load" };
     ScriptTableModel scriptTableModel;
     juce::TableListBox scriptTable {"Script", &scriptTableModel };
+    juce::Label idLabel, sourceTextLabel, translationLabel, timeRestrictionLabel, voiceTalentLabel, characterNameLabel;
+    juce::TextEditor id, sourceText, translation, timeRestriction, voiceTalent, characterName;
 
     juce::SparseSet<int> moveSelection(juce::SparseSet<int> selection, int direction);
     

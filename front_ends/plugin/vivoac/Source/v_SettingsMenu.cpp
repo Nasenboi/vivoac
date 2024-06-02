@@ -13,7 +13,7 @@
 #include "v_SettingsMenu.h"
 
 //==============================================================================
-v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p) : v_BaseMenuComponent(p)
+v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuComponent(p,c)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

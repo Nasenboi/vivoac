@@ -12,7 +12,7 @@
 #include "v_GeneratorMenu.h"
 
 //==============================================================================
-v_GeneratorMenu::v_GeneratorMenu(VivoacAudioProcessor& p): v_BaseMenuComponent(p)
+v_GeneratorMenu::v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c): v_BaseMenuComponent(p,c)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

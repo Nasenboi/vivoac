@@ -19,7 +19,7 @@
 class v_VoiceMenu  : public v_BaseMenuComponent
 {
 public:
-    v_VoiceMenu(VivoacAudioProcessor& p);
+    v_VoiceMenu(VivoacAudioProcessor& p, HTTPClient& c);
     ~v_VoiceMenu() override;
 
     void paint (juce::Graphics&) override;

@@ -49,6 +49,11 @@ inline void to_json(json& j, const CharacterInfo& s) {
     };
 };
 
+enum ScriptLineKeys {
+    id, source_text, translation, time_restriction, voice_talent,
+    character_name, reference_audio_path, delivery_audio_path,
+    generated_audio_path
+};
 struct ScriptLine {
     std::string id = "";
     std::string source_text = "";

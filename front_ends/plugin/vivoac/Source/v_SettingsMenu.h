@@ -19,7 +19,7 @@
 class v_SettingsMenu  : public v_BaseMenuComponent
 {
 public:
-    v_SettingsMenu(VivoacAudioProcessor& p);
+    v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c);
     ~v_SettingsMenu() override;
 
     void paint (juce::Graphics&) override;

@@ -32,6 +32,11 @@ public:
     void initSession();
 
     // == Script functions ==
+    ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
+    void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
+    void updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey);
+    std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
+    void fetchScriptLines();
 
     // == Audio functions ==
 
@@ -56,5 +61,7 @@ private:
     // Script
     CharacterInfo characterInfo;
     std::vector<ScriptLine> scriptLines;
+    ScriptLine currentScriptLine;
+
 
 };

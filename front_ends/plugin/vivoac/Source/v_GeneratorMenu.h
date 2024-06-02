@@ -19,7 +19,7 @@
 class v_GeneratorMenu  : public v_BaseMenuComponent
 {
 public:
-    v_GeneratorMenu(VivoacAudioProcessor& p);
+    v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c);
     ~v_GeneratorMenu() override;
 
     void paint (juce::Graphics&) override;
