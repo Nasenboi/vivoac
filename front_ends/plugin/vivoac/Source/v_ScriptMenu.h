@@ -44,7 +44,7 @@ private:
     int defaultLength = 100, defaultHeight = 50;
 
     // UI components
-    juce::TextButton prevButton{ "<" }, nextButton{ ">" }, clearButton{ "x" }, loadButton{ "load" };
+    juce::TextButton prevButton{ "<" }, nextButton{ ">" }, clearButton{ "x" }, loadButton{ "Load" };
     ScriptTableModel scriptTableModel;
     juce::TableListBox scriptTable {"Script", &scriptTableModel };
     juce::Label idLabel, sourceTextLabel, translationLabel, timeRestrictionLabel, voiceTalentLabel, characterNameLabel;

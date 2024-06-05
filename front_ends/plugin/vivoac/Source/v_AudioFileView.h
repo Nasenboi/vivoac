@@ -35,9 +35,9 @@ private:
     VivoacAudioProcessor& processor;
     HTTPClient& client;
 
-    juce::TextButton loadButton{ "load" };
+    juce::TextButton loadButton{ "Load" }, playButton{ "Play" };
 
-    const int margin = 3, height=50, width=300;
+    const int margin = 3, height=50, width=300, buttonWidth=50, buttonHeight=20;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_AudioFileView)
 };

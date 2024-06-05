@@ -59,8 +59,13 @@ public:
     japvts apvts;
 
     //==============================================================================
-    void loadAudioFile();
+    void loadAudioFile(std::function<void()> callback = [](){});
     void loadAudioFile(const juce::String& path);
+    juce::AudioBuffer<float>& getWaveForm() { return waveForm; };
+
+    juce::String getFileName() { return currentAudioFile.getFileNameWithoutExtension(); }
+    juce::String getFilePath() { return currentAudioFile.getFullPathName(); }
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VivoacAudioProcessor)
     //==============================================================================
@@ -72,6 +77,8 @@ private:
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReader> formatReader;
     juce::BigInteger midiRange;
-
+    juce::AudioBuffer<float> waveForm;
+    std::unique_ptr<juce::FileChooser> fileChooser;
+    juce::File currentAudioFile;
 
 };

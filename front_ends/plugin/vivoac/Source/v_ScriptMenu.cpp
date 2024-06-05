@@ -102,7 +102,7 @@ void v_ScriptMenu::resized()
     translation.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 4 * margin - 4 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight);
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
 
-    scriptAudioView.setBounds(getWidth() - 3 * margin - defaultHeight - scriptAudioView.getWidth(), getHeight() - margin - scriptAudioView.getHeight(), scriptAudioView.getWidth(), scriptAudioView.getHeight());
+    scriptAudioView.setBounds(getWidth() - 2 * margin - defaultHeight - scriptAudioView.getWidth(), getHeight() - margin - scriptAudioView.getHeight(), scriptAudioView.getWidth(), scriptAudioView.getHeight());
 }
 
 void v_ScriptMenu::buttonClicked(juce::Button* button) {
@@ -188,4 +188,5 @@ bool v_ScriptMenu::isInterestedInFileDrag(const juce::StringArray& files) {
 void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
     if (!isInterestedInFileDrag(files[0])) return;
     processor.loadAudioFile(files[0]);
+    scriptAudioView.repaint();
 };
