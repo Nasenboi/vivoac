@@ -13,7 +13,7 @@
 #include "v_DataModels.h"
 
 //==============================================================================
-v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuComponent(p,c)
+v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuComponent(p,c), scriptAudioView(p, c)
 {
     // Buttons
     prevButton.addListener(this);
@@ -67,6 +67,9 @@ v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuC
     voiceTalent.addListener(this);
     addAndMakeVisible(characterName);
     characterName.addListener(this);
+
+    // Audio File View
+    addAndMakeVisible(scriptAudioView);
 }
 
 v_ScriptMenu::~v_ScriptMenu()
@@ -98,6 +101,8 @@ void v_ScriptMenu::resized()
     sourceText.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 6 * margin - 7 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight) ;
     translation.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 4 * margin - 4 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight);
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
+
+    scriptAudioView.setBounds(getWidth() - 3 * margin - defaultHeight - scriptAudioView.getWidth(), getHeight() - margin - scriptAudioView.getHeight(), scriptAudioView.getWidth(), scriptAudioView.getHeight());
 }
 
 void v_ScriptMenu::buttonClicked(juce::Button* button) {
@@ -166,4 +171,21 @@ juce::SparseSet<int> v_ScriptMenu::moveSelection(juce::SparseSet<int> selection,
     }
      
     return newSelection;
+};
+
+bool v_ScriptMenu::isInterestedInFileDrag(const juce::StringArray& files) {
+    if (files[0].contains(".wav") ||
+        files[0].contains(".mp3") ||
+        files[0].contains(".aif") ||
+        files[0].contains(".ogg")) {
+        return true;
+    }
+
+    return false;
+};
+
+
+void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
+    if (!isInterestedInFileDrag(files[0])) return;
+    processor.loadAudioFile(files[0]);
 };

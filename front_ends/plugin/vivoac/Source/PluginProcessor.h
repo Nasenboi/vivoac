@@ -55,11 +55,23 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
     japvts apvts;
 
+    //==============================================================================
+    void loadAudioFile();
+    void loadAudioFile(const juce::String& path);
 private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VivoacAudioProcessor)
     //==============================================================================
     japvts::ParameterLayout createParameters();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VivoacAudioProcessor)
+    //==============================================================================
+    juce::Synthesiser synth;
+    const int numVoices = 1;
+    juce::AudioFormatManager formatManager;
+    std::unique_ptr<juce::AudioFormatReader> formatReader;
+    juce::BigInteger midiRange;
+
+
 };

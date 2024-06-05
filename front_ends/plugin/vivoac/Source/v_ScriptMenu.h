@@ -14,63 +14,14 @@
 #include "v_HTTPClient.h"
 #include "v_BaseMenuComponent.h"
 #include "v_Colors.h"
+#include "v_AudioFileView.h"
+#include "v_ScriptTableModel.h"
 
 
 //==============================================================================
 /*
 */
-class ScriptTableModel : public juce::TableListBoxModel {
-public:
-    int getNumRows() override {
-        return numRows;
-    }
-
-    void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override {
-        if (rowIsSelected) {
-            g.fillAll(colors.light_sky_blue);
-        }
-        else if (rowNumber % 2 == 0) {
-            g.fillAll(colors.rich_black.brighter(0.15f));
-        }
-    };
-
-    void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override {
-        g.setColour(juce::Colours::white);
-        g.setFont(12.0f);
-        juce::String text, id;
-
-        switch (columnId) {
-        case 1:
-            id = juce::String("");
-            g.drawText(id, juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
-            break;
-        case 2:
-            text = juce::String("");
-            if (text.length() > 35) { text.append("...", 3); }
-            g.drawText(text, juce::Rectangle(margin, 0, width-2*margin, height), juce::Justification::left, true);
-            break;
-        default:
-            break;
-        };
-    };
-
-    void listWasScrolled() override {
-
-    };
-
-    int getScriptLength() {
-        return 0;
-    };
-
-private:
-    int numRows = 0;
-    const v_Colors colors;
-};
-
-//==============================================================================
-/*
-*/
-class v_ScriptMenu  : public v_BaseMenuComponent, public juce::Button::Listener, public juce::TextEditor::Listener
+class v_ScriptMenu  : public v_BaseMenuComponent, public juce::Button::Listener, public juce::TextEditor::Listener, public juce::FileDragAndDropTarget
 {
 public:
     v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c);
@@ -84,6 +35,9 @@ public:
     void buttonStateChanged(juce::Button* button) override {};
     void textEditorTextChanged(juce::TextEditor& editor) override;
 
+    bool isInterestedInFileDrag(const juce::StringArray& files) override;
+    void filesDropped(const juce::StringArray& files, int x, int y) override;
+
 private:
     // UI Sizes
     int margin = 10;
@@ -95,6 +49,8 @@ private:
     juce::TableListBox scriptTable {"Script", &scriptTableModel };
     juce::Label idLabel, sourceTextLabel, translationLabel, timeRestrictionLabel, voiceTalentLabel, characterNameLabel;
     juce::TextEditor id, sourceText, translation, timeRestriction, voiceTalent, characterName;
+    // can be either for the reference audio or the source audio
+    v_AudioFileView scriptAudioView;
 
     juce::SparseSet<int> moveSelection(juce::SparseSet<int> selection, int direction);
     
