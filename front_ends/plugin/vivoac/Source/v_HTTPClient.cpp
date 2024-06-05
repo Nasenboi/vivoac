@@ -50,17 +50,9 @@
 using json = nlohmann::json;
 
 HTTPClient::HTTPClient() {
-    curl = curl_easy_init();
-    if (!curl) {
-        throw std::runtime_error("Failed to initialize CURL");
-    }
-
 };
 
 HTTPClient::~HTTPClient() {
-    if (curl) {
-        curl_easy_cleanup(curl);
-    }
 };
 
 //==============================================================================
@@ -77,26 +69,22 @@ void HTTPClient::parameterChanged(const juce::String& parameterID, float newValu
 // == Session functions ==
 
 void HTTPClient::initSession() {
-    if (!initCurl("/session/create", HTTPMethod::Put)) return;
-
-    CURLcode res = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
+    CURLcode res = doCurl("/session/create", HTTPMethod::Put);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
         return;
     }
     json j;
-
     try {
         j = json::parse(readBuffer);
         DBG(j.dump(4));
+        sessionID = j.value("session_id", "");
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        sessionID = "";
     }
-
-    sessionID = j.value("session_id", "");
 };
 
 // == Script functions ==
@@ -133,8 +121,28 @@ void HTTPClient::updateCurrentScriptLine(const std::string& text, const ScriptLi
     };
 };
 
-void HTTPClient::fetchScriptLines() {
+void HTTPClient::getScriptLines() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    json body = {};
+    body["script_line"] = currentScriptLine;
 
+    DBG("--------------------------------");
+    CURLcode res = doCurl("/script/get", HTTPMethod::Post, headers, body);
+    
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG(j.dump(4));
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+    DBG("-------------------------------");
 };
 
 // == Audio functions ==
@@ -145,13 +153,32 @@ void HTTPClient::fetchScriptLines() {
 //==============================================================================
 /* Class functionality
 */
-bool HTTPClient::initCurl(const std::string& path, const HTTPMethod& method) {
-    if (!curl) return false;
+CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
+    const HEADER_PARAMS header_params, json body_params) {
+    CURLcode res;
+    CURL* curl;
+
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+
+    // Set headers if any
+    struct curl_slist* headers;
+    headers = NULL;
+    for (const auto& h : header_params) {
+        std::string headerString = h.first + ": " + h.second;
+        headers = curl_slist_append(headers, headerString.c_str());
+    }
+    if (!body_params.empty()) {
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+    }
+
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
     readBuffer.clear();
-    curl_easy_reset(curl);
 
     auto curlURL = constructURL(path);
-    if (curlURL.empty()) return false;
+    if (curlURL.empty()) return CURLE_FAILED_INIT;
+
     curl_easy_setopt(curl, CURLOPT_URL, curlURL.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -159,18 +186,42 @@ bool HTTPClient::initCurl(const std::string& path, const HTTPMethod& method) {
     switch (method) {
     case HTTPMethod::Put:
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
         break;
     case HTTPMethod::Post:
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
         break;
     case HTTPMethod::Delete:
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         break;
-    default:
+    case HTTPMethod::Get:
         curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        break;
     };
 
-    return true;
+    // Set body if it exists
+    if (!body_params.is_null()) {
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.38.0");
+        curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+
+        std::string bodyStr = body_params.dump();
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)bodyStr.size());
+        curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, bodyStr.c_str());
+        DBG("body: " << bodyStr.c_str());
+    }
+
+    const CURLcode result = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    curl = NULL;
+    curl_slist_free_all(headers);
+    headers = NULL;
+    curl_global_cleanup();
+
+    return result;
 };
 
 size_t HTTPClient::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {

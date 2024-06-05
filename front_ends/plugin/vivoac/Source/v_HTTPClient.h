@@ -15,7 +15,8 @@
 #include "v_DataModels.h"
 
 typedef juce::AudioProcessorValueTreeState japvts;
-
+typedef std::pair<std::string, std::string> HEADER_PARAM;
+typedef std::vector<HEADER_PARAM> HEADER_PARAMS;
 
 //==============================================================================
 /* The HTTPClient Class
@@ -36,7 +37,7 @@ public:
     void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
     void updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey);
     std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
-    void fetchScriptLines();
+    void getScriptLines();
 
     // == Audio functions ==
 
@@ -44,7 +45,6 @@ public:
 
 private:
     // == Curl opts ===
-    CURL* curl;
     std::string readBuffer;
     std::string url = "http://localhost", port = "8080";
     std::string sessionID;
@@ -55,7 +55,8 @@ private:
 
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
     std::string constructURL(const std::string& path = "");
-    bool initCurl(const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get);
+    CURLcode doCurl(const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
+        const HEADER_PARAMS header_params = {}, json body_params = json());
 
     // === The Data models as structures: ===
     // Script

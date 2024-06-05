@@ -77,17 +77,16 @@ inline void from_json(const json& j, ScriptLine& s) {
     s.generated_audio_path = j.value("generated_audio_path", "");
 };
 inline void to_json(json& j, const ScriptLine& s) {
-    j = json{
-        {"id", s.id},
-        {"source_text", s.source_text},
-        {"translation", s.translation},
-        {"time_restriction", s.time_restriction},
-        {"voice_talent", s.voice_talent},
-        {"character_name", s.character_name},
-        {"reference_audio_path", s.reference_audio_path},
-        {"delivery_audio_path", s.delivery_audio_path},
-        {"generated_audio_path", s.generated_audio_path}
-    };
+    j = json{};
+    if (!s.id.empty()) j["id"] = s.id;
+    if (!s.source_text.empty()) j["source_text"] = s.source_text;
+    if (!s.translation.empty()) j["translation"] = s.translation;
+    if (!s.time_restriction.empty()) j["time_restriction"] = s.time_restriction;
+    if (!s.voice_talent.empty()) j["voice_talent"] = s.voice_talent;
+    if (!s.character_name.empty()) j["character_name"] = s.character_name;
+    if (!s.reference_audio_path.empty()) j["reference_audio_path"] = s.reference_audio_path;
+    if (!s.delivery_audio_path.empty()) j["delivery_audio_path"] = s.delivery_audio_path;
+    if (!s.generated_audio_path.empty()) j["generated_audio_path"] = s.generated_audio_path;
 };
 
 //==============================================================================

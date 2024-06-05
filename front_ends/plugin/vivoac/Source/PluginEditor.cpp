@@ -19,14 +19,13 @@ VivoacAudioProcessorEditor::VivoacAudioProcessorEditor(VivoacAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p), menuBar(*this)
 {    
     setLookAndFeel(&newLookAndFeel);
-
     addAndMakeVisible(menuBar);
-
     for (int i = 0; i < menuBar.num_menu_buttons; ++i) {
         addAndMakeVisible(menuComponents[i].get());
     }
-
     setSize (ui_width, ui_height);
+
+    client.initSession();
 }
 
 VivoacAudioProcessorEditor::~VivoacAudioProcessorEditor()

@@ -122,7 +122,7 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
         translation.setText("", juce::dontSendNotification);
     }
     else if (button == &loadButton) {
-        client.fetchScriptLines();
+        client.getScriptLines();
     }
 
 }
