@@ -70,6 +70,16 @@ v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuC
 
     // Audio File View
     addAndMakeVisible(scriptAudioView);
+    sourceLoaderLabel.setText("Source", juce::dontSendNotification);
+    sourceLoaderLabel.attachToComponent(&sourceLoader, true);
+    addAndMakeVisible(sourceLoaderLabel);
+    sourceLoader.addListener(this);
+    addAndMakeVisible(sourceLoader);
+    translationLoaderLabel.setText("Translation", juce::dontSendNotification);
+    translationLoaderLabel.attachToComponent(&translationLoader, true);
+    addAndMakeVisible(translationLoaderLabel);
+    translationLoader.addListener(this);
+    addAndMakeVisible(translationLoader);
 }
 
 v_ScriptMenu::~v_ScriptMenu()
@@ -103,6 +113,9 @@ void v_ScriptMenu::resized()
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
 
     scriptAudioView.setBounds(getWidth() - 2 * margin - defaultHeight - scriptAudioView.getWidth(), getHeight() - margin - scriptAudioView.getHeight(), scriptAudioView.getWidth(), scriptAudioView.getHeight());
+    const int loadButtonSize = (defaultHeight-margin)/2;
+    sourceLoader.setBounds(4 * defaultLength, getHeight() - 2 * (margin + loadButtonSize), loadButtonSize, loadButtonSize);
+    translationLoader.setBounds(4 * defaultLength, getHeight() - margin - loadButtonSize, loadButtonSize, loadButtonSize );
 }
 
 void v_ScriptMenu::buttonClicked(juce::Button* button) {
@@ -125,6 +138,8 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
         characterName.setText("", juce::dontSendNotification);
         sourceText.setText("", juce::dontSendNotification);
         translation.setText("", juce::dontSendNotification);
+        processor.clearAudio();
+        scriptAudioView.repaint();
     }
     else if (button == &loadButton) {
         client.getScriptLines();

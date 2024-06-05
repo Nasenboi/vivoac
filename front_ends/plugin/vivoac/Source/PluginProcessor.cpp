@@ -192,6 +192,28 @@ japvts::ParameterLayout VivoacAudioProcessor::createParameters() {
 }
 
 //==============================================================================
+bool VivoacAudioProcessor::isPlayingAudio() {
+    juce::SynthesiserVoice* v = synth.getVoice(0);
+
+    return v->isVoiceActive();
+}
+
+void VivoacAudioProcessor::playAudio() {
+    synth.noteOn(0, 60, 1.0f);
+}
+
+void VivoacAudioProcessor::pauseAudio() {
+    synth.allNotesOff(0, false);
+}
+
+void VivoacAudioProcessor::clearAudio() {
+    pauseAudio();
+    synth.clearSounds();
+    waveForm = juce::AudioSampleBuffer{};
+    currentAudioFile = juce::File{};
+    formatReader = nullptr;
+}
+
 void VivoacAudioProcessor::loadAudioFile(std::function<void()> callback) {
     fileChooser = std::make_unique<juce::FileChooser>("Please select an audio file");
 

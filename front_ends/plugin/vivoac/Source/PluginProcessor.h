@@ -65,6 +65,10 @@ public:
 
     juce::String getFileName() { return currentAudioFile.getFileNameWithoutExtension(); }
     juce::String getFilePath() { return currentAudioFile.getFullPathName(); }
+    void playAudio();
+    void pauseAudio();
+    bool isPlayingAudio();
+    void clearAudio();
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VivoacAudioProcessor)

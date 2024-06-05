@@ -51,6 +51,8 @@ private:
     juce::TextEditor id, sourceText, translation, timeRestriction, voiceTalent, characterName;
     // can be either for the reference audio or the source audio
     v_AudioFileView scriptAudioView;
+    juce::TextButton sourceLoader{ ">" }, translationLoader{ ">" };
+    juce::Label sourceLoaderLabel, translationLoaderLabel;
 
     juce::SparseSet<int> moveSelection(juce::SparseSet<int> selection, int direction);
     

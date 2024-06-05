@@ -80,5 +80,12 @@ void v_AudioFileView::buttonClicked(juce::Button* button) {
             this->repaint();
         });
     }
-
+    else if (button == &playButton) {
+        if (!processor.isPlayingAudio()) {
+            processor.playAudio();
+        }
+        else {
+            processor.pauseAudio();
+        }
+    }
 }
