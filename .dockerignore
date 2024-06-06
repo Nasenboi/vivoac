@@ -9,6 +9,7 @@ tests/
 documentation/
 README.md
 logs/
+front_ends/
 
 # Git
 .git
