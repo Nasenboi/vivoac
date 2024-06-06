@@ -14,8 +14,6 @@
 //==============================================================================
 v_AudioFileView::v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c): processor(p), client(c)
 {
-    setSize(width, height);
-
     loadButton.addListener(this);
     addAndMakeVisible(loadButton);
     playButton.addListener(this);
@@ -28,6 +26,7 @@ v_AudioFileView::~v_AudioFileView()
 
 void v_AudioFileView::paint(juce::Graphics& g)
 {
+    const int buttonWidth = getHeight(), buttonHeight = getHeight() / 2 - 2*margin;
     g.fillAll(colors.midnight_green);
 
     // fill border of waveform:
@@ -49,18 +48,17 @@ void v_AudioFileView::paint(juce::Graphics& g)
         p.startNewSubPath(x, y);
         int starti;
         for (int s = 0; s < waveForm.getNumSamples(); s += widthRatio) {
-            // low pass filter:
-            /*
+            // simple low pass filter:
             y = 0.0f;
             if (s < 4) {starti = 0;}
             else {starti = -4;}
             for (int i = starti; i < starti + 5; ++i) {y += (readBuffer[(int)s + i] * heightRatio);}
-            y = y / 3 + startY;*/
-            y = (readBuffer[(int)s] * heightRatio) + startY;
+            y = y / 3 + startY;
+            //y = (readBuffer[(int)s] * heightRatio) + startY;
             p.lineTo(x, y);
             ++x;
         }
-        p.lineTo((float)borderF.getWidth(), startY);
+        p.lineTo(getWidth(), startY);
         g.strokePath(p, juce::PathStrokeType(1.0f));
     }
 
@@ -70,6 +68,7 @@ void v_AudioFileView::paint(juce::Graphics& g)
 
 void v_AudioFileView::resized()
 {
+    const int buttonWidth = getHeight(), buttonHeight = getHeight() / 2 - 2*margin;
     loadButton.setBounds(margin, margin, buttonWidth, buttonHeight);
     playButton.setBounds(margin, getHeight()-margin-buttonHeight, buttonWidth, buttonHeight);
 }

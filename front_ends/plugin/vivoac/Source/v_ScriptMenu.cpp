@@ -112,7 +112,7 @@ void v_ScriptMenu::resized()
     translation.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 4 * margin - 4 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight);
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
 
-    scriptAudioView.setBounds(getWidth() - 2 * margin - defaultHeight - scriptAudioView.getWidth(), getHeight() - margin - scriptAudioView.getHeight(), scriptAudioView.getWidth(), scriptAudioView.getHeight());
+    scriptAudioView.setBounds(getWidth() - 2 * margin - defaultHeight - 3*defaultLength, getHeight() - margin - defaultHeight, 3 * defaultLength, defaultHeight);
     const int loadButtonSize = (defaultHeight-margin)/2;
     sourceLoader.setBounds(4 * defaultLength, getHeight() - 2 * (margin + loadButtonSize), loadButtonSize, loadButtonSize);
     translationLoader.setBounds(4 * defaultLength, getHeight() - margin - loadButtonSize, loadButtonSize, loadButtonSize );
