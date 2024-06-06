@@ -21,8 +21,8 @@ public:
         setColour(juce::TableHeaderComponent::ColourIds::outlineColourId, colors.verdigris);
         setColour(juce::TableHeaderComponent::ColourIds::textColourId, colors.true_white);
 
-        setColour(juce::TextEditor::ColourIds::backgroundColourId, colors.rich_black);
-        setColour(juce::TextEditor::ColourIds::focusedOutlineColourId, colors.midnight_green);
+        setColour(juce::TextEditor::ColourIds::backgroundColourId, colors.midnight_green);
+        setColour(juce::TextEditor::ColourIds::focusedOutlineColourId, colors.electric_blue);
         setColour(juce::TextEditor::ColourIds::highlightColourId, colors.midnight_green);
         setColour(juce::TextEditor::ColourIds::highlightedTextColourId, colors.true_white);
         setColour(juce::TextEditor::ColourIds::outlineColourId, colors.verdigris);

@@ -93,6 +93,15 @@ v_SettingsMenu::~v_SettingsMenu()
 void v_SettingsMenu::paint (juce::Graphics& g)
 {
     g.fillAll(colors.rich_black);
+
+    // some nice lines to keep settings visually seperated:
+    juce::Path p;
+    p.startNewSubPath(getWidth() / 2, 0);
+    p.lineTo(getWidth() / 2, getHeight());
+    p.startNewSubPath(0, getHeight()/2);
+    p.lineTo(getWidth() / 2, getHeight() / 2);
+    g.setColour(colors.verdigris);
+    g.strokePath(p, juce::PathStrokeType{ 2.0f });
 }
 
 void v_SettingsMenu::resized()
