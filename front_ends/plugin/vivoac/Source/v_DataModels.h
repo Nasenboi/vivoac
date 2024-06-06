@@ -29,8 +29,6 @@ inline void to_json(json& j, const Name& s) {
     j = json{};
     if (!s.key.empty()) {j["key"]=s.key;}
 }
-
-
 */
 
 
@@ -48,14 +46,14 @@ struct VoiceSettings {
     std::vector<std::string> files = {};
     json labels = {};
 };
-bool const isEmpty(const VoiceSettings& v) {
+bool const isEmpty(const VoiceSettings& s) {
     return {
-        v.voice_id.empty() &&
-        v.name.empty() &&
-        v.settings == json{} &&
-        v.description.empty() &&
-        v.files.size() == 0 &&
-        v.labels == json{}
+        s.voice_id.empty() &&
+        s.name.empty() &&
+        s.settings == json{} &&
+        s.description.empty() &&
+        s.files.size() == 0 &&
+        s.labels == json{}
     };
 };
 inline void from_json(const json& j, VoiceSettings& s) {
@@ -102,8 +100,6 @@ inline void to_json(json& j, const TextToSpeech& s) {
     if (s.seed != -1) { j["seed"] = s.seed; }
 }
 
-
-
 //==============================================================================
 /* The Audio Models
 */ 
@@ -117,6 +113,16 @@ struct AudioFormat {
     std::string bit_depth = "";
     std::string bit_rate = "";
     std::string normalization_type = "";
+};
+bool const isEmpty(const AudioFormat& s) {
+    return {
+        s.codec.empty() &&
+        s.sample_rate.empty() &&
+        s.channels.empty() &&
+        s.bit_depth.empty() &&
+        s.bit_rate.empty() &&
+        s.normalization_type.empty()
+    };
 };
 inline void from_json(const json& j, AudioFormat& s) {
     s.codec = j.value("codec", "");
@@ -140,18 +146,24 @@ inline void to_json(json& j, const AudioFormat& s) {
 /* The Engine Backend Models
 */
 
-enum class Engine_ModulesKeys {
-
+enum class EngineModulesKeys {
+    ai_api_engine_module, audio_file_engine_module, script_db_engine_module
 };
-struct Engine_Modules {
-
+struct EngineModules {
+    std::string ai_api_engine_module = "";
+    std::string audio_file_engine_module = "";
+    std::string script_db_engine_module = "";
 };
-inline void from_json(const json& j, Name& s) {
-    s.key = j.value("key", "");
+inline void from_json(const json& j, EngineModules& s) {
+    s.ai_api_engine_module = j.value("ai_api_engine_module", "");
+    s.audio_file_engine_module = j.value("audio_file_engine_module", "");
+    s.script_db_engine_module = j.value("script_db_engine_module", "");
 }
-inline void to_json(json& j, const Name& s) {
+inline void to_json(json& j, const EngineModules& s) {
     j = json{};
-    if (!s.key.empty()) { j["key"] = s.key; }
+    if (!s.ai_api_engine_module.empty()) { j["ai_api_engine_module"] = s.ai_api_engine_module; }
+    if (!s.audio_file_engine_module.empty()) { j["audio_file_engine_module"] = s.audio_file_engine_module; }
+    if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
 }
 
 //==============================================================================
@@ -229,3 +241,22 @@ inline void to_json(json& j, const ScriptLine& s) {
 //==============================================================================
 /* The Session Models
 */
+
+enum class SessionSettingsKeys {
+    audio_format
+};
+struct SessionSettings {
+    AudioFormat audio_format = AudioFormat{};
+};
+bool const isEmpty(const SessionSettings& s) {
+    return {
+        isEmpty(s.audio_format)
+    };
+};
+inline void from_json(const json& j, SessionSettings& s) {
+    if (j.contains("audio_format") && j["audio_format"].is_object()) { s.audio_format = j["audio_format"].get<AudioFormat>(); }
+}
+inline void to_json(json& j, const SessionSettings& s) {
+    j = json{};
+    if (!isEmpty(s.audio_format)) { j["audio_format"] = s.audio_format; }
+}
