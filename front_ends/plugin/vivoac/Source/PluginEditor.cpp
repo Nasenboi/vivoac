@@ -24,12 +24,11 @@ VivoacAudioProcessorEditor::VivoacAudioProcessorEditor(VivoacAudioProcessor& p)
         addAndMakeVisible(menuComponents[i].get());
     }
     setSize (ui_width, ui_height);
-
-    client.initSession();
 }
 
 VivoacAudioProcessorEditor::~VivoacAudioProcessorEditor()
 {
+    client.closeSession();
     setLookAndFeel(nullptr);
 }
 

@@ -23,11 +23,24 @@ public:
 
         setColour(juce::TextEditor::ColourIds::backgroundColourId, colors.midnight_green);
         setColour(juce::TextEditor::ColourIds::focusedOutlineColourId, colors.electric_blue);
-        setColour(juce::TextEditor::ColourIds::highlightColourId, colors.midnight_green);
+        setColour(juce::TextEditor::ColourIds::highlightColourId, colors.verdigris);
         setColour(juce::TextEditor::ColourIds::highlightedTextColourId, colors.true_white);
         setColour(juce::TextEditor::ColourIds::outlineColourId, colors.verdigris);
         setColour(juce::TextEditor::ColourIds::shadowColourId, colors.true_black);
         setColour(juce::TextEditor::ColourIds::textColourId, colors.true_white);
+
+        setColour(juce::ComboBox::ColourIds::arrowColourId, colors.verdigris);
+        setColour(juce::ComboBox::ColourIds::backgroundColourId, colors.midnight_green);
+        setColour(juce::ComboBox::ColourIds::buttonColourId, colors.verdigris);
+        setColour(juce::ComboBox::ColourIds::focusedOutlineColourId, colors.electric_blue);
+        setColour(juce::ComboBox::ColourIds::outlineColourId, colors.verdigris);
+        setColour(juce::ComboBox::ColourIds::textColourId, colors.true_white);
+
+        setColour(juce::PopupMenu::ColourIds::backgroundColourId, colors.verdigris);
+        setColour(juce::PopupMenu::ColourIds::headerTextColourId, colors.electric_blue);
+        setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, colors.light_sky_blue);
+        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, colors.rich_black);
+        setColour(juce::PopupMenu::ColourIds::textColourId, colors.true_white);
     }
     CostumLookAndFeel(juce::Colour mc, juce::Colour ac) { mainColor = mc; accentColor = ac; }
     ~CostumLookAndFeel() {}

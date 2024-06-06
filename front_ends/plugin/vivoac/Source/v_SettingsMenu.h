@@ -37,7 +37,10 @@ private:
     juce::TextEditor apiUrl, apiPort, apiKey, generatedAudioPath, targetNumChannels, targetSampleRate, aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings, sessionId;
     juce::Label apiUrlLabel, apiPortLabel, apiKeyLabel, generatedAudioPathLabel, targetNumChannelsLabel, targetSampleRateLabel, targetAudioFormatLabel, aiApiEngineLabel, audioFileEngineLabel, scriptDbEngineLabel, sessionIdLabel;
     juce::ComboBox targetAudioFormat, aiApiEngine, audioFileEngine, scriptDbEngine;
+    juce::TextButton reconnectButton{ "reload" }, choosePathButton{ "choose" };
+
+    std::unique_ptr<juce::FileChooser> fileChooser;
 
     // UI constants
-    const int margin = 5;
+    const int margin = 10, textEditLength = 125, textEditHeight = 25;
 };

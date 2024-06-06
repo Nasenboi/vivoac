@@ -87,6 +87,32 @@ void HTTPClient::initSession() {
     }
 };
 
+void HTTPClient::closeSession() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+
+    CURLcode res = doCurl("/session/close", HTTPMethod::Post, headers);
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG(j.dump(4));
+        sessionID = "";
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+        sessionID = "";
+    }
+}
+
+void HTTPClient::reload() {
+    closeSession();
+    initSession();
+}
+
 // == Script functions ==
 
 void HTTPClient::updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey) {

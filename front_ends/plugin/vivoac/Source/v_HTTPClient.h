@@ -31,6 +31,12 @@ public:
     // == Session functions ==
 
     void initSession();
+    void closeSession();
+    void reload();
+    std::string getSessionID() { return sessionID; }
+    void setUrl(const std::string& u) { url = u; }
+    void setPort(const std::string& p) { port = p; }
+    void setApiKey(const std::string& k) { apiKey = k; }
 
     // == Script functions ==
     ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
@@ -48,6 +54,7 @@ private:
     std::string readBuffer;
     std::string url = "http://localhost", port = "8080";
     std::string sessionID;
+    std::string apiKey;
 
     enum HTTPMethod {
         Get, Post, Put, Delete
