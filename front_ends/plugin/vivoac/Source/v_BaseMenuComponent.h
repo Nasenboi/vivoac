@@ -26,6 +26,8 @@ public:
 
     virtual void paint (juce::Graphics&) override;
     virtual void resized() override;
+    virtual void onEnter() {};
+    virtual void onLeave() {};
 
 protected:
     VivoacAudioProcessor &processor;

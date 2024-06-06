@@ -77,6 +77,7 @@ void v_AudioFileView::buttonClicked(juce::Button* button) {
     if (button == &loadButton) {
         processor.loadAudioFile([this]() {
             this->repaint();
+            this->currentAudioFile = processor.getCurrentAudioFile();
         });
     }
     else if (button == &playButton) {

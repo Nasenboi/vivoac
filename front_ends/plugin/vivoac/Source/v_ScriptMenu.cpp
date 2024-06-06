@@ -203,5 +203,14 @@ bool v_ScriptMenu::isInterestedInFileDrag(const juce::StringArray& files) {
 void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
     if (!isInterestedInFileDrag(files[0])) return;
     processor.loadAudioFile(files[0]);
+    scriptAudioView.currentAudioFile = processor.getCurrentAudioFile();
     scriptAudioView.repaint();
 };
+
+void v_ScriptMenu::onEnter() {
+    processor.loadAudioFile(scriptAudioView.currentAudioFile);
+}
+
+void v_ScriptMenu::onLeave() {
+    processor.clearAudio();
+}

@@ -224,24 +224,7 @@ void VivoacAudioProcessor::loadAudioFile(std::function<void()> callback) {
         juce::File file = chooser.getResult();
         
         if (file != juce::File{}) {
-            currentAudioFile = file;
-            formatReader.reset(formatManager.createReaderFor(currentAudioFile));
-
-            synth.addSound(new juce::SamplerSound(
-                "sample", *formatReader, midiRange, 60, 0.1, 0.1, 30.0
-            ));
-
-            const int numSamples = static_cast<int>(formatReader->lengthInSamples);
-            waveForm.setSize(1, numSamples);
-            formatReader->read(
-                &waveForm, 0, numSamples, 0, true, false
-            );
-            //normalize:
-            const float maxValue = waveForm.findMinMax(0, 0, waveForm.getNumSamples()).getEnd();
-            auto writeBuffer = waveForm.getWritePointer(0);
-            for (int s = 0; s < waveForm.getNumSamples(); ++s) {
-                writeBuffer[s] = writeBuffer[s] / maxValue;
-            }
+            loadAudioFile(file);
 
             if (callback) {
                 callback();
@@ -251,11 +234,14 @@ void VivoacAudioProcessor::loadAudioFile(std::function<void()> callback) {
 }
 
 void VivoacAudioProcessor::loadAudioFile(const juce::String& path) {
-    synth.clearSounds();
+    loadAudioFile(juce::File{ path });
+}
 
-    currentAudioFile = juce::File{ path };
+void VivoacAudioProcessor::loadAudioFile(const juce::File& file) {
+    synth.clearSounds();
+    currentAudioFile = juce::File{ file };
     formatReader.reset(formatManager.createReaderFor(currentAudioFile));
-    
+
     synth.addSound(new juce::SamplerSound(
         "sample", *formatReader, midiRange, 60, 0.1, 0.1, 30.0
     ));

@@ -38,6 +38,9 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
+    void onEnter() override;
+    void onLeave() override;
+
 private:
     // UI Sizes
     int margin = 10;

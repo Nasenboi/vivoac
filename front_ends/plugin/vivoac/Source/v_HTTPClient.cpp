@@ -91,31 +91,31 @@ void HTTPClient::initSession() {
 
 void HTTPClient::updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey) {
     switch (scriptLineKey) {
-    case id:
+    case ScriptLineKeys::id:
         currentScriptLine.id = text;
         break;
-    case source_text:
+    case ScriptLineKeys::source_text:
         currentScriptLine.source_text = text;
         break;
-    case translation:
+    case ScriptLineKeys::translation:
         currentScriptLine.translation = text;
         break;
-    case time_restriction:
+    case ScriptLineKeys::time_restriction:
         currentScriptLine.time_restriction = text;
         break;
-    case voice_talent:
+    case ScriptLineKeys::voice_talent:
         currentScriptLine.voice_talent = text;
         break;
-    case character_name:
+    case ScriptLineKeys::character_name:
         currentScriptLine.character_name = text;
         break;
-    case reference_audio_path:
+    case ScriptLineKeys::reference_audio_path:
         currentScriptLine.reference_audio_path = text;
         break;
-    case delivery_audio_path:
+    case ScriptLineKeys::delivery_audio_path:
         currentScriptLine.delivery_audio_path = text;
         break;
-    case generated_audio_path:
+    case ScriptLineKeys::generated_audio_path:
         currentScriptLine.generated_audio_path = text;
         break;
     };

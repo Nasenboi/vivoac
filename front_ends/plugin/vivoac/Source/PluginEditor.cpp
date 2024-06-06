@@ -49,14 +49,16 @@ void VivoacAudioProcessorEditor::resized()
 void VivoacAudioProcessorEditor::buttonClicked(juce::Button* button) {
     for (int i = 0; i < menuBar.num_menu_buttons; ++i) {
         if (button == &menuBar.getMenuButton(i)) {
-            menuBar.setCurrentMenu(v_MenuBar::MenuOptions(i));
-            menuComponents[i]->setVisible(true);
-
             for (int j = 0; j < menuBar.num_menu_buttons; ++j) {
                 if (j != i) {
                     menuComponents[j]->setVisible(false);
+                    menuComponents[j]->onLeave();
                 }
             }
+
+            menuBar.setCurrentMenu(v_MenuBar::MenuOptions(i));
+            menuComponents[i]->onEnter();
+            menuComponents[i]->setVisible(true);
             break;
         }
     }

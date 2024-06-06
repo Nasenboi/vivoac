@@ -61,10 +61,12 @@ public:
     //==============================================================================
     void loadAudioFile(std::function<void()> callback = [](){});
     void loadAudioFile(const juce::String& path);
+    void loadAudioFile(const juce::File& file);
     juce::AudioBuffer<float>& getWaveForm() { return waveForm; };
 
     juce::String getFileName() { return currentAudioFile.getFileNameWithoutExtension(); }
     juce::String getFilePath() { return currentAudioFile.getFullPathName(); }
+    juce::File getCurrentAudioFile() { return currentAudioFile; }
     void playAudio();
     void pauseAudio();
     bool isPlayingAudio();

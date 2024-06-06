@@ -30,10 +30,13 @@ public:
     void buttonClicked(juce::Button* button) override;
     void buttonStateChanged(juce::Button* button) override {};
 
+    juce::File currentAudioFile;
+
 private:
     v_Colors colors;
     VivoacAudioProcessor& processor;
     HTTPClient& client;
+
 
     juce::TextButton loadButton{ "Load" }, playButton{ "Play" };
 

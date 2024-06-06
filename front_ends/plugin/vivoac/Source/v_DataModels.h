@@ -15,13 +15,31 @@ using json = nlohmann::json;
 
 //==============================================================================
 /* The Data Models for the HTTPClient connection
+
+enum NameKeys {
+
+};
+struct Name {
+
+};
+inline void from_json(const json& j, Name& s) {
+    s.key = j.value("key", "");
+}
+inline void to_json(json& j, const Name& s) {
+    j = json{};
+    if (!key.empty()) {j["key"]=s.key;}
+}
+
+
 */
 
 
 //==============================================================================
 /* The Script Models
 */
-
+enum class CharacterInfoKeys {
+    id, character_name, voice_talent, script_name, number_of_lines, gender
+};
 struct CharacterInfo {
     std::string id = "";
     std::string character_name = "";
@@ -39,17 +57,16 @@ inline void from_json(const json& j, CharacterInfo& s) {
     s.gender = j.value("gender", "");
 };
 inline void to_json(json& j, const CharacterInfo& s) {
-    j = json{
-        {"id", s.id},
-        {"character_name", s.character_name},
-        {"voice_talent", s.voice_talent},
-        {"script_name", s.script_name},
-        {"number_of_lines", s.number_of_lines},
-        {"gender", s.gender}
-    };
+    j = json{};
+    if (!s.id.empty()) { j["id"] = s.id; }
+    if (!s.character_name.empty()) { j["character_name"] = s.character_name; }
+    if (!s.voice_talent.empty()) { j["voice_talent"] = s.voice_talent; }
+    if (!s.script_name.empty()) { j["script_name"] = s.script_name; }
+    if (s.number_of_lines != 0) { j["number_of_lines"] = s.number_of_lines; }
+    if (!s.gender.empty()) { j["gender"] = s.gender; }
 };
 
-enum ScriptLineKeys {
+enum class ScriptLineKeys {
     id, source_text, translation, time_restriction, voice_talent,
     character_name, reference_audio_path, delivery_audio_path,
     generated_audio_path
@@ -92,6 +109,18 @@ inline void to_json(json& j, const ScriptLine& s) {
 //==============================================================================
 /* The Audio Models
 */ 
+enum class AudioFormatKeys {
+
+};
+struct AudioFormat {
+
+};
+inline void from_json(const json& j, AudioFormat& s) {
+
+}
+inline void to_json(json& j, const AudioFormat& s) {
+    j = json{};
+}
 
 //==============================================================================
 /* The AI API Models
