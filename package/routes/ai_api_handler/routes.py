@@ -38,7 +38,7 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         data: Text_To_Speech,
     ):
-        return await self.api_engine.text_to_speech(text=text, session_id=session_id)
+        return await self.api_engine.text_to_speech(text="text", session_id=session_id)
 
     ############################################################
     # setter functions:
