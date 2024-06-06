@@ -14,7 +14,7 @@ from pydantic import BaseModel
 
 # audio model
 class Audio_Format(BaseModel):
-    codec: Optional[Literal["wav", "mp3", "ogg", "aiff"]] = None
+    codec: Optional[Literal["wav", "mp3", "ogg", "aif"]] = None
     sample_rate: Optional[int] = None
     channels: Optional[int] = None
     bit_depth: Optional[int] = None

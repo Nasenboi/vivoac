@@ -208,7 +208,9 @@ void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
 };
 
 void v_ScriptMenu::onEnter() {
-    processor.loadAudioFile(scriptAudioView.currentAudioFile);
+    if (scriptAudioView.currentAudioFile.exists()) {
+        processor.loadAudioFile(scriptAudioView.currentAudioFile);
+    }
 }
 
 void v_ScriptMenu::onLeave() {

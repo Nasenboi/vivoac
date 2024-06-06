@@ -46,7 +46,7 @@ struct VoiceSettings {
     std::vector<std::string> files = {};
     json labels = {};
 };
-bool const isEmpty(const VoiceSettings& s) {
+inline bool const isEmpty(const VoiceSettings& s) {
     return {
         s.voice_id.empty() &&
         s.name.empty() &&
@@ -114,7 +114,7 @@ struct AudioFormat {
     std::string bit_rate = "";
     std::string normalization_type = "";
 };
-bool const isEmpty(const AudioFormat& s) {
+inline bool const isEmpty(const AudioFormat& s) {
     return {
         s.codec.empty() &&
         s.sample_rate.empty() &&
@@ -248,7 +248,7 @@ enum class SessionSettingsKeys {
 struct SessionSettings {
     AudioFormat audio_format = AudioFormat{};
 };
-bool const isEmpty(const SessionSettings& s) {
+inline bool const isEmpty(const SessionSettings& s) {
     return {
         isEmpty(s.audio_format)
     };
