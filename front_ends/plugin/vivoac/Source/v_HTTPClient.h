@@ -34,6 +34,7 @@ public:
 
     // == Engine functions ==
     PossibleEngineModules possibleEngineModules;
+    int getEngineId(EngineModulesKeys key);
 
     // == Script functions ==
     ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
@@ -70,6 +71,7 @@ public:
 
     // Engine Modules
     void updateSessionEngines(const EngineModulesKeys& key, const std::string& value);
+    void updateSessionEngines(const EngineModulesKeys& key, const int& value);
     void updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value);
 
     // Script

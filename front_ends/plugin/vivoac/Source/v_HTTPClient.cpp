@@ -90,6 +90,7 @@ void HTTPClient::initSession() {
 };
 
 void HTTPClient::closeSession() {
+    if (sessionID.empty()) return;
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
 
@@ -145,6 +146,20 @@ void HTTPClient::getScriptLines() {
 
 // == ai api functions ==
 
+// == Engine Functions == 
+int HTTPClient::getEngineId(EngineModulesKeys key) {
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module_index:
+        return abs(engineModules.ai_api_engine_module_index);
+        break;
+    case EngineModulesKeys::audio_file_engine_module_index:
+        return abs(engineModules.audio_file_engine_module_index);
+        break;
+    case EngineModulesKeys::script_db_engine_module_index:
+        return abs(engineModules.script_db_engine_module_index);
+        break;
+    }
+}
 
 //==============================================================================
 /* Class functionality
@@ -352,6 +367,19 @@ void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const std::s
         break;
     case EngineModulesKeys::script_db_engine_module:
         engineModules.script_db_engine_module = value;
+        break;
+    }
+};
+void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const int& value) {
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module_index:
+        engineModules.ai_api_engine_module_index = value;
+        break;
+    case EngineModulesKeys::audio_file_engine_module_index:
+        engineModules.audio_file_engine_module_index = value;
+        break;
+    case EngineModulesKeys::script_db_engine_module_index:
+        engineModules.script_db_engine_module_index = value;
         break;
     }
 };

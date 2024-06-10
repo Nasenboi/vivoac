@@ -156,30 +156,43 @@ inline void to_json(json& j, const AudioFormat& s) {
 */
 
 enum class EngineModulesKeys {
-    ai_api_engine_module, audio_file_engine_module, script_db_engine_module
+    ai_api_engine_module, audio_file_engine_module, script_db_engine_module,
+    ai_api_engine_module_index, audio_file_engine_module_index, script_db_engine_module_index
 };
 struct EngineModules {
     std::string ai_api_engine_module = "";
     std::string audio_file_engine_module = "";
     std::string script_db_engine_module = "";
+    int ai_api_engine_module_index = -1;
+    int audio_file_engine_module_index = -1;
+    int script_db_engine_module_index = -1;
 };
 inline bool isEmpty(const EngineModules& s) {
     return {
         s.ai_api_engine_module.empty() &&
         s.audio_file_engine_module.empty() &&
-        s.script_db_engine_module.empty()
+        s.script_db_engine_module.empty() &&
+        s.ai_api_engine_module_index == -1 &&
+        s.audio_file_engine_module_index == -1 &&
+        s.script_db_engine_module_index == -1
     };
 }
 inline void from_json(const json& j, EngineModules& s) {
     s.ai_api_engine_module = j.value("ai_api_engine_module", "");
     s.audio_file_engine_module = j.value("audio_file_engine_module", "");
     s.script_db_engine_module = j.value("script_db_engine_module", "");
+    s.ai_api_engine_module_index = j.value("ai_api_engine_module_index", -1);
+    s.audio_file_engine_module_index = j.value("audio_file_engine_module_index", -1);
+    s.script_db_engine_module_index = j.value("script_db_engine_module_index", -1);
 }
 inline void to_json(json& j, const EngineModules& s) {
     j = json{};
     if (!s.ai_api_engine_module.empty()) { j["ai_api_engine_module"] = s.ai_api_engine_module; }
     if (!s.audio_file_engine_module.empty()) { j["audio_file_engine_module"] = s.audio_file_engine_module; }
     if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
+    if (s.ai_api_engine_module_index != -1) { j["ai_api_engine_module_index"] = s.ai_api_engine_module_index; }
+    if (s.audio_file_engine_module_index != -1) { j["audio_file_engine_module_index"] = s.audio_file_engine_module_index; }
+    if (s.script_db_engine_module_index != -1) { j["script_db_engine_module_index"] = s.script_db_engine_module_index; }
 }
 const struct PossibleEngineModules {
     const std::array<std::string, 2> ai_api_engine_modules {
