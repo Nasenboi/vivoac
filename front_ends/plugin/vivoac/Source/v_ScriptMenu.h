@@ -33,7 +33,9 @@ public:
 
     void buttonClicked(juce::Button* button) override;
     void buttonStateChanged(juce::Button* button) override {};
-    void textEditorTextChanged(juce::TextEditor& editor) override;
+    void textEditorReturnKeyPressed(juce::TextEditor& editor) override;
+    void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
+    void onTextEditorDone(juce::TextEditor& editor);
 
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;

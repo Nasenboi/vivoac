@@ -28,6 +28,19 @@ public:
 
     void parameterChanged(const juce::String& parameterID, float newValue) override;
 
+    // == ai api functions ==
+
+    // == Audio functions ==
+
+    // == Engine functions ==
+    PossibleEngineModules possibleEngineModules;
+
+    // == Script functions ==
+    ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
+    void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
+    std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
+    void getScriptLines();
+
     // == Session functions ==
 
     void initSession();
@@ -35,19 +48,38 @@ public:
     void reload();
     std::string getSessionID() { return sessionID; }
     void setUrl(const std::string& u) { url = u; }
+    std::string& getUrl() { return url; };
     void setPort(const std::string& p) { port = p; }
+    std::string& getPort() { return port; };
     void setApiKey(const std::string& k) { apiKey = k; }
+    std::string& getApiKey() { return apiKey; };
 
-    // == Script functions ==
-    ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
-    void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
-    void updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey);
-    std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
-    void getScriptLines();
+    // == Boring Update Functions ==
+    // AI API:
+    void updateVoiceSettings(const VoiceSettingsKeys& key, const std::string& value);
+    void updateVoiceSettings(const VoiceSettingsKeys& key, const json& value);
+    void updateVoiceSettings(const VoiceSettingsKeys& key, std::vector<std::string>& value);
+    void updateTextToSpeech(const TextToSpeechKeys& key, const std::string& value);
+    void updateTextToSpeech(const TextToSpeechKeys& key, const VoiceSettings& value);
+    void updateTextToSpeech(const TextToSpeechKeys& key, const int& value);
 
-    // == Audio functions ==
+    // Audio
+    void updateAudioFormat(const AudioFormatKeys& key, const std::string& value);
+    void updateAudioFormat(const AudioFormatKeys& key, const int& value);
+    std::string generatedAudioPath;
 
-    // == ai api functions ==
+    // Engine Modules
+    void updateSessionEngines(const EngineModulesKeys& key, const std::string& value);
+    void updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value);
+
+    // Script
+    void updateCharacterInfo(const CharacterInfoKeys& key, const std::string& value);
+    void updateCharacterInfo(const CharacterInfoKeys& key, const int& value);
+    void updateCurrentScriptLine(const ScriptLineKeys& key, const std::string& value);
+
+    // Session
+    void updateSessionSettings(const SessionSettingsKeys& key, const std::string& value);
+    void updateSessionSettings(const SessionSettingsKeys& key, const AudioFormat& value);
 
 private:
     // == Curl opts ===
@@ -66,10 +98,27 @@ private:
         const HEADER_PARAMS header_params = {}, json body_params = json());
 
     // === The Data models as structures: ===
+    // AI API:
+    VoiceSettings voiceSettings;
+    TextToSpeech textToSpeech;
+
+    // Audio
+    AudioFormat audioFormat;
+
+    // Engine Modules:
+    EngineModules engineModules;
+    json aiApiSettings, audioFileEngineSettings, scriptDbEngineSettings;
+
     // Script
     CharacterInfo characterInfo;
     std::vector<ScriptLine> scriptLines;
     ScriptLine currentScriptLine;
 
+    // Session
+    SessionSettings sessionSettings;
 
+    // Settings
+    void loadPluginSettings();
+    void savePluginSettings();
+    PluginSettings settings;
 };

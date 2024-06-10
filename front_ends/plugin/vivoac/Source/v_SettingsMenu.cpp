@@ -19,19 +19,20 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     apiUrlLabel.setText("URL:", juce::dontSendNotification);
     apiUrlLabel.attachToComponent(&apiUrl, true);
     addAndMakeVisible(apiUrlLabel);
-    apiUrl.setText("http://localhost");
+    apiUrl.setText(client.getUrl());
     apiUrl.addListener(this);
     addAndMakeVisible(apiUrl);
     apiPortLabel.setText("Port:", juce::dontSendNotification);
     apiPortLabel.attachToComponent(&apiPort, true);
     addAndMakeVisible(apiPortLabel);
-    apiPort.setText("8080");
+    apiPort.setText(client.getPort());
     apiPort.addListener(this);
     addAndMakeVisible(apiPort);
     apiKeyLabel.setText("API Key:", juce::dontSendNotification);
     apiKeyLabel.attachToComponent(&apiKey, true);
     addAndMakeVisible(apiKeyLabel);
     apiKey.addListener(this);
+    apiKey.setText(client.getApiKey());
     addAndMakeVisible(apiKey);
     sessionIdLabel.setText("Session:", juce::dontSendNotification);
     sessionIdLabel.attachToComponent(&sessionId, true);
@@ -82,6 +83,10 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     aiApiEngineSettings.setTabKeyUsedAsCharacter(true);
     aiApiEngineSettings.addListener(this);
     addAndMakeVisible(aiApiEngineSettings);
+    for (int i = 0; i < client.possibleEngineModules.ai_api_engine_modules.size(); ++i) {
+        aiApiEngine.addItem(client.possibleEngineModules.ai_api_engine_modules[i], i+1);
+    }
+    aiApiEngine.setSelectedId(1);
     aiApiEngine.addListener(this);
     addAndMakeVisible(aiApiEngine);
     audioFileEngineLabel.setText("Audio File Engine:", juce::dontSendNotification);
@@ -93,6 +98,10 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     audioFileEngineSettings.setReturnKeyStartsNewLine(true);
     audioFileEngineSettings.setTabKeyUsedAsCharacter(true);
     addAndMakeVisible(audioFileEngineSettings);
+    for (int i = 0; i < client.possibleEngineModules.audio_file_engine_modules.size(); ++i) {
+        audioFileEngine.addItem(client.possibleEngineModules.audio_file_engine_modules[i], i+1);
+    }
+    audioFileEngine.setSelectedId(1);
     audioFileEngine.addListener(this);
     addAndMakeVisible(audioFileEngine);
     scriptDbEngineLabel.setText("Script DB Engine:", juce::dontSendNotification);
@@ -104,6 +113,10 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     scriptDbEngineSettings.setTabKeyUsedAsCharacter(true);
     scriptDbEngineSettings.addListener(this);
     addAndMakeVisible(scriptDbEngineSettings);
+    for (int i = 0; i < client.possibleEngineModules.script_db_engine_modules.size(); ++i) {
+        scriptDbEngine.addItem(client.possibleEngineModules.script_db_engine_modules[i], i+1);
+    }
+    scriptDbEngine.setSelectedId(1);
     scriptDbEngine.addListener(this);
     addAndMakeVisible(scriptDbEngine);
 }
@@ -166,7 +179,13 @@ void v_SettingsMenu::buttonClicked(juce::Button* button) {
     }
 };
 
-void v_SettingsMenu::textEditorTextChanged(juce::TextEditor& editor) {
+void v_SettingsMenu::textEditorReturnKeyPressed(juce::TextEditor& editor) {
+    if (!editor.getReturnKeyStartsNewLine()) {
+        editor.unfocusAllComponents();
+    };
+};
+
+void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
     if (&editor == &apiUrl) {
         client.setUrl(apiUrl.getText().toStdString());
     }
@@ -176,8 +195,37 @@ void v_SettingsMenu::textEditorTextChanged(juce::TextEditor& editor) {
     else if (&editor == &apiKey) {
         client.setApiKey(apiKey.getText().toStdString());
     }
+    else if (&editor == &generatedAudioPath) {
+        client.generatedAudioPath = generatedAudioPath.getText().toStdString();
+    }
+    else if (&editor == &targetNumChannels) {
+        client.updateAudioFormat(AudioFormatKeys::channels, targetNumChannels.getText().getIntValue());
+    }
+    else if (&editor == &targetSampleRate) {
+        client.updateAudioFormat(AudioFormatKeys::sample_rate, targetSampleRate.getText().getIntValue());
+    }
+    else if (&editor == &aiApiEngineSettings) {
+        client.updateSessionEngineSettings(EngineModulesKeys::ai_api_engine_module, aiApiEngineSettings.getText().toStdString());
+    }
+    else if (&editor == &audioFileEngineSettings) {
+        client.updateSessionEngineSettings(EngineModulesKeys::audio_file_engine_module, audioFileEngineSettings.getText().toStdString());
+    }
+    else if (&editor == &scriptDbEngineSettings) {
+        client.updateSessionEngineSettings(EngineModulesKeys::script_db_engine_module, scriptDbEngineSettings.getText().toStdString());
+    }
 };
 
 void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
-
+    if (comboBoxThatHasChanged == &aiApiEngine) {
+        client.updateSessionEngines(EngineModulesKeys::ai_api_engine_module, aiApiEngine.getSelectedIdAsValue().toString().toStdString());
+    }
+    else if (comboBoxThatHasChanged == &audioFileEngine) {
+        client.updateSessionEngines(EngineModulesKeys::audio_file_engine_module, audioFileEngine.getSelectedIdAsValue().toString().toStdString());
+    }
+    else if (comboBoxThatHasChanged == &scriptDbEngine) {
+        client.updateSessionEngines(EngineModulesKeys::script_db_engine_module, scriptDbEngine.getSelectedIdAsValue().toString().toStdString());
+    }
+    else if (comboBoxThatHasChanged == &targetAudioFormat) {
+        client.updateAudioFormat(AudioFormatKeys::codec, targetAudioFormat.getSelectedIdAsValue().toString().toStdString());
+    }
 };

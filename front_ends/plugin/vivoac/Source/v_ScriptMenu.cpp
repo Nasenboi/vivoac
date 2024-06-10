@@ -58,8 +58,12 @@ v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuC
     addAndMakeVisible(id);
     id.addListener(this);
     addAndMakeVisible(sourceText);
+    sourceText.setMultiLine(true, true);
+    sourceText.setReturnKeyStartsNewLine(true);
     sourceText.addListener(this);
     addAndMakeVisible(translation);
+    translation.setMultiLine(true, true);
+    translation.setReturnKeyStartsNewLine(true);
     translation.addListener(this);
     addAndMakeVisible(timeRestriction);
     timeRestriction.addListener(this);
@@ -109,6 +113,7 @@ void v_ScriptMenu::resized()
     characterName.setBounds(getWidth() - 1.5 * defaultLength - margin, 3 * margin + defaultHeight / 2, 1.5 * defaultLength, defaultHeight / 2);
 
     sourceText.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 6 * margin - 7 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight) ;
+
     translation.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 4 * margin - 4 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight);
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
 
@@ -147,25 +152,29 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
 
 }
 
-
-void v_ScriptMenu::textEditorTextChanged(juce::TextEditor& editor) {
+void v_ScriptMenu::textEditorReturnKeyPressed(juce::TextEditor& editor) {
+   if (!editor.getReturnKeyStartsNewLine()) {
+        editor.unfocusAllComponents();
+   };
+};
+void v_ScriptMenu::onTextEditorDone(juce::TextEditor& editor) {
     if (&editor == &id) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::id);
+        client.updateCurrentScriptLine(ScriptLineKeys::id, editor.getText().toStdString());
     }
     else if (&editor == &sourceText) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::source_text);
+        client.updateCurrentScriptLine(ScriptLineKeys::source_text, editor.getText().toStdString());
     }
     else if (&editor == &translation) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::translation);
+        client.updateCurrentScriptLine(ScriptLineKeys::translation, editor.getText().toStdString());
     }
     else if (&editor == &voiceTalent) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::voice_talent);
+        client.updateCurrentScriptLine(ScriptLineKeys::voice_talent, editor.getText().toStdString());
     }
     else if (&editor == &characterName) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::character_name);
+        client.updateCurrentScriptLine(ScriptLineKeys::character_name, editor.getText().toStdString());
     }
     else if (&editor == &timeRestriction) {
-        client.updateCurrentScriptLine(editor.getText().toStdString(), ScriptLineKeys::time_restriction);
+        client.updateCurrentScriptLine(ScriptLineKeys::time_restriction, editor.getText().toStdString());
     }
 };
 

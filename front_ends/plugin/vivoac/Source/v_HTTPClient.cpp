@@ -50,9 +50,11 @@
 using json = nlohmann::json;
 
 HTTPClient::HTTPClient() {
+    loadPluginSettings();
 };
 
 HTTPClient::~HTTPClient() {
+    savePluginSettings();
 };
 
 //==============================================================================
@@ -114,38 +116,6 @@ void HTTPClient::reload() {
 }
 
 // == Script functions ==
-
-void HTTPClient::updateCurrentScriptLine(const std::string& text, const ScriptLineKeys scriptLineKey) {
-    switch (scriptLineKey) {
-    case ScriptLineKeys::id:
-        currentScriptLine.id = text;
-        break;
-    case ScriptLineKeys::source_text:
-        currentScriptLine.source_text = text;
-        break;
-    case ScriptLineKeys::translation:
-        currentScriptLine.translation = text;
-        break;
-    case ScriptLineKeys::time_restriction:
-        currentScriptLine.time_restriction = text;
-        break;
-    case ScriptLineKeys::voice_talent:
-        currentScriptLine.voice_talent = text;
-        break;
-    case ScriptLineKeys::character_name:
-        currentScriptLine.character_name = text;
-        break;
-    case ScriptLineKeys::reference_audio_path:
-        currentScriptLine.reference_audio_path = text;
-        break;
-    case ScriptLineKeys::delivery_audio_path:
-        currentScriptLine.delivery_audio_path = text;
-        break;
-    case ScriptLineKeys::generated_audio_path:
-        currentScriptLine.generated_audio_path = text;
-        break;
-    };
-};
 
 void HTTPClient::getScriptLines() {
     HEADER_PARAMS headers = {};
@@ -275,3 +245,242 @@ std::string HTTPClient::constructURL(const std::string& path) {
     DBG(ss.str());
     return ss.str();
 }
+
+// === Boring Update functions ===
+ // AI API:
+void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, const std::string& value ) {
+    switch(key) {
+    case VoiceSettingsKeys::voice_id :
+        voiceSettings.voice_id = value;
+        break;
+    case VoiceSettingsKeys::name:
+        voiceSettings.name = value;
+        break;
+    case VoiceSettingsKeys::description:
+        voiceSettings.description = value;
+        break;
+    }
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+};
+void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, const json& value) {
+    switch (key) {
+    case VoiceSettingsKeys::settings:
+        voiceSettings.settings = value;
+        break;
+    case VoiceSettingsKeys::labels:
+        voiceSettings.labels = value;
+        break;
+    }
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+};
+void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, std::vector<std::string>& value) {
+    switch (key) {
+    case VoiceSettingsKeys::files:
+        voiceSettings.files = value;
+        break;
+    }
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+};
+
+void HTTPClient::updateTextToSpeech(const TextToSpeechKeys& key, const std::string& value ) {
+    switch (key) {
+    case TextToSpeechKeys::text:
+        textToSpeech.text = value;
+        break;
+    case TextToSpeechKeys::voice:
+        textToSpeech.voice = value;
+        break;
+    case TextToSpeechKeys::model:
+        textToSpeech.model = value;
+        break;
+    }
+    settings.textToSpeech = textToSpeech;
+};
+void HTTPClient::updateTextToSpeech(const TextToSpeechKeys& key, const VoiceSettings& value) {
+    switch (key) {
+    case TextToSpeechKeys::voice_settings:
+        textToSpeech.voice_settings = value;
+        break;
+    }
+};
+void HTTPClient::updateTextToSpeech(const TextToSpeechKeys& key, const int& value) {
+    switch (key) {
+    case TextToSpeechKeys::seed:
+        textToSpeech.seed = value;
+        break;
+    }
+};
+
+// Audio
+void  HTTPClient::updateAudioFormat(const AudioFormatKeys& key, const std::string& value) {
+    switch (key) {
+    case AudioFormatKeys::codec:
+        audioFormat.codec = value;
+        break;
+    case AudioFormatKeys::bit_depth:
+        audioFormat.bit_depth = value;
+        break;
+    case AudioFormatKeys::bit_rate:
+        audioFormat.bit_rate = value;
+        break;
+    case AudioFormatKeys::normalization_type:
+        audioFormat.normalization_type = value;
+        break;
+    }
+    updateSessionSettings(SessionSettingsKeys::audio_format, audioFormat);
+};
+void  HTTPClient::updateAudioFormat(const AudioFormatKeys& key, const int& value) {
+    switch (key) {
+    case AudioFormatKeys::sample_rate:
+        audioFormat.sample_rate = value;
+        break;
+    case AudioFormatKeys::channels:
+        audioFormat.channels = value;
+        break;
+    }
+    updateSessionSettings(SessionSettingsKeys::audio_format, audioFormat);
+};
+
+// Engine Modules
+void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const std::string& value ) {
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        engineModules.ai_api_engine_module = value;
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        engineModules.audio_file_engine_module = value;
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        engineModules.script_db_engine_module = value;
+        break;
+    }
+};
+void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value) {
+    json valueJ;
+    try {
+        valueJ = json{ value };
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        aiApiSettings = valueJ;
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        audioFileEngineSettings = valueJ;
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        scriptDbEngineSettings = valueJ;
+        break;
+    }
+};
+
+// Script
+void HTTPClient::updateCharacterInfo(const CharacterInfoKeys& key, const std::string& value ) {
+    switch (key) {
+    case CharacterInfoKeys::id:
+        characterInfo.id = value;
+        break;
+    case CharacterInfoKeys::character_name:
+        characterInfo.character_name = value;
+        break;
+    case CharacterInfoKeys::voice_talent:
+        characterInfo.voice_talent = value;
+        break;
+    case CharacterInfoKeys::script_name:
+        characterInfo.script_name = value;
+        break;
+    case CharacterInfoKeys::gender:
+        characterInfo.gender = value;
+        break;
+    }
+};
+void HTTPClient::updateCharacterInfo(const CharacterInfoKeys& key, const int& value) {
+    switch (key) {
+    case CharacterInfoKeys::number_of_lines:
+        characterInfo.number_of_lines = value;
+        break;
+    }
+};
+
+void HTTPClient::updateCurrentScriptLine(const ScriptLineKeys& key, const std::string& value) {
+    switch (key) {
+    case ScriptLineKeys::id:
+        currentScriptLine.id = value;
+        break;
+    case ScriptLineKeys::source_text:
+        currentScriptLine.source_text = value;
+        break;
+    case ScriptLineKeys::translation:
+        currentScriptLine.translation = value;
+        break;
+    case ScriptLineKeys::time_restriction:
+        currentScriptLine.time_restriction = value;
+        break;
+    case ScriptLineKeys::voice_talent:
+        currentScriptLine.voice_talent = value;
+        break;
+    case ScriptLineKeys::character_name:
+        currentScriptLine.character_name = value;
+        break;
+    case ScriptLineKeys::reference_audio_path:
+        currentScriptLine.reference_audio_path = value;
+        break;
+    case ScriptLineKeys::delivery_audio_path:
+        currentScriptLine.delivery_audio_path = value;
+        break;
+    case ScriptLineKeys::generated_audio_path:
+        currentScriptLine.generated_audio_path = value;
+        break;
+    };
+};
+
+
+// Session
+void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const std::string& value ) {
+    // Nothing to see here UwU
+};
+
+void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const AudioFormat& value) {
+    switch (key) {
+    case SessionSettingsKeys::audio_format:
+        sessionSettings.audio_format = value;
+    }
+};
+
+
+// Plugin
+void HTTPClient::loadPluginSettings() {
+    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json"};
+    const juce::File settingsFile{ settingsLocation };
+    settingsFile.create();
+    const json settingsJ = json::parse(settingsFile.loadFileAsString().toStdString());
+    settings = settingsJ;
+
+    textToSpeech = settings.textToSpeech;
+    engineModules = settings.engineModules;
+    sessionSettings = settings.sessionSettings;
+    generatedAudioPath = settings.generatedAudioPath;
+    url = settings.url;
+    port = settings.port;
+    apiKey = settings.api_key;
+    DBG(settingsJ.dump(4));
+    DBG(json{ settings }.dump(4));
+};
+
+void HTTPClient::savePluginSettings() {
+    settings.textToSpeech = textToSpeech;
+    settings.engineModules = engineModules;
+    settings.sessionSettings = sessionSettings;
+    settings.generatedAudioPath = generatedAudioPath;
+    settings.url = url;
+    settings.port = port;
+    settings.api_key = apiKey;
+
+    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
+    const juce::File settingsFile{ settingsLocation };
+
+    settingsFile.replaceWithText(json{ settings }[0] .dump());
+};

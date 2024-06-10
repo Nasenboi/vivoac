@@ -29,7 +29,9 @@ public:
     void onLeave() override {};
     void buttonClicked(juce::Button* button) override;
     void buttonStateChanged(juce::Button* button) override {};
-    void textEditorTextChanged(juce::TextEditor& editor) override;
+    void textEditorReturnKeyPressed(juce::TextEditor& editor) override;
+    void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
+    void onTextEditorDone(juce::TextEditor& editor);
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 private:

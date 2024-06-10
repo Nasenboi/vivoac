@@ -84,6 +84,15 @@ struct TextToSpeech {
     std::string model = "";
     int seed = -1;
 };
+inline bool isEmpty(const TextToSpeech& s) {
+    return {
+        s.text.empty() &&
+        s.voice.empty() &&
+        s.model.empty() &&
+        s.seed == -1 &&
+        isEmpty(s.voice_settings)
+    };
+}
 inline void from_json(const json& j, TextToSpeech& s) {
     s.text = j.value("text", "");
     s.voice = j.value("voice", "");
@@ -108,8 +117,8 @@ enum class AudioFormatKeys {
 };
 struct AudioFormat {
     std::string codec = "";
-    std::string sample_rate = "";
-    std::string channels = "";
+    int sample_rate = -1;
+    int channels = -1;
     std::string bit_depth = "";
     std::string bit_rate = "";
     std::string normalization_type = "";
@@ -117,8 +126,8 @@ struct AudioFormat {
 inline bool const isEmpty(const AudioFormat& s) {
     return {
         s.codec.empty() &&
-        s.sample_rate.empty() &&
-        s.channels.empty() &&
+        s.sample_rate == -1 &&
+        s.channels == -1 &&
         s.bit_depth.empty() &&
         s.bit_rate.empty() &&
         s.normalization_type.empty()
@@ -126,8 +135,8 @@ inline bool const isEmpty(const AudioFormat& s) {
 };
 inline void from_json(const json& j, AudioFormat& s) {
     s.codec = j.value("codec", "");
-    s.sample_rate = j.value("sample_rate", "");
-    s.channels = j.value("channels", "");
+    s.sample_rate = j.value("sample_rate", -1);
+    s.channels = j.value("channels", -1);
     s.bit_depth = j.value("bit_depth", "");
     s.bit_rate = j.value("bit_rate", "");
     s.normalization_type = j.value("normalization_type", "");
@@ -135,8 +144,8 @@ inline void from_json(const json& j, AudioFormat& s) {
 inline void to_json(json& j, const AudioFormat& s) {
     j = json{};
     if (!s.codec.empty()) { j["codec"] = s.codec; }
-    if (!s.sample_rate.empty()) { j["sample_rate"] = s.sample_rate; }
-    if (!s.channels.empty()) { j["channels"] = s.channels; }
+    if (s.sample_rate != -1) { j["sample_rate"] = s.sample_rate; }
+    if (s.channels != -1) { j["channels"] = s.channels; }
     if (!s.bit_depth.empty()) { j["bit_depth"] = s.bit_depth; }
     if (!s.bit_rate.empty()) { j["bit_rate"] = s.bit_rate; }
     if (!s.normalization_type.empty()) { j["normalization_type"] = s.normalization_type; }
@@ -154,6 +163,13 @@ struct EngineModules {
     std::string audio_file_engine_module = "";
     std::string script_db_engine_module = "";
 };
+inline bool isEmpty(const EngineModules& s) {
+    return {
+        s.ai_api_engine_module.empty() &&
+        s.audio_file_engine_module.empty() &&
+        s.script_db_engine_module.empty()
+    };
+}
 inline void from_json(const json& j, EngineModules& s) {
     s.ai_api_engine_module = j.value("ai_api_engine_module", "");
     s.audio_file_engine_module = j.value("audio_file_engine_module", "");
@@ -165,6 +181,17 @@ inline void to_json(json& j, const EngineModules& s) {
     if (!s.audio_file_engine_module.empty()) { j["audio_file_engine_module"] = s.audio_file_engine_module; }
     if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
 }
+const struct PossibleEngineModules {
+    const std::array<std::string, 2> ai_api_engine_modules {
+        "AI_API_Engine", "Excel_Script_DB_Engine"
+    };
+    const std::array<std::string, 1> audio_file_engine_modules {
+        "Audio_File_Engine"
+    };
+    const std::array<std::string, 1> script_db_engine_modules {
+        "Script_DB_Engine"
+    };
+};
 
 //==============================================================================
 /* The Script Models
@@ -177,7 +204,7 @@ struct CharacterInfo {
     std::string character_name = "";
     std::string voice_talent = "";
     std::string script_name = "";
-    int number_of_lines = 0;
+    int number_of_lines = -1;
     std::string gender = "";
 };
 inline void from_json(const json& j, CharacterInfo& s) {
@@ -194,7 +221,7 @@ inline void to_json(json& j, const CharacterInfo& s) {
     if (!s.character_name.empty()) { j["character_name"] = s.character_name; }
     if (!s.voice_talent.empty()) { j["voice_talent"] = s.voice_talent; }
     if (!s.script_name.empty()) { j["script_name"] = s.script_name; }
-    if (s.number_of_lines != 0) { j["number_of_lines"] = s.number_of_lines; }
+    if (s.number_of_lines != -1) { j["number_of_lines"] = s.number_of_lines; }
     if (!s.gender.empty()) { j["gender"] = s.gender; }
 };
 
@@ -259,4 +286,42 @@ inline void from_json(const json& j, SessionSettings& s) {
 inline void to_json(json& j, const SessionSettings& s) {
     j = json{};
     if (!isEmpty(s.audio_format)) { j["audio_format"] = s.audio_format; }
+}
+
+//==============================================================================
+/* The Settings Models
+*/
+
+enum class PluginSettingsKeys {
+    textToSpeech, engineModules, sessionSettings, generatedAudioPath, url, port, api_key
+};
+struct PluginSettings {
+    TextToSpeech textToSpeech = TextToSpeech{};
+    EngineModules engineModules = EngineModules{};
+    SessionSettings sessionSettings = SessionSettings{};
+
+    std::string generatedAudioPath = "";
+    std::string url = "";
+    std::string port = "";
+    std::string api_key = "";
+
+};
+inline void from_json(const json& j, PluginSettings& s) {
+    if (j.contains("textToSpeech") && j["textToSpeech"].is_object()) { s.textToSpeech = j["textToSpeech"].get<TextToSpeech>(); }
+    if (j.contains("engineModules") && j["engineModules"].is_object()) { s.engineModules = j["engineModules"].get<EngineModules>(); }
+    if (j.contains("sessionSettings") && j["sessionSettings"].is_object()) { s.sessionSettings = j["sessionSettings"].get<SessionSettings>(); }
+    if (j.contains("generatedAudioPath")) { s.generatedAudioPath = j["generated_audio_path"]; };
+    if (j.contains("url")) { s.url = j["url"]; };
+    if (j.contains("port")) { s.port = j["port"]; };
+    if (j.contains("api_key")) { s.api_key = j["api_key"]; };
+}
+inline void to_json(json& j, const PluginSettings& s) {
+    j = json{};
+    if (!isEmpty(s.textToSpeech)) { j["textToSpeech"] = s.textToSpeech; }
+    if (!isEmpty(s.engineModules)) { j["engineModules"] = s.engineModules; }
+    if (!isEmpty(s.sessionSettings)) { j["sessionSettings"] = s.sessionSettings; }
+    if (!s.url.empty()) j["url"] = s.url;
+    if (!s.port.empty()) j["port"] = s.port;
+    if (!s.api_key.empty()) j["api_key"] = s.api_key;
+
 }
