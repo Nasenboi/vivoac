@@ -70,6 +70,7 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     targetAudioFormat.addItem("ogg", 3);
     targetAudioFormat.addItem("aif", 4);
     targetAudioFormat.setSelectedId(1);
+    targetAudioFormat.addListener(this);
     addAndMakeVisible(targetAudioFormat);
 
 
@@ -229,6 +230,6 @@ void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
         client.updateSessionEngines(EngineModulesKeys::script_db_engine_module_index, scriptDbEngine.getSelectedId());
     }
     else if (comboBoxThatHasChanged == &targetAudioFormat) {
-        client.updateAudioFormat(AudioFormatKeys::codec, targetAudioFormat.getSelectedIdAsValue().toString().toStdString());
+        client.updateAudioFormat(AudioFormatKeys::codec, targetAudioFormat.getText().toStdString());
     }
 };
