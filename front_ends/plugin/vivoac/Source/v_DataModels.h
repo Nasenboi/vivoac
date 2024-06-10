@@ -196,13 +196,13 @@ inline void to_json(json& j, const EngineModules& s) {
 }
 const struct PossibleEngineModules {
     const std::array<std::string, 2> ai_api_engine_modules {
-        "AI_API_Engine", "Excel_Script_DB_Engine"
+        "AI_API_Engine", "Piper_TTS_Engine"
     };
     const std::array<std::string, 1> audio_file_engine_modules {
         "Audio_File_Engine"
     };
-    const std::array<std::string, 1> script_db_engine_modules {
-        "Script_DB_Engine"
+    const std::array<std::string, 2> script_db_engine_modules {
+        "Script_DB_Engine", "Excel_Script_DB_Engine"
     };
 };
 
