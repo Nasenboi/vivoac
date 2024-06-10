@@ -47,6 +47,7 @@ public:
     void initSession();
     void closeSession();
     void reload();
+
     std::string getSessionID() { return sessionID; }
     void setUrl(const std::string& u) { url = u; }
     std::string& getUrl() { return url; };
@@ -118,6 +119,7 @@ private:
 
     // Session
     SessionSettings sessionSettings;
+    void updateSession();
 
     // Settings
     void loadPluginSettings();

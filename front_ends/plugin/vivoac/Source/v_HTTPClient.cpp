@@ -116,6 +116,38 @@ void HTTPClient::reload() {
     initSession();
 }
 
+void HTTPClient::updateSession() {
+    if (sessionID.empty()) return;
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    json body = {};
+    body["session_id"] = sessionID.c_str();
+    body["session_settings"] = sessionSettings;
+
+    DBG("---------------------------------------------");
+    DBG("session to send:");
+    DBG(body.dump(4));
+    DBG("---------------------------------------------");
+
+    CURLcode res = doCurl("/session/update", HTTPMethod::Post, headers, body);
+
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG("---------------------------------------------");
+        DBG("json recieved:");
+        DBG(j.dump(4));
+        DBG("---------------------------------------------");
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+}
+
 // == Script functions ==
 
 void HTTPClient::getScriptLines() {
@@ -124,7 +156,6 @@ void HTTPClient::getScriptLines() {
     json body = {};
     body["script_line"] = currentScriptLine;
 
-    DBG("--------------------------------");
     CURLcode res = doCurl("/script/get", HTTPMethod::Post, headers, body);
     
     if (res != CURLE_OK) {
@@ -139,7 +170,6 @@ void HTTPClient::getScriptLines() {
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
     }
-    DBG("-------------------------------");
 };
 
 // == Audio functions ==
@@ -476,6 +506,7 @@ void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const Aud
     case SessionSettingsKeys::audio_format:
         sessionSettings.audio_format = value;
     }
+    updateSession();
 };
 
 
@@ -510,5 +541,5 @@ void HTTPClient::savePluginSettings() {
     const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
     const juce::File settingsFile{ settingsLocation };
 
-    settingsFile.replaceWithText(json{ settings }[0] .dump());
+    settingsFile.replaceWithText(json{ settings } [0] .dump());
 };
