@@ -85,3 +85,28 @@ class Engine_Backend:
                 self.session_sub_engines.remove(engine)
                 return session_id
         raise ValueError(f"Session ID not found: {session_id}")
+
+    # == Session Engine Settings ==
+    async def get_session_engine_settings(
+        self, session_id: str | int, engine_module_name: str
+    ) -> dict:
+        for engine in self.session_sub_engines:
+            if engine.session_id == session_id:
+                LOGGER.debug(f"Getting engine settings: {engine_module_name}")
+                settings = engine.__getattribute__(
+                    engine_module_name
+                ).get_class_variables()
+                LOGGER.debug(f"Settings: {settings}")
+                return engine.__getattribute__(engine_module_name).get_class_variables()
+        raise ValueError(f"Session ID not found: {session_id}")
+
+    async def update_session_engine_settings(
+        self, session_id: str | int, engine_module_name: str, engine_settings: dict
+    ) -> str | int:
+        for engine in self.session_sub_engines:
+            if engine.session_id == session_id:
+                engine.__getattribute__(engine_module_name).set_class_variables(
+                    **engine_settings
+                )
+                return session_id
+        raise ValueError(f"Session ID not found: {session_id}")

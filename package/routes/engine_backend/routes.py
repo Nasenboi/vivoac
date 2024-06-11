@@ -33,6 +33,16 @@ class Engine_Router(APIRouter):
         self.add_api_route(
             path="/update", endpoint=self.update_session_engines_route, methods=["POST"]
         )
+        self.add_api_route(
+            path="/settings/get",
+            endpoint=self.get_engine_settings_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/settings/update",
+            endpoint=self.update_engine_settings_route,
+            methods=["POST"],
+        )
 
     async def get_session_engines_route(
         self,
@@ -49,4 +59,25 @@ class Engine_Router(APIRouter):
     ) -> str | int:
         return await self.api_engine.engine_backend.update_session_engines(
             session_id=session_id, engine_modules=engine_modules
+        )
+
+    # == Engine Settings ==
+
+    async def get_engine_settings_route(
+        self, session_id: Annotated[str, Header()], engine_module_name: str
+    ) -> dict:
+        return await self.api_engine.engine_backend.get_session_engine_settings(
+            session_id=session_id, engine_module_name=engine_module_name
+        )
+
+    async def update_engine_settings_route(
+        self,
+        session_id: Annotated[str, Header()],
+        engine_module_name: str,
+        engine_settings: dict,
+    ) -> dict:
+        return await self.api_engine.engine_backend.update_session_engine_settings(
+            session_id=session_id,
+            engine_module_name=engine_module_name,
+            engine_settings=engine_settings,
         )

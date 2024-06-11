@@ -25,14 +25,14 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     script_file_name: str = None
     excel_data_frame: pd.DataFrame = None
     field_name_mapping: Annotated[Dict[str, str], "'Script field': 'Excel field'"] = {
-        "id": "id",
+        "id": "rain_id",
         "source_text": "source_text",
         "translation": "translation",
         "time_restriction": "time_restriction",
         "voice_talent": "voice_talent",
         "character_name": "character_name",
-        "reference_audio_path": "reference_audio_path",
-        "delivery_audio_path": "delivery_audio_path",
+        "reference_audio_path": "RA_path",
+        "delivery_audio_path": "DA_path",
         "generatied_audio_path": "generatied_audio_path",
     }
 

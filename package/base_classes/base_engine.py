@@ -19,7 +19,10 @@ class Base_Engine:
     # getter functions:
 
     def get_class_variables(self):
-        return self.__annotations__
+        annotations = self.__annotations__
+        for key in annotations.keys():
+            annotations[key] = getattr(self, key)
+        return annotations
 
     ############################################################
     # set class variables:
