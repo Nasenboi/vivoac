@@ -92,11 +92,6 @@ class Engine_Backend:
     ) -> dict:
         for engine in self.session_sub_engines:
             if engine.session_id == session_id:
-                LOGGER.debug(f"Getting engine settings: {engine_module_name}")
-                settings = engine.__getattribute__(
-                    engine_module_name
-                ).get_class_variables()
-                LOGGER.debug(f"Settings: {settings}")
                 return engine.__getattribute__(engine_module_name).get_class_variables()
         raise ValueError(f"Session ID not found: {session_id}")
 
