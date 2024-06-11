@@ -70,7 +70,7 @@ void HTTPClient::parameterChanged(const juce::String& parameterID, float newValu
 
 // == Session functions ==
 
-void HTTPClient::initSession() {
+void HTTPClient::CURLinitSession() {
     CURLcode res = doCurl("/session/create", HTTPMethod::Put);
 
     if (res != CURLE_OK) {
@@ -88,12 +88,12 @@ void HTTPClient::initSession() {
         sessionID = "";
     }
 
-    getEngineSettings(EngineModulesKeys::ai_api_engine_module);
-    getEngineSettings(EngineModulesKeys::audio_file_engine_module);
-    getEngineSettings(EngineModulesKeys::script_db_engine_module);
+    CURLgetEngineSettings(EngineModulesKeys::ai_api_engine_module);
+    CURLgetEngineSettings(EngineModulesKeys::audio_file_engine_module);
+    CURLgetEngineSettings(EngineModulesKeys::script_db_engine_module);
 };
 
-void HTTPClient::closeSession() {
+void HTTPClient::CURLcloseSession() {
     if (sessionID.empty()) return;
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
@@ -116,11 +116,11 @@ void HTTPClient::closeSession() {
 }
 
 void HTTPClient::reload() {
-    closeSession();
-    initSession();
+    CURLcloseSession();
+    CURLinitSession();
 }
 
-void HTTPClient::updateSession() {
+void HTTPClient::CURLupdateSession() {
     if (sessionID.empty()) return;
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
@@ -154,7 +154,7 @@ void HTTPClient::updateSession() {
 
 // == Script functions ==
 
-void HTTPClient::getScriptLines() {
+void HTTPClient::CURLgetScriptLines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
@@ -194,7 +194,29 @@ int HTTPClient::getEngineId(EngineModulesKeys key) {
         break;
     }
 }
-void HTTPClient::getEngineSettings(EngineModulesKeys key) {
+void HTTPClient::CURLupdateSessionEngines() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    json body = {};
+    body["engine_modules"] = engineModules;
+
+    CURLcode res = doCurl("/engine/settings/get", HTTPMethod::Get, headers, body);
+
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG(j.dump(4));
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+}
+
+void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     std::string engine_name;
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
@@ -239,6 +261,10 @@ void HTTPClient::getEngineSettings(EngineModulesKeys key) {
         scriptDbEngineSettings = j;
         break;
     }
+}
+
+void HTTPClient::CURLupdateSessionEngineSettings() {
+
 }
 
 std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump) {

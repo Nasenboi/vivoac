@@ -41,12 +41,12 @@ public:
     ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
     void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
     std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
-    void getScriptLines();
+    void CURLgetScriptLines();
 
     // == Session functions ==
 
-    void initSession();
-    void closeSession();
+    void CURLinitSession();
+    void CURLcloseSession();
     void reload();
 
     std::string getSessionID() { return sessionID; }
@@ -112,7 +112,9 @@ private:
     // Engine Modules:
     EngineModules engineModules;
     json aiApiSettings, audioFileEngineSettings, scriptDbEngineSettings;
-    void getEngineSettings(EngineModulesKeys key);
+    void CURLgetEngineSettings(EngineModulesKeys key);
+    void CURLupdateSessionEngines();
+    void CURLupdateSessionEngineSettings();
 
     // Script
     CharacterInfo characterInfo;
@@ -121,7 +123,7 @@ private:
 
     // Session
     SessionSettings sessionSettings;
-    void updateSession();
+    void CURLupdateSession();
 
     // Settings
     void loadPluginSettings();
