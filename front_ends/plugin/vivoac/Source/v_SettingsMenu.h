@@ -34,6 +34,9 @@ public:
     void onTextEditorDone(juce::TextEditor& editor);
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
+    void updateSessionComponents();
+    void updateEngineComponents();
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(v_SettingsMenu)
     juce::TextEditor apiUrl, apiPort, apiKey, generatedAudioPath, targetNumChannels, targetSampleRate, aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings, sessionId;

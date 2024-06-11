@@ -69,7 +69,6 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     targetAudioFormat.addItem("mp3", 2);
     targetAudioFormat.addItem("ogg", 3);
     targetAudioFormat.addItem("aif", 4);
-    targetAudioFormat.setSelectedId(1);
     targetAudioFormat.addListener(this);
     addAndMakeVisible(targetAudioFormat);
 
@@ -98,11 +97,11 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     audioFileEngineSettings.addListener(this);
     audioFileEngineSettings.setReturnKeyStartsNewLine(true);
     audioFileEngineSettings.setTabKeyUsedAsCharacter(true);
+    audioFileEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::audio_file_engine_module));
     addAndMakeVisible(audioFileEngineSettings);
     for (int i = 0; i < client.possibleEngineModules.audio_file_engine_modules.size(); ++i) {
         audioFileEngine.addItem(client.possibleEngineModules.audio_file_engine_modules[i], i+1);
     }
-    audioFileEngine.setSelectedId(client.getEngineId(EngineModulesKeys::audio_file_engine_module_index));
     audioFileEngine.addListener(this);
     addAndMakeVisible(audioFileEngine);
     scriptDbEngineLabel.setText("Script DB Engine:", juce::dontSendNotification);
@@ -113,11 +112,11 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     scriptDbEngineSettings.setReturnKeyStartsNewLine(true);
     scriptDbEngineSettings.setTabKeyUsedAsCharacter(true);
     scriptDbEngineSettings.addListener(this);
+    scriptDbEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::script_db_engine_module));
     addAndMakeVisible(scriptDbEngineSettings);
     for (int i = 0; i < client.possibleEngineModules.script_db_engine_modules.size(); ++i) {
         scriptDbEngine.addItem(client.possibleEngineModules.script_db_engine_modules[i], i+1);
     }
-    scriptDbEngine.setSelectedId(client.getEngineId(EngineModulesKeys::script_db_engine_module_index));
     scriptDbEngine.addListener(this);
     addAndMakeVisible(scriptDbEngine);
 }
@@ -165,10 +164,26 @@ void v_SettingsMenu::resized()
     audioFileEngine.setBounds(getWidth() / 2 + margin, getHeight() / 6 * 3 - textEditHeight / 2, textEditLength, textEditHeight);
     scriptDbEngine.setBounds(getWidth() / 2 + margin, getHeight() / 6 * 5 - textEditHeight / 2, textEditLength, textEditHeight);
 }
+
+void v_SettingsMenu::updateSessionComponents() {
+    sessionId.setText(client.getSessionID());
+
+}
+void v_SettingsMenu::updateEngineComponents() {
+    aiApiEngine.setSelectedId(client.getEngineId(EngineModulesKeys::ai_api_engine_module_index));
+    audioFileEngine.setSelectedId(client.getEngineId(EngineModulesKeys::audio_file_engine_module_index));
+    scriptDbEngine.setSelectedId(client.getEngineId(EngineModulesKeys::script_db_engine_module_index));
+
+    aiApiEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::ai_api_engine_module));
+    audioFileEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::audio_file_engine_module));
+    scriptDbEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::script_db_engine_module));
+}
+
 void v_SettingsMenu::buttonClicked(juce::Button* button) {
     if (button == &reconnectButton) {
         client.reload();
-        sessionId.setText(client.getSessionID());
+        updateSessionComponents();
+        updateEngineComponents();
     }
     else if (button == &choosePathButton) {
         fileChooser = std::make_unique<juce::FileChooser>("Please select a good path!");

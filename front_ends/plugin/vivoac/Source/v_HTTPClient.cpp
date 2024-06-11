@@ -87,6 +87,10 @@ void HTTPClient::initSession() {
         DBG("JSON parse error: " << e.what());
         sessionID = "";
     }
+
+    getEngineSettings(EngineModulesKeys::ai_api_engine_module);
+    getEngineSettings(EngineModulesKeys::audio_file_engine_module);
+    getEngineSettings(EngineModulesKeys::script_db_engine_module);
 };
 
 void HTTPClient::closeSession() {
@@ -190,12 +194,72 @@ int HTTPClient::getEngineId(EngineModulesKeys key) {
         break;
     }
 }
+void HTTPClient::getEngineSettings(EngineModulesKeys key) {
+    std::string engine_name;
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        engine_name = "ai_api_engine";
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        engine_name = "audio_file_engine";
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        engine_name = "script_db_engine";
+        break;
+    }
+
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    json query = {};
+    query["engine_module_name"] = engine_name;
+
+    CURLcode res = doCurl("/engine/settings/get", HTTPMethod::Get, headers, {}, query);
+
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG(j.dump(4));
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        aiApiSettings = j;
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        audioFileEngineSettings = j;
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        scriptDbEngineSettings = j;
+        break;
+    }
+}
+
+std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump) {
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        return aiApiSettings.dump(dump);
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        return audioFileEngineSettings.dump(dump);
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        return scriptDbEngineSettings.dump(dump);
+        break;
+    }
+}
 
 //==============================================================================
 /* Class functionality
 */
 CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
-    const HEADER_PARAMS header_params, json body_params) {
+    const HEADER_PARAMS header_params, json body_params, json query_params) {
     CURLcode res;
     CURL* curl;
 
@@ -217,7 +281,7 @@ CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
 
     readBuffer.clear();
 
-    auto curlURL = constructURL(path);
+    auto curlURL = constructURL(path, query_params);
     if (curlURL.empty()) return CURLE_FAILED_INIT;
 
     curl_easy_setopt(curl, CURLOPT_URL, curlURL.c_str());
@@ -276,7 +340,17 @@ size_t HTTPClient::WriteCallback(void* contents, size_t size, size_t nmemb, std:
     return newLength;
 };
 
-std::string HTTPClient::constructURL(const std::string& path) {
+std::string urlEncode(CURL* curl, const std::string& value) {
+    char* output = curl_easy_escape(curl, value.c_str(), value.length());
+    if (output) {
+        std::string encoded(output);
+        curl_free(output);
+        return encoded;
+    }
+    return "";
+}
+
+std::string HTTPClient::constructURL(const std::string& path, json query_params) {
     DBG("Path: " << path);
     std::stringstream ss;
     ss << url;
@@ -285,6 +359,28 @@ std::string HTTPClient::constructURL(const std::string& path) {
     }
     if (!path.empty()) {
         ss << path;
+    }
+
+    if (!query_params.empty()) {
+        ss << "?";
+        CURL* curl = curl_easy_init(); // Initialize a CURL instance for URL encoding
+        bool first = true;
+        for (const auto& [key, value] : query_params.items()) {
+            if (!first) {
+                ss << "&";
+            }
+            first = false;
+            std::string encodedKey = urlEncode(curl, key);
+            std::string encodedValue;
+            if (value.is_string()) {
+                encodedValue = urlEncode(curl, value.get<std::string>());
+            }
+            else {
+                encodedValue = urlEncode(curl, value.dump());
+            }
+            ss << encodedKey << "=" << encodedValue;
+        }
+        curl_easy_cleanup(curl); // Clean up the CURL instance after encoding
     }
 
     DBG(ss.str());
