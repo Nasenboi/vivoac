@@ -64,7 +64,9 @@ class Engine_Router(APIRouter):
     # == Engine Settings ==
 
     async def get_engine_settings_route(
-        self, session_id: Annotated[str, Header()], engine_module_name: str
+        self,
+        session_id: Annotated[str, Header()],
+        engine_module_name: str,
     ) -> dict:
         return await self.api_engine.engine_backend.get_session_engine_settings(
             session_id=session_id, engine_module_name=engine_module_name

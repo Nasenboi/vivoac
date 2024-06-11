@@ -34,7 +34,7 @@ class Script_Router(APIRouter):
         self.add_api_route(
             path="/get",
             endpoint=self.get_script_lines_route,
-            methods=["Post"],
+            methods=["GET"],
         )
 
     @session_fetch
