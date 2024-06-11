@@ -147,7 +147,7 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
         scriptAudioView.repaint();
     }
     else if (button == &loadButton) {
-        client.getScriptLines();
+        client.CURLgetScriptLines();
     }
 
 }

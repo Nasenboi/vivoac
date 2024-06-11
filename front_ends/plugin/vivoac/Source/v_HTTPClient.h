@@ -31,11 +31,13 @@ public:
     // == ai api functions ==
 
     // == Audio functions ==
+    std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
 
     // == Engine functions ==
     PossibleEngineModules possibleEngineModules;
-    int getEngineId(EngineModulesKeys key);
+    std::string getSessionEngine(EngineModulesKeys key);
     std::string getEngineSettingsString(EngineModulesKeys key, int dump = 4);
+
 
     // == Script functions ==
     ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
@@ -73,7 +75,6 @@ public:
 
     // Engine Modules
     void updateSessionEngines(const EngineModulesKeys& key, const std::string& value);
-    void updateSessionEngines(const EngineModulesKeys& key, const int& value);
     void updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value);
 
     // Script
@@ -99,7 +100,7 @@ private:
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
     std::string constructURL(const std::string& path = "", json query = json());
     CURLcode doCurl(const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
-        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json());
+        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true);
 
     // === The Data models as structures: ===
     // AI API:
@@ -111,10 +112,11 @@ private:
 
     // Engine Modules:
     EngineModules engineModules;
-    json aiApiSettings, audioFileEngineSettings, scriptDbEngineSettings;
+    json aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings;
     void CURLgetEngineSettings(EngineModulesKeys key);
     void CURLupdateSessionEngines();
-    void CURLupdateSessionEngineSettings();
+    void updateSessionEngineSettings();
+    void CURLupdateSingleSessionEngineSettings(EngineModulesKeys key);
 
     // Script
     CharacterInfo characterInfo;

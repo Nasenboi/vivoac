@@ -51,10 +51,12 @@ using json = nlohmann::json;
 
 HTTPClient::HTTPClient() {
     loadPluginSettings();
+    CURLinitSession();
 };
 
 HTTPClient::~HTTPClient() {
     savePluginSettings();
+    CURLcloseSession();
 };
 
 //==============================================================================
@@ -71,7 +73,7 @@ void HTTPClient::parameterChanged(const juce::String& parameterID, float newValu
 // == Session functions ==
 
 void HTTPClient::CURLinitSession() {
-    CURLcode res = doCurl("/session/create", HTTPMethod::Put);
+    CURLcode res = doCurl("/session/create", HTTPMethod::Put, {}, {}, {}, false);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -87,14 +89,16 @@ void HTTPClient::CURLinitSession() {
         DBG("JSON parse error: " << e.what());
         sessionID = "";
     }
-
+    CURLupdateSession();
+    CURLupdateSessionEngines();
+    updateSessionEngineSettings();
+    
     CURLgetEngineSettings(EngineModulesKeys::ai_api_engine_module);
     CURLgetEngineSettings(EngineModulesKeys::audio_file_engine_module);
     CURLgetEngineSettings(EngineModulesKeys::script_db_engine_module);
 };
 
 void HTTPClient::CURLcloseSession() {
-    if (sessionID.empty()) return;
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
 
@@ -121,7 +125,6 @@ void HTTPClient::reload() {
 }
 
 void HTTPClient::CURLupdateSession() {
-    if (sessionID.empty()) return;
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
@@ -177,30 +180,40 @@ void HTTPClient::CURLgetScriptLines() {
 };
 
 // == Audio functions ==
+std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFormatKeys& key) {
+    switch (key) {
+    case AudioFormatKeys::codec:
+        return audioFormat.codec;
+        break;
+    case AudioFormatKeys::bit_depth:
+        return audioFormat.bit_depth;
+        break;
+    case AudioFormatKeys::bit_rate:
+        return audioFormat.bit_rate;
+        break;
+    case AudioFormatKeys::normalization_type:
+        return audioFormat.normalization_type;
+        break;
+    case AudioFormatKeys::sample_rate:
+        return audioFormat.sample_rate;
+        break;
+    case AudioFormatKeys::channels:
+        return audioFormat.channels;
+        break;
+    }
+}
 
 // == ai api functions ==
 
 // == Engine Functions == 
-int HTTPClient::getEngineId(EngineModulesKeys key) {
-    switch (key) {
-    case EngineModulesKeys::ai_api_engine_module_index:
-        return abs(engineModules.ai_api_engine_module_index);
-        break;
-    case EngineModulesKeys::audio_file_engine_module_index:
-        return abs(engineModules.audio_file_engine_module_index);
-        break;
-    case EngineModulesKeys::script_db_engine_module_index:
-        return abs(engineModules.script_db_engine_module_index);
-        break;
-    }
-}
+
 void HTTPClient::CURLupdateSessionEngines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
     body["engine_modules"] = engineModules;
 
-    CURLcode res = doCurl("/engine/settings/get", HTTPMethod::Get, headers, body);
+    CURLcode res = doCurl("/engine/update", HTTPMethod::Post, headers, body);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -252,7 +265,7 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
 
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
-        aiApiSettings = j;
+        aiApiEngineSettings = j;
         break;
     case EngineModulesKeys::audio_file_engine_module:
         audioFileEngineSettings = j;
@@ -263,14 +276,72 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     }
 }
 
-void HTTPClient::CURLupdateSessionEngineSettings() {
+void HTTPClient::updateSessionEngineSettings() {
+    CURLupdateSingleSessionEngineSettings(EngineModulesKeys::ai_api_engine_module);
+    CURLupdateSingleSessionEngineSettings(EngineModulesKeys::audio_file_engine_module);
+    CURLupdateSingleSessionEngineSettings(EngineModulesKeys::script_db_engine_module);
+}
 
+void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
+    std::string engine_name;
+    json engine_settings;
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        engine_name = "ai_api_engine";
+        engine_settings = aiApiEngineSettings;
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        engine_name = "audio_file_engine";
+        engine_settings = audioFileEngineSettings;
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        engine_name = "script_db_engine";
+        engine_settings = scriptDbEngineSettings;
+        break;
+    }
+
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    json query = {};
+    query["engine_module_name"] = engine_name;
+    json body = engine_settings;
+
+    DBG(body.dump(4));
+
+    CURLcode res = doCurl("/engine/settings/update", HTTPMethod::Post, headers, body, query);
+
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    json j;
+    try {
+        j = json::parse(readBuffer);
+        DBG(j.dump(4));
+    }
+    catch (json::parse_error& e) {
+        DBG("JSON parse error: " << e.what());
+    }
+}
+
+std::string HTTPClient::getSessionEngine(EngineModulesKeys key) {
+    switch (key) {
+    case EngineModulesKeys::ai_api_engine_module:
+        return engineModules.ai_api_engine_module;
+        break;
+    case EngineModulesKeys::audio_file_engine_module:
+        return engineModules.audio_file_engine_module;
+        break;
+    case EngineModulesKeys::script_db_engine_module:
+        return engineModules.script_db_engine_module;
+        break;
+    }
 }
 
 std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump) {
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
-        return aiApiSettings.dump(dump);
+        return aiApiEngineSettings.dump(dump);
         break;
     case EngineModulesKeys::audio_file_engine_module:
         return audioFileEngineSettings.dump(dump);
@@ -285,7 +356,8 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
 /* Class functionality
 */
 CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
-    const HEADER_PARAMS header_params, json body_params, json query_params) {
+    const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId) {
+    if (checkSessionId && sessionID.empty()) return CURLE_AUTH_ERROR;
     CURLcode res;
     CURL* curl;
 
@@ -521,32 +593,20 @@ void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const std::s
         engineModules.script_db_engine_module = value;
         break;
     }
+    CURLupdateSessionEngines();
 };
-void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const int& value) {
-    switch (key) {
-    case EngineModulesKeys::ai_api_engine_module_index:
-        engineModules.ai_api_engine_module_index = value;
-        break;
-    case EngineModulesKeys::audio_file_engine_module_index:
-        engineModules.audio_file_engine_module_index = value;
-        break;
-    case EngineModulesKeys::script_db_engine_module_index:
-        engineModules.script_db_engine_module_index = value;
-        break;
-    }
-};
+
 void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value) {
     json valueJ;
     try {
-        valueJ = json{ value };
+        valueJ = json::parse( value );
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
     }
-
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
-        aiApiSettings = valueJ;
+        aiApiEngineSettings = valueJ;
         break;
     case EngineModulesKeys::audio_file_engine_module:
         audioFileEngineSettings = valueJ;
@@ -555,6 +615,7 @@ void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const
         scriptDbEngineSettings = valueJ;
         break;
     }
+    updateSessionEngineSettings();
 };
 
 // Script
@@ -628,7 +689,7 @@ void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const Aud
     case SessionSettingsKeys::audio_format:
         sessionSettings.audio_format = value;
     }
-    updateSession();
+    CURLupdateSession();
 };
 
 
@@ -643,7 +704,11 @@ void HTTPClient::loadPluginSettings() {
     textToSpeech = settings.textToSpeech;
     engineModules = settings.engineModules;
     sessionSettings = settings.sessionSettings;
+    audioFormat = sessionSettings.audio_format;
     generatedAudioPath = settings.generatedAudioPath;
+    aiApiEngineSettings = settings.aiApiEngineSettings;
+    audioFileEngineSettings = settings.audioFileEngineSettings;
+    scriptDbEngineSettings = settings.scriptDbEngineSettings;
     url = settings.url;
     port = settings.port;
     apiKey = settings.api_key;
@@ -656,6 +721,9 @@ void HTTPClient::savePluginSettings() {
     settings.engineModules = engineModules;
     settings.sessionSettings = sessionSettings;
     settings.generatedAudioPath = generatedAudioPath;
+    settings.aiApiEngineSettings = aiApiEngineSettings;
+    settings.audioFileEngineSettings = audioFileEngineSettings;
+    settings.scriptDbEngineSettings = scriptDbEngineSettings;
     settings.url = url;
     settings.port = port;
     settings.api_key = apiKey;

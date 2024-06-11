@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from ...globals import LOGGER
 from .models import *
@@ -96,7 +96,10 @@ class Engine_Backend:
         raise ValueError(f"Session ID not found: {session_id}")
 
     async def update_session_engine_settings(
-        self, session_id: str | int, engine_module_name: str, engine_settings: dict
+        self,
+        session_id: str | int,
+        engine_module_name: str,
+        engine_settings: Dict[str, Any],
     ) -> str | int:
         for engine in self.session_sub_engines:
             if engine.session_id == session_id:

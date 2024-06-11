@@ -4,10 +4,12 @@ Description:
 Imports:
 """
 
-from typing import Annotated
+import json
+from typing import Annotated, Any, Dict
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Body, Header
 
+from ...globals import LOGGER
 from .models import *
 
 """
@@ -76,8 +78,9 @@ class Engine_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         engine_module_name: str,
-        engine_settings: dict,
-    ) -> dict:
+        engine_settings: Annotated[Dict[str, Any], Body()],
+    ) -> str | int:
+        LOGGER.debug(f"Updating engine settings: {engine_settings}")
         return await self.api_engine.engine_backend.update_session_engine_settings(
             session_id=session_id,
             engine_module_name=engine_module_name,

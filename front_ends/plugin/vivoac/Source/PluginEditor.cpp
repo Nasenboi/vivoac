@@ -28,7 +28,6 @@ VivoacAudioProcessorEditor::VivoacAudioProcessorEditor(VivoacAudioProcessor& p)
 
 VivoacAudioProcessorEditor::~VivoacAudioProcessorEditor()
 {
-    client.closeSession();
     setLookAndFeel(nullptr);
 }
 

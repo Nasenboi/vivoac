@@ -86,7 +86,6 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     for (int i = 0; i < client.possibleEngineModules.ai_api_engine_modules.size(); ++i) {
         aiApiEngine.addItem(client.possibleEngineModules.ai_api_engine_modules[i], i+1);
     }
-    aiApiEngine.setSelectedId(client.getEngineId(EngineModulesKeys::ai_api_engine_module_index));
     aiApiEngine.addListener(this);
     addAndMakeVisible(aiApiEngine);
     audioFileEngineLabel.setText("Audio File Engine:", juce::dontSendNotification);
@@ -119,6 +118,9 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     }
     scriptDbEngine.addListener(this);
     addAndMakeVisible(scriptDbEngine);
+
+    updateSessionComponents();
+    updateEngineComponents();
 }
 
 v_SettingsMenu::~v_SettingsMenu()
@@ -168,11 +170,14 @@ void v_SettingsMenu::resized()
 void v_SettingsMenu::updateSessionComponents() {
     sessionId.setText(client.getSessionID());
 
+    targetAudioFormat.setSelectetItemByText(std::get<std::string>(client.getAudioFormatParameter(AudioFormatKeys::codec)));
+    targetSampleRate.setText(juce::String(std::get<int>(client.getAudioFormatParameter(AudioFormatKeys::sample_rate))));
+    targetNumChannels.setText(juce::String(std::get<int>(client.getAudioFormatParameter(AudioFormatKeys::channels))));
 }
 void v_SettingsMenu::updateEngineComponents() {
-    aiApiEngine.setSelectedId(client.getEngineId(EngineModulesKeys::ai_api_engine_module_index));
-    audioFileEngine.setSelectedId(client.getEngineId(EngineModulesKeys::audio_file_engine_module_index));
-    scriptDbEngine.setSelectedId(client.getEngineId(EngineModulesKeys::script_db_engine_module_index));
+    aiApiEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::ai_api_engine_module));
+    audioFileEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::audio_file_engine_module));
+    scriptDbEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::script_db_engine_module));
 
     aiApiEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::ai_api_engine_module));
     audioFileEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::audio_file_engine_module));
@@ -229,20 +234,18 @@ void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
     else if (&editor == &scriptDbEngineSettings) {
         client.updateSessionEngineSettings(EngineModulesKeys::script_db_engine_module, scriptDbEngineSettings.getText().toStdString());
     }
+    updateEngineComponents();
 };
 
 void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
     if (comboBoxThatHasChanged == &aiApiEngine) {
         client.updateSessionEngines(EngineModulesKeys::ai_api_engine_module, aiApiEngine.getText().toStdString());
-        client.updateSessionEngines(EngineModulesKeys::ai_api_engine_module_index, aiApiEngine.getSelectedId());
     }
     else if (comboBoxThatHasChanged == &audioFileEngine) {
         client.updateSessionEngines(EngineModulesKeys::audio_file_engine_module, audioFileEngine.getText().toStdString());
-        client.updateSessionEngines(EngineModulesKeys::audio_file_engine_module_index, audioFileEngine.getSelectedId());
     }
     else if (comboBoxThatHasChanged == &scriptDbEngine) {
         client.updateSessionEngines(EngineModulesKeys::script_db_engine_module, scriptDbEngine.getText().toStdString());
-        client.updateSessionEngines(EngineModulesKeys::script_db_engine_module_index, scriptDbEngine.getSelectedId());
     }
     else if (comboBoxThatHasChanged == &targetAudioFormat) {
         client.updateAudioFormat(AudioFormatKeys::codec, targetAudioFormat.getText().toStdString());

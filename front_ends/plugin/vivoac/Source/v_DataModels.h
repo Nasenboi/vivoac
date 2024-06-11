@@ -156,43 +156,30 @@ inline void to_json(json& j, const AudioFormat& s) {
 */
 
 enum class EngineModulesKeys {
-    ai_api_engine_module, audio_file_engine_module, script_db_engine_module,
-    ai_api_engine_module_index, audio_file_engine_module_index, script_db_engine_module_index
+    ai_api_engine_module, audio_file_engine_module, script_db_engine_module
 };
 struct EngineModules {
     std::string ai_api_engine_module = "";
     std::string audio_file_engine_module = "";
     std::string script_db_engine_module = "";
-    int ai_api_engine_module_index = -1;
-    int audio_file_engine_module_index = -1;
-    int script_db_engine_module_index = -1;
 };
 inline bool isEmpty(const EngineModules& s) {
     return {
         s.ai_api_engine_module.empty() &&
         s.audio_file_engine_module.empty() &&
-        s.script_db_engine_module.empty() &&
-        s.ai_api_engine_module_index == -1 &&
-        s.audio_file_engine_module_index == -1 &&
-        s.script_db_engine_module_index == -1
+        s.script_db_engine_module.empty()
     };
 }
 inline void from_json(const json& j, EngineModules& s) {
     s.ai_api_engine_module = j.value("ai_api_engine_module", "");
     s.audio_file_engine_module = j.value("audio_file_engine_module", "");
     s.script_db_engine_module = j.value("script_db_engine_module", "");
-    s.ai_api_engine_module_index = j.value("ai_api_engine_module_index", -1);
-    s.audio_file_engine_module_index = j.value("audio_file_engine_module_index", -1);
-    s.script_db_engine_module_index = j.value("script_db_engine_module_index", -1);
 }
 inline void to_json(json& j, const EngineModules& s) {
     j = json{};
     if (!s.ai_api_engine_module.empty()) { j["ai_api_engine_module"] = s.ai_api_engine_module; }
     if (!s.audio_file_engine_module.empty()) { j["audio_file_engine_module"] = s.audio_file_engine_module; }
     if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
-    if (s.ai_api_engine_module_index != -1) { j["ai_api_engine_module_index"] = s.ai_api_engine_module_index; }
-    if (s.audio_file_engine_module_index != -1) { j["audio_file_engine_module_index"] = s.audio_file_engine_module_index; }
-    if (s.script_db_engine_module_index != -1) { j["script_db_engine_module_index"] = s.script_db_engine_module_index; }
 }
 const struct PossibleEngineModules {
     const std::array<std::string, 2> ai_api_engine_modules {
@@ -312,17 +299,22 @@ struct PluginSettings {
     TextToSpeech textToSpeech = TextToSpeech{};
     EngineModules engineModules = EngineModules{};
     SessionSettings sessionSettings = SessionSettings{};
+    json aiApiEngineSettings = {};
+    json audioFileEngineSettings = {};
+    json scriptDbEngineSettings = {};
 
     std::string generatedAudioPath = "";
     std::string url = "";
     std::string port = "";
     std::string api_key = "";
-
 };
 inline void from_json(const json& j, PluginSettings& s) {
     if (j.contains("textToSpeech") && j["textToSpeech"].is_object()) { s.textToSpeech = j["textToSpeech"].get<TextToSpeech>(); }
     if (j.contains("engineModules") && j["engineModules"].is_object()) { s.engineModules = j["engineModules"].get<EngineModules>(); }
     if (j.contains("sessionSettings") && j["sessionSettings"].is_object()) { s.sessionSettings = j["sessionSettings"].get<SessionSettings>(); }
+    if (j.contains("aiApiEngineSettings") && j["aiApiEngineSettings"].is_object()) { s.aiApiEngineSettings = j["aiApiEngineSettings"]; }
+    if (j.contains("audioFileEngineSettings") && j["audioFileEngineSettings"].is_object()) { s.audioFileEngineSettings = j["audioFileEngineSettings"]; }
+    if (j.contains("scriptDbEngineSettings") && j["scriptDbEngineSettings"].is_object()) { s.scriptDbEngineSettings = j["scriptDbEngineSettings"]; }
     if (j.contains("generatedAudioPath")) { s.generatedAudioPath = j["generated_audio_path"]; };
     if (j.contains("url")) { s.url = j["url"]; };
     if (j.contains("port")) { s.port = j["port"]; };
@@ -333,8 +325,10 @@ inline void to_json(json& j, const PluginSettings& s) {
     if (!isEmpty(s.textToSpeech)) { j["textToSpeech"] = s.textToSpeech; }
     if (!isEmpty(s.engineModules)) { j["engineModules"] = s.engineModules; }
     if (!isEmpty(s.sessionSettings)) { j["sessionSettings"] = s.sessionSettings; }
+    if (!s.aiApiEngineSettings.empty()) { j["aiApiEngineSettings"] = s.aiApiEngineSettings; }
+    if (!s.audioFileEngineSettings.empty()) { j["audioFileEngineSettings"] = s.audioFileEngineSettings; }
+    if (!s.scriptDbEngineSettings.empty()) { j["scriptDbEngineSettings"] = s.scriptDbEngineSettings; }
     if (!s.url.empty()) j["url"] = s.url;
     if (!s.port.empty()) j["port"] = s.port;
     if (!s.api_key.empty()) j["api_key"] = s.api_key;
-
 }

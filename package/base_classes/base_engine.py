@@ -27,6 +27,6 @@ class Base_Engine:
     ############################################################
     # set class variables:
 
-    def set_class_variables(self, *kwargs):
+    def set_class_variables(self, **kwargs):
         for key, value in kwargs.items():
-            setattr(self, key, value)
+            self.__setattr__(key, value)

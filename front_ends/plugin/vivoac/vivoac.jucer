@@ -22,6 +22,8 @@
               file="Source/v_BaseMenuComponent.cpp"/>
         <FILE id="dz8JTE" name="v_BaseMenuComponent.h" compile="0" resource="0"
               file="Source/v_BaseMenuComponent.h"/>
+        <FILE id="EzNIc7" name="v_BetterCombobox.h" compile="0" resource="0"
+              file="Source/v_BetterCombobox.h"/>
         <FILE id="GtghdO" name="v_GeneratorMenu.cpp" compile="1" resource="0"
               file="Source/v_GeneratorMenu.cpp"/>
         <FILE id="kYoIQs" name="v_GeneratorMenu.h" compile="0" resource="0"
