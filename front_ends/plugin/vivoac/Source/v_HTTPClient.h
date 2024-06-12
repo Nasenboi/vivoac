@@ -71,7 +71,8 @@ public:
     // Audio
     void updateAudioFormat(const AudioFormatKeys& key, const std::string& value);
     void updateAudioFormat(const AudioFormatKeys& key, const int& value);
-    std::string generatedAudioPath;
+    void setGeneratedAudioPath(const std::string& k) { generatedAudioPath = k; }
+    std::string& getGeneratedAudioPath() { return generatedAudioPath; };
 
     // Engine Modules
     void updateSessionEngines(const EngineModulesKeys& key, const std::string& value);
@@ -93,6 +94,7 @@ private:
     std::string url = "http://localhost", port = "8080";
     std::string sessionID;
     std::string apiKey;
+    std::string generatedAudioPath;
 
     enum HTTPMethod {
         Get, Post, Put, Delete

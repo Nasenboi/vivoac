@@ -12,7 +12,7 @@
 #include <JuceHeader.h>
 #include "v_Colors.h"
 
-class ScriptTableModel : public juce::TableListBoxModel {
+class v_GeneratorTableModel : public juce::TableListBoxModel {
 public:
     int getNumRows() override {
         return numRows;
@@ -31,10 +31,13 @@ public:
         g.setColour(juce::Colours::white);
         g.setFont(12.0f);
 
-
+        // trim text from the begining until it fits in the cell:
+        juce::String text = generatedAudioFiles[rowNumber];
+        int begin = text.length() - 60;
+        if (begin < 0) {begin = 0;}
         switch (columnId) {
         case 1:
-            g.drawText(generatedAudioFiles[rowNumber], juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
+            g.drawText(text.substring(begin), juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
             break;
         default:
             break;
@@ -50,6 +53,11 @@ public:
     int getScriptLength() {
         return numRows;
     };
+
+
+    std::string getAudioFile(int row) {
+		return generatedAudioFiles[row];
+	};
 
 private:
     int numRows = 0;

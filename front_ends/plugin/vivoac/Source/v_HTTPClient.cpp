@@ -737,7 +737,6 @@ void HTTPClient::loadPluginSettings() {
     url = settings.url;
     port = settings.port;
     apiKey = settings.api_key;
-    DBG(settingsJ.dump(4));
     DBG(json{ settings }.dump(4));
 };
 
@@ -752,6 +751,8 @@ void HTTPClient::savePluginSettings() {
     settings.url = url;
     settings.port = port;
     settings.api_key = apiKey;
+
+    DBG(json{ settings }.dump(4));
 
     const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
     const juce::File settingsFile{ settingsLocation };

@@ -45,6 +45,7 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     generatedAudioPathLabel.setText("AI Audio Path:", juce::dontSendNotification);
     generatedAudioPathLabel.attachToComponent(&generatedAudioPath, true);
     addAndMakeVisible(generatedAudioPathLabel);
+    generatedAudioPath.setText(client.getGeneratedAudioPath());
     generatedAudioPath.addListener(this);
     addAndMakeVisible(generatedAudioPath);
     choosePathButton.addListener(this);
@@ -195,7 +196,11 @@ void v_SettingsMenu::buttonClicked(juce::Button* button) {
         auto folderChooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
         fileChooser->launchAsync(folderChooserFlags, [this](const juce::FileChooser& chooser) {
             juce::File file = chooser.getResult();
-            if (file.isDirectory()) {generatedAudioPath.setText(file.getFullPathName());}
+            if (file.isDirectory()) {
+                generatedAudioPath.setText(file.getFullPathName());
+                client.setGeneratedAudioPath(generatedAudioPath.getText().toStdString());
+            }
+
         });
     }
 };
@@ -217,7 +222,7 @@ void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
         client.setApiKey(apiKey.getText().toStdString());
     }
     else if (&editor == &generatedAudioPath) {
-        client.generatedAudioPath = generatedAudioPath.getText().toStdString();
+        client.setGeneratedAudioPath(generatedAudioPath.getText().toStdString());
     }
     else if (&editor == &targetNumChannels) {
         client.updateAudioFormat(AudioFormatKeys::channels, targetNumChannels.getText().getIntValue());

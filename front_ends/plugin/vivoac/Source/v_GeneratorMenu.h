@@ -12,6 +12,9 @@
 
 #include <JuceHeader.h>
 #include "v_BaseMenuComponent.h"
+#include "v_GeneratorTableModel.h"
+#include "v_AudioFileView.h"
+#include "v_BetterTableListBox.h"
 
 //==============================================================================
 /*
@@ -25,11 +28,23 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void onEnter() override {};
-    void onLeave() override {};
+    void onEnter() override;
+    void onLeave() override;
+
+    void onSelectedRowsChanged();
+
+    void loadGeneratedAudioFiles();
 
 private:
-    juce::TableListBox generatorTable;
+    // UI Sizes
+    int margin = 10;
+    int defaultLength = 100, defaultHeight = 50;
+
+    // UI components
+    v_GeneratorTableModel generatorTableModel;
+    v_BetterTableListBox generatorTable{ "Generated Audio", &generatorTableModel };
+    v_AudioFileView audioFileView;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_GeneratorMenu)
 };

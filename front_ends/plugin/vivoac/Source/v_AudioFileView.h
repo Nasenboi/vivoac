@@ -21,7 +21,7 @@
 class v_AudioFileView  : public juce::Component, public juce::Button::Listener
 {
 public:
-    v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c);
+    v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c, const bool hasLoadButton = true);
     ~v_AudioFileView() override;
 
     void paint (juce::Graphics&) override;
@@ -36,6 +36,7 @@ private:
     v_Colors colors;
     VivoacAudioProcessor& processor;
     HTTPClient& client;
+    const bool hasLoadButton;
 
 
     juce::TextButton loadButton{ "Load" }, playButton{ "Play" };

@@ -12,10 +12,13 @@
 #include "v_AudioFileView.h"
 
 //==============================================================================
-v_AudioFileView::v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c): processor(p), client(c)
+v_AudioFileView::v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c, const bool hasLoadButton): processor(p), client(c), hasLoadButton(hasLoadButton)
 {
-    loadButton.addListener(this);
-    addAndMakeVisible(loadButton);
+    if (hasLoadButton) {
+        loadButton.addListener(this);
+        addAndMakeVisible(loadButton);
+    }
+
     playButton.addListener(this);
     addAndMakeVisible(playButton);
 }
@@ -69,8 +72,15 @@ void v_AudioFileView::paint(juce::Graphics& g)
 void v_AudioFileView::resized()
 {
     const int buttonWidth = getHeight(), buttonHeight = getHeight() / 2 - 2*margin;
-    loadButton.setBounds(margin, margin, buttonWidth, buttonHeight);
-    playButton.setBounds(margin, getHeight()-margin-buttonHeight, buttonWidth, buttonHeight);
+
+    if (hasLoadButton) {
+        loadButton.setBounds(margin, margin, buttonWidth, buttonHeight);
+        playButton.setBounds(margin, getHeight() - margin - buttonHeight, buttonWidth, buttonHeight);
+	}
+	else {
+        playButton.setBounds(margin, margin, buttonWidth, getHeight() - 2 * margin);
+	}
+
 }
 
 void v_AudioFileView::buttonClicked(juce::Button* button) {

@@ -330,7 +330,7 @@ inline void from_json(const json& j, PluginSettings& s) {
     if (j.contains("aiApiEngineSettings") && j["aiApiEngineSettings"].is_object()) { s.aiApiEngineSettings = j["aiApiEngineSettings"]; }
     if (j.contains("audioFileEngineSettings") && j["audioFileEngineSettings"].is_object()) { s.audioFileEngineSettings = j["audioFileEngineSettings"]; }
     if (j.contains("scriptDbEngineSettings") && j["scriptDbEngineSettings"].is_object()) { s.scriptDbEngineSettings = j["scriptDbEngineSettings"]; }
-    if (j.contains("generatedAudioPath")) { s.generatedAudioPath = j["generated_audio_path"]; };
+    if (j.contains("generatedAudioPath")) { s.generatedAudioPath = j["generatedAudioPath"]; };
     if (j.contains("url")) { s.url = j["url"]; };
     if (j.contains("port")) { s.port = j["port"]; };
     if (j.contains("api_key")) { s.api_key = j["api_key"]; };
@@ -343,6 +343,7 @@ inline void to_json(json& j, const PluginSettings& s) {
     if (!s.aiApiEngineSettings.empty()) { j["aiApiEngineSettings"] = s.aiApiEngineSettings; }
     if (!s.audioFileEngineSettings.empty()) { j["audioFileEngineSettings"] = s.audioFileEngineSettings; }
     if (!s.scriptDbEngineSettings.empty()) { j["scriptDbEngineSettings"] = s.scriptDbEngineSettings; }
+    if (!s.generatedAudioPath.empty()) j["generatedAudioPath"] = s.generatedAudioPath;
     if (!s.url.empty()) j["url"] = s.url;
     if (!s.port.empty()) j["port"] = s.port;
     if (!s.api_key.empty()) j["api_key"] = s.api_key;
