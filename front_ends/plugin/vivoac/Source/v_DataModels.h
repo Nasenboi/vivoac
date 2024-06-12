@@ -57,12 +57,12 @@ inline bool const isEmpty(const VoiceSettings& s) {
     };
 };
 inline void from_json(const json& j, VoiceSettings& s) {
-    s.voice_id = j.value("voice_id", "");
-    s.name = j.value("name", "");
-    s.settings = j.value("settings", json{});
-    s.description = j.value("description", "");
+    if (j.contains("voice_id") && j["voice_id"].is_string()) { s.voice_id = j["voice_id"]; }
+    if (j.contains("name") && j["name"].is_string()) { s.name = j["name"]; }
+    if (j.contains("settings") && j["settings"].is_object()) { s.settings = j["settings"]; }
+    if (j.contains("description") && j["description"].is_string()) { s.description = j["description"]; }
     if (j.contains("files") && j["files"].is_array()) { s.files = j["files"].get<std::vector<std::string>>(); }
-    s.labels = j.value("labels", json{});
+    if (j.contains("labels") && j["labels"].is_object()) { s.labels = j["labels"]; }
 }
 inline void to_json(json& j, const VoiceSettings& s) {
     j = json{};
@@ -94,11 +94,11 @@ inline bool isEmpty(const TextToSpeech& s) {
     };
 }
 inline void from_json(const json& j, TextToSpeech& s) {
-    s.text = j.value("text", "");
-    s.voice = j.value("voice", "");
+    if (j.contains("text") && j["text"].is_string()) { s.text = j["text"]; }
+    if (j.contains("voice") && j["voice"].is_string()) { s.voice = j["voice"]; }
     if (j.contains("voice_settings") && j["voice_settings"].is_object()) { s.voice_settings = j["voice_settings"].get<VoiceSettings>(); }
-    s.model = j.value("model", "");
-    s.seed = j.value("seed", -1);
+    if (j.contains("model") && j["model"].is_string()) { s.model = j["model"]; }
+    if (j.contains("seed") && j["seed"].is_number_integer()) { s.seed = j["seed"]; }
 }
 inline void to_json(json& j, const TextToSpeech& s) {
     j = json{};
@@ -134,12 +134,12 @@ inline bool const isEmpty(const AudioFormat& s) {
     };
 };
 inline void from_json(const json& j, AudioFormat& s) {
-    s.codec = j.value("codec", "");
-    s.sample_rate = j.value("sample_rate", -1);
-    s.channels = j.value("channels", -1);
-    s.bit_depth = j.value("bit_depth", "");
-    s.bit_rate = j.value("bit_rate", "");
-    s.normalization_type = j.value("normalization_type", "");
+    if (j.contains("codec") && j["codec"].is_string()) { s.codec = j["codec"]; }
+	if (j.contains("sample_rate") && j["sample_rate"].is_number_integer()) { s.sample_rate = j["sample_rate"]; }
+	if (j.contains("channels") && j["channels"].is_number_integer()) { s.channels = j["channels"]; }
+	if (j.contains("bit_depth") && j["bit_depth"].is_string()) { s.bit_depth = j["bit_depth"]; }
+	if (j.contains("bit_rate") && j["bit_rate"].is_string()) { s.bit_rate = j["bit_rate"]; }
+	if (j.contains("normalization_type") && j["normalization_type"].is_string()) { s.normalization_type = j["normalization_type"]; }    
 }
 inline void to_json(json& j, const AudioFormat& s) {
     j = json{};
@@ -171,9 +171,9 @@ inline bool isEmpty(const EngineModules& s) {
     };
 }
 inline void from_json(const json& j, EngineModules& s) {
-    s.ai_api_engine_module = j.value("ai_api_engine_module", "");
-    s.audio_file_engine_module = j.value("audio_file_engine_module", "");
-    s.script_db_engine_module = j.value("script_db_engine_module", "");
+    if (j.contains("ai_api_engine_module") && j["ai_api_engine_module"].is_string()) { s.ai_api_engine_module = j["ai_api_engine_module"]; }
+    if (j.contains("audio_file_engine_module") && j["audio_file_engine_module"].is_string()) { s.audio_file_engine_module = j["audio_file_engine_module"]; }
+    if (j.contains("script_db_engine_module") && j["script_db_engine_module"].is_string()) { s.script_db_engine_module = j["script_db_engine_module"]; }
 }
 inline void to_json(json& j, const EngineModules& s) {
     j = json{};
@@ -208,12 +208,12 @@ struct CharacterInfo {
     std::string gender = "";
 };
 inline void from_json(const json& j, CharacterInfo& s) {
-    s.id = j.value("id", "");
-    s.character_name = j.value("character_name", "");
-    s.voice_talent = j.value("voice_talent", "");
-    s.script_name = j.value("script_name", "");
-    s.number_of_lines = j.value("number_of_lines", 0);
-    s.gender = j.value("gender", "");
+    if (j.contains("id") && j["id"].is_string()) { s.id = j["id"]; }
+    if (j.contains("character_name") && j["character_name"].is_string()) { s.character_name = j["character_name"]; }
+    if (j.contains("voice_talent") && j["voice_talent"].is_string()) { s.voice_talent = j["voice_talent"]; }
+    if (j.contains("script_name") && j["script_name"].is_string()) { s.script_name = j["script_name"]; }
+    if (j.contains("gender") && j["gender"].is_string()) { s.gender = j["gender"]; }
+    if (j.contains("number_of_lines") && j["number_of_lines"].is_number_integer()) { s.number_of_lines = j["number_of_lines"]; }
 };
 inline void to_json(json& j, const CharacterInfo& s) {
     j = json{};
@@ -241,16 +241,31 @@ struct ScriptLine {
     std::string delivery_audio_path = "";
     std::string generated_audio_path = "";
 };
+inline bool isEmpty(const ScriptLine& s) {
+	return {
+		s.id.empty() &&
+		s.source_text.empty() &&
+		s.translation.empty() &&
+		s.time_restriction.empty() &&
+		s.voice_talent.empty() &&
+		s.character_name.empty() &&
+		s.reference_audio_path.empty() &&
+		s.delivery_audio_path.empty() &&
+		s.generated_audio_path.empty()
+	};
+}
 inline void from_json(const json& j, ScriptLine& s) {
-    s.id = j.value("id", "");
-    s.source_text = j.value("source_text", "");
-    s.translation = j.value("translation", "");
-    s.time_restriction = j.value("time_restriction", "");
-    s.voice_talent = j.value("voice_talent", "");
-    s.character_name = j.value("character_name", "");
-    s.reference_audio_path = j.value("reference_audio_path", "");
-    s.delivery_audio_path = j.value("delivery_audio_path", "");
-    s.generated_audio_path = j.value("generated_audio_path", "");
+    DBG(j.dump(4));
+    if (j.contains("id") && j["id"].is_string()) { s.id = j["id"]; }
+    else if (j.contains("id") && j["id"].is_number()) { s.id = std::string(j["id"]); }
+	if (j.contains("source_text") && j["source_text"].is_string()) { s.source_text = j["source_text"]; }
+	if (j.contains("translation") && j["translation"].is_string()) { s.translation = j["translation"]; }
+	if (j.contains("time_restriction") && j["time_restriction"].is_string()) { s.time_restriction = j["time_restriction"]; }
+	if (j.contains("voice_talent") && j["voice_talent"].is_string()) { s.voice_talent = j["voice_talent"]; }
+	if (j.contains("character_name") && j["character_name"].is_string()) { s.character_name = j["character_name"]; }
+	if (j.contains("reference_audio_path") && j["reference_audio_path"].is_string()) { s.reference_audio_path = j["reference_audio_path"]; }
+	if (j.contains("delivery_audio_path") && j["delivery_audio_path"].is_string()) { s.delivery_audio_path = j["delivery_audio_path"]; }
+	if (j.contains("generated_audio_path") && j["generated_audio_path"].is_string()) { s.generated_audio_path = j["generated_audio_path"]; }
 };
 inline void to_json(json& j, const ScriptLine& s) {
     j = json{};

@@ -29,6 +29,7 @@ public:
     void onLeave() override {};
 
 private:
+    juce::TableListBox generatorTable;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_GeneratorMenu)
 };

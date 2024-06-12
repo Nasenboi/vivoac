@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    v_ScriptTableModel.h
-    Created: 5 Jun 2024 3:30:17pm
+    v_GeneratorTableBodel.h
+    Created: 12 Jun 2024 3:31:34pm
     Author:  cboen
 
   ==============================================================================
@@ -10,9 +10,8 @@
 
 #pragma once
 #include <JuceHeader.h>
-//==============================================================================
-/*
-*/
+#include "v_Colors.h"
+
 class ScriptTableModel : public juce::TableListBoxModel {
 public:
     int getNumRows() override {
@@ -31,32 +30,21 @@ public:
     void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override {
         g.setColour(juce::Colours::white);
         g.setFont(12.0f);
-        juce::String text, id;
 
-        text = scriptLines[rowNumber].source_text;
-        id = scriptLines[rowNumber].id;
 
         switch (columnId) {
         case 1:
-            g.drawText(id, juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
-            break;
-        case 2:
-            if (text.length() > 35) { text.append("...", 3); }
-            g.drawText(text, juce::Rectangle(margin, 0, width - 2 * margin, height), juce::Justification::left, true);
+            g.drawText(generatedAudioFiles[rowNumber], juce::Rectangle(0, 0, width, height), juce::Justification::centred, true);
             break;
         default:
             break;
         };
     };
 
-    void updateTable (std::vector<ScriptLine>& newScriptLines) {
-        scriptLines.clear();
-        scriptLines = newScriptLines;
-		numRows = scriptLines.size();
-    };
-
-    void listWasScrolled() override {
-
+    void updateTable(std::vector<std::string>& newGeneratedAudioFiles) {
+        generatedAudioFiles.clear();
+        generatedAudioFiles = newGeneratedAudioFiles;
+        numRows = generatedAudioFiles.size();
     };
 
     int getScriptLength() {
@@ -67,5 +55,5 @@ private:
     int numRows = 0;
     const v_Colors colors;
 
-    std::vector<ScriptLine> scriptLines;
+    std::vector<std::string> generatedAudioFiles;
 };

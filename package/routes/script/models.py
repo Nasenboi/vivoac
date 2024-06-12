@@ -36,6 +36,8 @@ class Script_Line(BaseModel):
     reference_audio_path: Optional[str] = None
     delivery_audio_path: Optional[str] = None
     generated_audio_path: Optional[str] = None
+    comment: Optional[str] = None
+    direction_notes: Optional[str] = None
 
     def is_empty(self):
         return not self.__dict__

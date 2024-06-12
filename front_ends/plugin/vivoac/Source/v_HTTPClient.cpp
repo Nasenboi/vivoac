@@ -92,10 +92,6 @@ void HTTPClient::CURLinitSession() {
     CURLupdateSession();
     CURLupdateSessionEngines();
     updateSessionEngineSettings();
-    
-    CURLgetEngineSettings(EngineModulesKeys::ai_api_engine_module);
-    CURLgetEngineSettings(EngineModulesKeys::audio_file_engine_module);
-    CURLgetEngineSettings(EngineModulesKeys::script_db_engine_module);
 };
 
 void HTTPClient::CURLcloseSession() {
@@ -161,9 +157,13 @@ void HTTPClient::CURLgetScriptLines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
-    body["script_line"] = currentScriptLine;
 
-    CURLcode res = doCurl("/script/get", HTTPMethod::Post, headers, body);
+    if (!isEmpty(currentScriptLine)) {
+        body["script_line"] = currentScriptLine;
+    }
+
+    CURLcode res = doCurl("/script/get", HTTPMethod::Get, headers, body);
+    DBG("body: " << body.dump(4));
     
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -172,11 +172,22 @@ void HTTPClient::CURLgetScriptLines() {
     json j;
     try {
         j = json::parse(readBuffer);
-        DBG(j.dump(4));
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
     }
+
+    std::vector<json> lines;
+    if (j.is_array()) {
+		lines = j;
+	}
+	else {
+		DBG("No script lines found.");
+	}
+    scriptLines.clear();
+    for (int i = 0; i < lines.size(); ++i) {
+        scriptLines.push_back(lines[i]);
+	}
 };
 
 // == Audio functions ==
@@ -211,7 +222,7 @@ void HTTPClient::CURLupdateSessionEngines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
-    body["engine_modules"] = engineModules;
+    body = engineModules;
 
     CURLcode res = doCurl("/engine/update", HTTPMethod::Post, headers, body);
 
@@ -227,6 +238,12 @@ void HTTPClient::CURLupdateSessionEngines() {
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
     }
+}
+
+void HTTPClient::getAllEngineSettings() {
+    CURLgetEngineSettings(EngineModulesKeys::ai_api_engine_module);
+    CURLgetEngineSettings(EngineModulesKeys::audio_file_engine_module);
+    CURLgetEngineSettings(EngineModulesKeys::script_db_engine_module);
 }
 
 void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
@@ -298,6 +315,10 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
         engine_name = "script_db_engine";
         engine_settings = scriptDbEngineSettings;
         break;
+    }
+    if (engine_settings.is_null()) {
+        CURLgetEngineSettings(key);
+        return;
     }
 
     HEADER_PARAMS headers = {};
@@ -594,6 +615,7 @@ void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const std::s
         break;
     }
     CURLupdateSessionEngines();
+    updateSessionEngineSettings();
 };
 
 void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const std::string& value) {
@@ -678,6 +700,9 @@ void HTTPClient::updateCurrentScriptLine(const ScriptLineKeys& key, const std::s
     };
 };
 
+void HTTPClient::setCurrentScriptLine(const int& index) {
+	currentScriptLine = scriptLines[index];
+};
 
 // Session
 void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const std::string& value ) {

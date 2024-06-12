@@ -59,6 +59,7 @@ class Engine_Router(APIRouter):
         session_id: Annotated[str, Header()],
         engine_modules: Engine_Modules,
     ) -> str | int:
+        LOGGER.debug(f"Updating session engines: {engine_modules}")
         return await self.api_engine.engine_backend.update_session_engines(
             session_id=session_id, engine_modules=engine_modules
         )

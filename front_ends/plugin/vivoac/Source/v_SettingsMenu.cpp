@@ -250,4 +250,5 @@ void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
     else if (comboBoxThatHasChanged == &targetAudioFormat) {
         client.updateAudioFormat(AudioFormatKeys::codec, targetAudioFormat.getText().toStdString());
     }
+    updateEngineComponents();
 };

@@ -29,6 +29,9 @@ v_ScriptMenu::v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuC
     addAndMakeVisible(clearButton);
     
     // ScriptTable
+    scriptTable.setSelectedRowsChangedCallback([this](int lastRowSelected) {
+        this->onSelectedRowsChanged();
+    });
     scriptTable.getViewport()->setScrollBarsShown(false, false, true, false);
     addAndMakeVisible(scriptTable);
     scriptTable.getHeader().addColumn("ID", 1, 0.75*defaultLength);
@@ -123,33 +126,34 @@ void v_ScriptMenu::resized()
     translationLoader.setBounds(4 * defaultLength, getHeight() - margin - loadButtonSize, loadButtonSize, loadButtonSize );
 }
 
+void v_ScriptMenu::onSelectedRowsChanged() {
+    const juce::SparseSet<int> selection = scriptTable.getSelectedRows();
+    scriptTable.scrollToEnsureRowIsOnscreen(selection.getRange(selection.getNumRanges() - 1).getStart());
+    client.setCurrentScriptLine(selection.getRange(0).getStart());
+    updateComponents();
+}
+
 void v_ScriptMenu::buttonClicked(juce::Button* button) {
     if (button == &prevButton) {
         const juce::SparseSet<int> selection = scriptTable.getSelectedRows();
         juce::SparseSet<int> newSelection = moveSelection(selection, -1);
         scriptTable.setSelectedRows(newSelection);
-        scriptTable.scrollToEnsureRowIsOnscreen(newSelection.getRange(0).getStart());
     }
     else if (button == &nextButton) {
         const juce::SparseSet<int> selection = scriptTable.getSelectedRows();
         juce::SparseSet<int> newSelection = moveSelection(selection, 1);
         scriptTable.setSelectedRows(newSelection);
-        scriptTable.scrollToEnsureRowIsOnscreen(newSelection.getRange(newSelection.getNumRanges() - 1).getStart());
     }
     else if (button == &clearButton) {
-        id.setText("", juce::dontSendNotification);
-        timeRestriction.setText("", juce::dontSendNotification);
-        voiceTalent.setText("", juce::dontSendNotification);
-        characterName.setText("", juce::dontSendNotification);
-        sourceText.setText("", juce::dontSendNotification);
-        translation.setText("", juce::dontSendNotification);
+        scriptTable.setSelectedRows(juce::SparseSet<int>());
         processor.clearAudio();
         scriptAudioView.repaint();
     }
     else if (button == &loadButton) {
         client.CURLgetScriptLines();
+        scriptTableModel.updateTable(client.getAllScriptLines());
+        scriptTable.updateContent();
     }
-
 }
 
 void v_ScriptMenu::textEditorReturnKeyPressed(juce::TextEditor& editor) {
@@ -193,7 +197,7 @@ juce::SparseSet<int> v_ScriptMenu::moveSelection(juce::SparseSet<int> selection,
         range = juce::Range<int>(start, end);
         newSelection.addRange(range);
     }
-     
+
     return newSelection;
 };
 
@@ -208,6 +212,15 @@ bool v_ScriptMenu::isInterestedInFileDrag(const juce::StringArray& files) {
     return false;
 };
 
+void  v_ScriptMenu::updateComponents() {
+    // Update text fields accordung to the current script line
+    id.setText(client.getCurrentScriptLine().id, juce::dontSendNotification);
+    sourceText.setText(client.getCurrentScriptLine().source_text, juce::dontSendNotification);
+    translation.setText(client.getCurrentScriptLine().translation, juce::dontSendNotification);
+    timeRestriction.setText(client.getCurrentScriptLine().time_restriction, juce::dontSendNotification);
+    voiceTalent.setText(client.getCurrentScriptLine().voice_talent, juce::dontSendNotification);
+    characterName.setText(client.getCurrentScriptLine().character_name, juce::dontSendNotification);
+}
 
 void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
     if (!isInterestedInFileDrag(files[0])) return;

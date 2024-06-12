@@ -81,6 +81,7 @@ public:
     void updateCharacterInfo(const CharacterInfoKeys& key, const std::string& value);
     void updateCharacterInfo(const CharacterInfoKeys& key, const int& value);
     void updateCurrentScriptLine(const ScriptLineKeys& key, const std::string& value);
+    void setCurrentScriptLine(const int& index);
 
     // Session
     void updateSessionSettings(const SessionSettingsKeys& key, const std::string& value);
@@ -113,6 +114,7 @@ private:
     // Engine Modules:
     EngineModules engineModules;
     json aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings;
+    void getAllEngineSettings();
     void CURLgetEngineSettings(EngineModulesKeys key);
     void CURLupdateSessionEngines();
     void updateSessionEngineSettings();

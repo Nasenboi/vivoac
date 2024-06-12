@@ -16,11 +16,12 @@
 #include "v_Colors.h"
 #include "v_AudioFileView.h"
 #include "v_ScriptTableModel.h"
+#include "v_BetterTableListBox.h"
 
 //==============================================================================
 /*
 */
-class v_ScriptMenu  : public v_BaseMenuComponent, public juce::Button::Listener, public juce::TextEditor::Listener, public juce::FileDragAndDropTarget
+class v_ScriptMenu : public v_BaseMenuComponent, public juce::Button::Listener, public juce::TextEditor::Listener, public juce::FileDragAndDropTarget
 {
 public:
     v_ScriptMenu(VivoacAudioProcessor& p, HTTPClient& c);
@@ -50,13 +51,16 @@ private:
     // UI components
     juce::TextButton prevButton{ "<" }, nextButton{ ">" }, clearButton{ "x" }, loadButton{ "Load" };
     ScriptTableModel scriptTableModel;
-    juce::TableListBox scriptTable {"Script", &scriptTableModel };
+    v_BetterTableListBox scriptTable {"Script", &scriptTableModel };
     juce::Label idLabel, sourceTextLabel, translationLabel, timeRestrictionLabel, voiceTalentLabel, characterNameLabel;
     juce::TextEditor id, sourceText, translation, timeRestriction, voiceTalent, characterName;
     // can be either for the reference audio or the source audio
     v_AudioFileView scriptAudioView;
     juce::TextButton sourceLoader{ ">" }, translationLoader{ ">" };
     juce::Label sourceLoaderLabel, translationLoaderLabel;
+
+    void onSelectedRowsChanged();
+    void updateComponents();
 
     juce::SparseSet<int> moveSelection(juce::SparseSet<int> selection, int direction);
     

@@ -4,10 +4,9 @@ Description:
 Imports:
 """
 
-from typing import List, Union
+from typing import Any, Dict, List, Union
 
-from fastapi import HTTPException
-
+from ...base_classes.script_db_engine import Script_DB_Engine
 from ...globals import LOGGER, SETTINGS_GLOBAL
 from ..session.models import Session
 from .models import *
@@ -17,7 +16,7 @@ from .models import *
 
 
 async def get_script_lines(
-    script_line: Script_Line, session: Session
-) -> Union[List[Union[Script_Line | dict]], Script_Line, dict]:
+    script_line: Optional[Script_Line], script_db_engine: Script_DB_Engine
+) -> Union[List[Union[Script_Line | Dict[str, Any]]], Script_Line, Dict[str, Any]]:
     LOGGER.debug(f"Getting script: {script_line}")
-    return script_line
+    return script_db_engine.get_script_lines(script_line)

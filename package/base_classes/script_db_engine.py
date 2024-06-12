@@ -4,10 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Annotated, List, Union
-
-from annotated_types import Ge, Le
-from pydantic import confloat
+from typing import List, Optional, Union
 
 from ..routes.script.models import Character_Info, Script_Line
 from ..utils.decorators import virtual
@@ -33,7 +30,7 @@ class Script_DB_Engine(Base_Engine):
 
     @virtual
     def get_script_lines(
-        self, script: Script_Line = Script_Line()
+        self, script: Optional[Script_Line] = Script_Line()
     ) -> Union[List[Script_Line], Script_Line]:
         pass
 

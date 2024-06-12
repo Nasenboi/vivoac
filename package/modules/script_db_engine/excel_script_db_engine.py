@@ -10,6 +10,7 @@ import os
 from typing import Annotated, Dict, List, Union
 
 import pandas as pd
+from pydantic import parse_obj_as
 
 from ...base_classes import Script_DB_Engine
 from ...globals import LOGGER
@@ -34,6 +35,8 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         "reference_audio_path": "RA_path",
         "delivery_audio_path": "DA_path",
         "generatied_audio_path": "generatied_audio_path",
+        "comment": "comment_1",
+        "direction_notes": "direction_notes",
     }
 
     def __init__(
@@ -71,11 +74,15 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         # Checks before we search the database:
         if not self.__check_excel_script():
             return Script_Line()
-        if script.is_empty():
+        if script == None:
+            LOGGER.warning("No Script_Line given, returning all script lines!")
+            script = Script_Line()
+            filtered_database = self.excel_data_frame
+        elif script.is_empty():
             LOGGER.warning("The given Script is empty, returning all script lines!")
-
-        # Get all fitting script lines from the database:
-        filtered_database = self.__filter_database(script)
+            filtered_database = self.excel_data_frame
+        else:
+            filtered_database = self.__filter_database(script)
 
         # Return the results properly:
         if len(filtered_database) < 1:
@@ -86,9 +93,17 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
                 {{key: value for key, value in filtered_database.iloc[0].items()}}
             )
         else:
+
+            def script_line_model_dump(line):
+                script_line = Script_Line()
+                for key, value in line.items():
+                    if key is not None and hasattr(script_line, key):
+                        setattr(script_line, key, str(value))
+                return script_line
+
             return [
-                Script_Line({{key: value for key, value in line.to_dict().items()}})
-                for line in filtered_database
+                script_line_model_dump(line)
+                for line in filtered_database.to_dict(orient="records")
             ]
 
     def get_character_infos(
@@ -115,8 +130,16 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     ############################################################
     # set class variables, expanding the base function to reload the excel script:
 
-    def set_class_variables(self, *kwargs):
-        super().set_class_variables(*kwargs)
+    def get_class_variables(self):
+        return {
+            "script_path": self.script_path,
+            "script_file_name": self.script_file_name,
+            "field_name_mapping": self.field_name_mapping,
+        }
+
+    def set_class_variables(self, **kwargs):
+        super().set_class_variables(**kwargs)
+        LOGGER.debug(f"Reloading excel script:{self.script_file_name}")
         self.__load_excel_script()
 
     ############################################################
@@ -126,10 +149,10 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         if self.script_path == None or self.script_file_name == None:
             raise ValueError("Excel file path or name not given!")
 
-        if not os.path.exists(self.script_path + self.script_file_name):
-            raise FileNotFoundError("Excel file does not exist!")
+        full_path = self.script_path + "/" + self.script_file_name
+        LOGGER.debug(f"Loading excel script: {full_path}")
 
-        self.excel_data_frame = pd.read_excel(self.script_path + self.script_file_name)
+        self.excel_data_frame = pd.read_excel(full_path)
         self.__apply_field_mapping()
 
     def __apply_field_mapping(self):
