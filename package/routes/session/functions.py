@@ -11,18 +11,17 @@ from .models import Session
 ########################################################################################"""
 
 
-async def create_session(api_engine, session: Session) -> Session:
+async def create_session(self, api_engine, session: Session) -> Session:
     session.fill_default_values()
     LOGGER.debug(f"Creating session: {session.session_id}")
+    await self.engine_backend.add_session_engines(session=session)
     await api_engine.session_backend.create(session_id=session.session_id, data=session)
-    await api_engine.engine_backend.add_session_engines(session_id=session.session_id)
     return session
 
 
-async def close_session(api_engine, session_id: str | int) -> Session:
+async def close_session(self, api_engine, session_id: str | int) -> Session:
     LOGGER.debug(f"Closing session: {session_id}")
     await api_engine.session_backend.delete(session_id)
-    await api_engine.engine_backend.close_session_engines(session_id=session_id)
     return session_id
 
 

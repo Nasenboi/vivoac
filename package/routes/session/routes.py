@@ -4,10 +4,12 @@ Description:
 Imports:
 """
 
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import APIRouter, Header
 
+from .engine_backend.engine_backend import Engine_Backend
+from .engine_backend.routes import Engine_Router
 from .functions import *
 from .models import *
 
@@ -17,6 +19,7 @@ from .models import *
 
 class Session_Router(APIRouter):
     api_engine = None
+    engine_backend = None
     route_parameters: dict = {
         "prefix": "/session",
         "tags": ["session"],
@@ -27,6 +30,11 @@ class Session_Router(APIRouter):
         self.route_parameters.update(kwargs)
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
+
+        self.engine_backend = Engine_Backend()
+        self.include_router(
+            Engine_Router(session_engine=self, api_engine=api_engine),
+        )
 
         self.add_api_route(
             path="/create", endpoint=self.create_session_route, methods=["PUT"]
@@ -42,13 +50,17 @@ class Session_Router(APIRouter):
         )
 
     async def create_session_route(self, session: Session = Session()) -> Session:
-        return await create_session(api_engine=self.api_engine, session=session)
+        return await create_session(
+            self=self, api_engine=self.api_engine, session=session
+        )
 
     async def close_session_route(
         self,
         session_id: Annotated[str, Header()],
     ) -> str | int:
-        return await close_session(api_engine=self.api_engine, session_id=session_id)
+        return await close_session(
+            self=self, api_engine=self.api_engine, session_id=session_id
+        )
 
     async def get_session_route(
         self,

@@ -10,6 +10,7 @@ from uuid import uuid4
 from pydantic import BaseModel
 
 from ..audio.models import Audio_Format
+from .engine_backend.models import *
 
 """
 ########################################################################################"""
@@ -25,6 +26,7 @@ class Session_Settings(BaseModel):
 
 class Session(BaseModel):
     session_settings: Optional[Session_Settings] = None
+    api_engine_modules: Optional[API_Sub_Engines] = None
     session_id: Optional[str] = None
 
     def fill_default_values(self):
