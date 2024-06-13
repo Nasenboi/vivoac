@@ -37,10 +37,10 @@ void v_MenuBar::paint (juce::Graphics& g)
     g.fillAll(colors.rich_black);
     g.drawImageWithin(logo, getWidth()-200, getHeight()-100, 200, 100, juce::RectanglePlacement::centred);
 
-    juce::ColourGradient gradient = juce::ColourGradient(colors.rich_black, 0, getHeight()-10, colors.midnight_green, 0, getHeight(), false);
+    juce::ColourGradient gradient = juce::ColourGradient(colors.midnight_green, getWidth() / 2, getHeight(), colors.rich_black, getWidth()/4*3, 0, false);
 
     int x1 = 0.0f;
-    int y1 = (float)getHeight() - 10;
+    int y1 = (float)getHeight() - button_height;
     int x2 = (float)getWidth();
     int y2 = (float)getHeight();
 
