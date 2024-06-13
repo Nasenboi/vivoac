@@ -16,14 +16,15 @@ from ...modules import *
 
 
 ai_api_engine_modules: Dict[str, Type[AI_API_Engine]] = {
-    "AI_API_Engine": AI_API_Engine,
+    # "AI_API_Engine": AI_API_Engine,
     "Piper_TTS_Engine": Piper_TTS_Engine,
 }
 audio_file_engine_modules: Dict[str, Type[Audio_File_Engine]] = {
-    "Audio_File_Engine": Audio_File_Engine,
+    # "Audio_File_Engine": Audio_File_Engine,
+    "Basic_Audio_File_Engine": Basic_Audio_File_Engine,
 }
 script_db_engine_modules: Dict[str, Type[Script_DB_Engine]] = {
-    "Script_DB_Engine": Script_DB_Engine,
+    # "Script_DB_Engine": Script_DB_Engine,
     "Excel_Script_DB_Engine": Excel_Script_DB_Engine,
 }
 
