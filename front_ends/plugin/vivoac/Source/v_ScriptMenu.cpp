@@ -233,6 +233,8 @@ void v_ScriptMenu::onEnter() {
     if (scriptAudioView.currentAudioFile.exists()) {
         processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
+
+    updateComponents();
 }
 
 void v_ScriptMenu::onLeave() {
