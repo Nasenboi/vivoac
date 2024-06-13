@@ -11,6 +11,13 @@ from typing import List
 from ...base_classes import AI_API_Engine
 
 """
+Notes:
+Use dimits to call piper api functions!
+from dimits import dimits
+model_name = de_DE_Name_pitch(.onnx)
+dt = Dimits(voice="model_name", modelDirectory="model_directory")
+dt.text_2_audio_file("text", "file_name", "output_directory", format="wav")
+
 ########################################################################################"""
 
 
