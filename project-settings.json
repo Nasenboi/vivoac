@@ -15,7 +15,8 @@
         "port": 8080
     },
     "directories": {
-        "piper-voice": "./piper-voice"
+        "piper-voice": "./piper-voice",
+        "temp": "./temp"
     },
     "logging-config": {
         "version": 1,

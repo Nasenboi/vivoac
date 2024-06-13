@@ -3,7 +3,8 @@
         "settings-theme": "docker"
     },
     "directories": {
-        "piper-voice": "/piper-voice"
+        "piper-voice": "/piper-voice",
+        "temp": "/tmp/vivoac"
     },
     "logging-config": {
         "handlers": {
