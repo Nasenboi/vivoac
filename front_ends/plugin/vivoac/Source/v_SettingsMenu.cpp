@@ -89,21 +89,7 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     }
     aiApiEngine.addListener(this);
     addAndMakeVisible(aiApiEngine);
-    audioFileEngineLabel.setText("Audio File Engine:", juce::dontSendNotification);
-    audioFileEngineLabel.attachToComponent(&audioFileEngineSettings, true);
-    audioFileEngineLabel.setJustificationType(juce::Justification::topLeft);
-    addAndMakeVisible(audioFileEngineLabel);
-    audioFileEngineSettings.setMultiLine(true, true);
-    audioFileEngineSettings.addListener(this);
-    audioFileEngineSettings.setReturnKeyStartsNewLine(true);
-    audioFileEngineSettings.setTabKeyUsedAsCharacter(true);
-    audioFileEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::audio_file_engine_module));
-    addAndMakeVisible(audioFileEngineSettings);
-    for (int i = 0; i < client.possibleEngineModules.audio_file_engine_modules.size(); ++i) {
-        audioFileEngine.addItem(client.possibleEngineModules.audio_file_engine_modules[i], i+1);
-    }
-    audioFileEngine.addListener(this);
-    addAndMakeVisible(audioFileEngine);
+    
     scriptDbEngineLabel.setText("Script DB Engine:", juce::dontSendNotification);
     scriptDbEngineLabel.attachToComponent(&scriptDbEngineSettings, true);
     scriptDbEngineLabel.setJustificationType(juce::Justification::topLeft);
@@ -138,9 +124,9 @@ void v_SettingsMenu::paint (juce::Graphics& g)
     p.startNewSubPath(getWidth() / 2, 0);
     p.lineTo(getWidth() / 2, getHeight());
     p.startNewSubPath(0, getHeight()/2);
-    p.lineTo(getWidth() / 2, getHeight() / 2);
+    p.lineTo(getWidth(), getHeight() / 2);
     g.setColour(colors.verdigris);
-    g.strokePath(p, juce::PathStrokeType{ 2.0f });
+    g.strokePath(p, juce::PathStrokeType{ 1.0f });
 }
 
 void v_SettingsMenu::resized()
@@ -160,12 +146,10 @@ void v_SettingsMenu::resized()
     targetNumChannels.setBounds(getWidth() / 4 + textEditLength / 3 * 2, getHeight() / 2 + 3 * margin +2 * textEditHeight, textEditLength / 3, textEditHeight);
 
     //  engine settings
-    aiApiEngineSettings.setBounds(getWidth() - margin - 2 * textEditLength, margin, 2 * textEditLength, getHeight() / 3 - 2*margin);
-    audioFileEngineSettings.setBounds(getWidth() - margin - 2 * textEditLength, margin+getHeight()/3, 2 * textEditLength, getHeight() / 3 - 2*margin);
-    scriptDbEngineSettings.setBounds(getWidth() - margin - 2 * textEditLength, margin+getHeight()/3*2, 2 * textEditLength, getHeight() / 3 - 2*margin);
-    aiApiEngine.setBounds(getWidth() / 2 + margin, getHeight() / 6 - textEditHeight / 2, textEditLength, textEditHeight);
-    audioFileEngine.setBounds(getWidth() / 2 + margin, getHeight() / 6 * 3 - textEditHeight / 2, textEditLength, textEditHeight);
-    scriptDbEngine.setBounds(getWidth() / 2 + margin, getHeight() / 6 * 5 - textEditHeight / 2, textEditLength, textEditHeight);
+    aiApiEngineSettings.setBounds(getWidth() - margin - 2 * textEditLength, margin, 2 * textEditLength, getHeight() / 2 - 2*margin);
+    scriptDbEngineSettings.setBounds(getWidth() - margin - 2 * textEditLength, margin+getHeight()/2, 2 * textEditLength, getHeight() / 2 - 2*margin);
+    aiApiEngine.setBounds(getWidth() / 2 + margin, getHeight() / 4 - textEditHeight / 2, textEditLength, textEditHeight);
+    scriptDbEngine.setBounds(getWidth() / 2 + margin, getHeight() / 4 * 3 - textEditHeight / 2, textEditLength, textEditHeight);
 }
 
 void v_SettingsMenu::updateSessionComponents() {
@@ -177,11 +161,9 @@ void v_SettingsMenu::updateSessionComponents() {
 }
 void v_SettingsMenu::updateEngineComponents() {
     aiApiEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::ai_api_engine_module));
-    audioFileEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::audio_file_engine_module));
     scriptDbEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::script_db_engine_module));
 
     aiApiEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::ai_api_engine_module));
-    audioFileEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::audio_file_engine_module));
     scriptDbEngineSettings.setText(client.getEngineSettingsString(EngineModulesKeys::script_db_engine_module));
 }
 
@@ -233,9 +215,6 @@ void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
     else if (&editor == &aiApiEngineSettings) {
         client.updateSessionEngineSettings(EngineModulesKeys::ai_api_engine_module, aiApiEngineSettings.getText().toStdString());
     }
-    else if (&editor == &audioFileEngineSettings) {
-        client.updateSessionEngineSettings(EngineModulesKeys::audio_file_engine_module, audioFileEngineSettings.getText().toStdString());
-    }
     else if (&editor == &scriptDbEngineSettings) {
         client.updateSessionEngineSettings(EngineModulesKeys::script_db_engine_module, scriptDbEngineSettings.getText().toStdString());
     }
@@ -245,9 +224,6 @@ void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
 void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
     if (comboBoxThatHasChanged == &aiApiEngine) {
         client.updateSessionEngines(EngineModulesKeys::ai_api_engine_module, aiApiEngine.getText().toStdString());
-    }
-    else if (comboBoxThatHasChanged == &audioFileEngine) {
-        client.updateSessionEngines(EngineModulesKeys::audio_file_engine_module, audioFileEngine.getText().toStdString());
     }
     else if (comboBoxThatHasChanged == &scriptDbEngine) {
         client.updateSessionEngines(EngineModulesKeys::script_db_engine_module, scriptDbEngine.getText().toStdString());

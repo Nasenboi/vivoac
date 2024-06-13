@@ -242,7 +242,6 @@ void HTTPClient::CURLupdateSessionEngines() {
 
 void HTTPClient::getAllEngineSettings() {
     CURLgetEngineSettings(EngineModulesKeys::ai_api_engine_module);
-    CURLgetEngineSettings(EngineModulesKeys::audio_file_engine_module);
     CURLgetEngineSettings(EngineModulesKeys::script_db_engine_module);
 }
 
@@ -251,9 +250,6 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
         engine_name = "ai_api_engine";
-        break;
-    case EngineModulesKeys::audio_file_engine_module:
-        engine_name = "audio_file_engine";
         break;
     case EngineModulesKeys::script_db_engine_module:
         engine_name = "script_db_engine";
@@ -284,9 +280,6 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     case EngineModulesKeys::ai_api_engine_module:
         aiApiEngineSettings = j;
         break;
-    case EngineModulesKeys::audio_file_engine_module:
-        audioFileEngineSettings = j;
-        break;
     case EngineModulesKeys::script_db_engine_module:
         scriptDbEngineSettings = j;
         break;
@@ -295,7 +288,6 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
 
 void HTTPClient::updateSessionEngineSettings() {
     CURLupdateSingleSessionEngineSettings(EngineModulesKeys::ai_api_engine_module);
-    CURLupdateSingleSessionEngineSettings(EngineModulesKeys::audio_file_engine_module);
     CURLupdateSingleSessionEngineSettings(EngineModulesKeys::script_db_engine_module);
 }
 
@@ -306,10 +298,6 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
     case EngineModulesKeys::ai_api_engine_module:
         engine_name = "ai_api_engine";
         engine_settings = aiApiEngineSettings;
-        break;
-    case EngineModulesKeys::audio_file_engine_module:
-        engine_name = "audio_file_engine";
-        engine_settings = audioFileEngineSettings;
         break;
     case EngineModulesKeys::script_db_engine_module:
         engine_name = "script_db_engine";
@@ -350,9 +338,6 @@ std::string HTTPClient::getSessionEngine(EngineModulesKeys key) {
     case EngineModulesKeys::ai_api_engine_module:
         return engineModules.ai_api_engine_module;
         break;
-    case EngineModulesKeys::audio_file_engine_module:
-        return engineModules.audio_file_engine_module;
-        break;
     case EngineModulesKeys::script_db_engine_module:
         return engineModules.script_db_engine_module;
         break;
@@ -363,9 +348,6 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
         return aiApiEngineSettings.dump(dump);
-        break;
-    case EngineModulesKeys::audio_file_engine_module:
-        return audioFileEngineSettings.dump(dump);
         break;
     case EngineModulesKeys::script_db_engine_module:
         return scriptDbEngineSettings.dump(dump);
@@ -607,9 +589,6 @@ void HTTPClient::updateSessionEngines(const EngineModulesKeys& key, const std::s
     case EngineModulesKeys::ai_api_engine_module:
         engineModules.ai_api_engine_module = value;
         break;
-    case EngineModulesKeys::audio_file_engine_module:
-        engineModules.audio_file_engine_module = value;
-        break;
     case EngineModulesKeys::script_db_engine_module:
         engineModules.script_db_engine_module = value;
         break;
@@ -629,9 +608,6 @@ void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
         aiApiEngineSettings = valueJ;
-        break;
-    case EngineModulesKeys::audio_file_engine_module:
-        audioFileEngineSettings = valueJ;
         break;
     case EngineModulesKeys::script_db_engine_module:
         scriptDbEngineSettings = valueJ;

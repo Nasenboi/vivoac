@@ -40,9 +40,9 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(v_SettingsMenu)
-    juce::TextEditor apiUrl, apiPort, apiKey, generatedAudioPath, targetNumChannels, targetSampleRate, aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings, sessionId;
-    juce::Label apiUrlLabel, apiPortLabel, apiKeyLabel, generatedAudioPathLabel, targetNumChannelsLabel, targetSampleRateLabel, targetAudioFormatLabel, aiApiEngineLabel, audioFileEngineLabel, scriptDbEngineLabel, sessionIdLabel;
-    v_BetterCombobox targetAudioFormat, aiApiEngine, audioFileEngine, scriptDbEngine;
+    juce::TextEditor apiUrl, apiPort, apiKey, generatedAudioPath, targetNumChannels, targetSampleRate, aiApiEngineSettings, scriptDbEngineSettings, sessionId;
+    juce::Label apiUrlLabel, apiPortLabel, apiKeyLabel, generatedAudioPathLabel, targetNumChannelsLabel, targetSampleRateLabel, targetAudioFormatLabel, aiApiEngineLabel, scriptDbEngineLabel, sessionIdLabel;
+    v_BetterCombobox targetAudioFormat, aiApiEngine, scriptDbEngine;
     juce::TextButton reconnectButton{ "reload" }, choosePathButton{ "choose" };
 
     std::unique_ptr<juce::FileChooser> fileChooser;

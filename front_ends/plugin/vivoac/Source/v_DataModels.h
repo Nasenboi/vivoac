@@ -156,40 +156,33 @@ inline void to_json(json& j, const AudioFormat& s) {
 */
 
 enum class EngineModulesKeys {
-    ai_api_engine_module, audio_file_engine_module, script_db_engine_module
+    ai_api_engine_module, script_db_engine_module
 };
 struct EngineModules {
     std::string ai_api_engine_module = "";
-    std::string audio_file_engine_module = "";
     std::string script_db_engine_module = "";
 };
 inline bool isEmpty(const EngineModules& s) {
     return {
         s.ai_api_engine_module.empty() &&
-        s.audio_file_engine_module.empty() &&
         s.script_db_engine_module.empty()
     };
 }
 inline void from_json(const json& j, EngineModules& s) {
     if (j.contains("ai_api_engine_module") && j["ai_api_engine_module"].is_string()) { s.ai_api_engine_module = j["ai_api_engine_module"]; }
-    if (j.contains("audio_file_engine_module") && j["audio_file_engine_module"].is_string()) { s.audio_file_engine_module = j["audio_file_engine_module"]; }
     if (j.contains("script_db_engine_module") && j["script_db_engine_module"].is_string()) { s.script_db_engine_module = j["script_db_engine_module"]; }
 }
 inline void to_json(json& j, const EngineModules& s) {
     j = json{};
     if (!s.ai_api_engine_module.empty()) { j["ai_api_engine_module"] = s.ai_api_engine_module; }
-    if (!s.audio_file_engine_module.empty()) { j["audio_file_engine_module"] = s.audio_file_engine_module; }
     if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
 }
 const struct PossibleEngineModules {
-    const std::array<std::string, 2> ai_api_engine_modules {
-        "AI_API_Engine", "Piper_TTS_Engine"
+    const std::array<std::string, 1> ai_api_engine_modules {
+        "Piper_TTS_Engine"
     };
-    const std::array<std::string, 1> audio_file_engine_modules {
-        "Audio_File_Engine"
-    };
-    const std::array<std::string, 2> script_db_engine_modules {
-        "Script_DB_Engine", "Excel_Script_DB_Engine"
+    const std::array<std::string, 1> script_db_engine_modules {
+        "Excel_Script_DB_Engine"
     };
 };
 
