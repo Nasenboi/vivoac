@@ -14,6 +14,9 @@
         "host": "0.0.0.0",
         "port": 8080
     },
+    "directories": {
+        "piper-voice": "./piper-voice"
+    },
     "logging-config": {
         "version": 1,
         "disable_existing_loggers": false,

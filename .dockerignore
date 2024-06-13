@@ -10,6 +10,7 @@ documentation/
 README.md
 logs/
 front_ends/
+piper-voice/
 
 # Git
 .git

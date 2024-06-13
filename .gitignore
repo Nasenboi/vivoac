@@ -4,6 +4,7 @@
 logs
 front_ends/plugin/vivoac/Builds/
 front_ends/plugin/vivoac/JuceLibraryCode/
+piper-voice/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

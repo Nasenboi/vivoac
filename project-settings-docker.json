@@ -2,6 +2,9 @@
     "metadata": {
         "settings-theme": "docker"
     },
+    "directories": {
+        "piper-voice": "/piper-voice"
+    },
     "logging-config": {
         "handlers": {
             "file": {
