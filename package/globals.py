@@ -51,3 +51,8 @@ with open(filename, "w") as f:
     pass
 logging.config.dictConfig(SETTINGS_GLOBAL.get("logging-config"))
 LOGGER = colorlog.getLogger("main")
+
+# Create the other directories that are needed, if they dont exist:
+directories = SETTINGS_GLOBAL.get("directories")
+for directory in directories:
+    os.makedirs(directory, exist_ok=True)
