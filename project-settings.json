@@ -15,8 +15,8 @@
         "port": 8080
     },
     "directories": {
-        "piper-voice": "./piper-voice",
-        "temp": "./temp"
+        "piper-voice": "./data/piper-voice",
+        "temp": "./data/temp"
     },
     "logging-config": {
         "version": 1,
@@ -41,7 +41,7 @@
                 "formatter": "colored",
                 "when": "D",
                 "backupCount": 0,
-                "filename": "./logs/vivoac.log"
+                "filename": "./data/logs/vivoac.log"
             },
             "stdout": {
                 "class": "logging.StreamHandler",

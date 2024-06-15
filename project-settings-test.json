@@ -5,7 +5,7 @@
     "logging-config": {
         "handlers": {
             "file": {
-                "filename": "./logs/vivoac-tests.log"
+                "filename": "./data/logs/vivoac-tests.log"
             }
         }
     }

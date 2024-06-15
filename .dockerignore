@@ -2,15 +2,16 @@
 # https://gist.github.com/KernelA/04b4d7691f28e264f72e76cfd724d448
 
 # Project / vivoac
-logs
 project-settings-test.json
 test_main.py
 tests/
 documentation/
 README.md
-logs/
 front_ends/
-piper-voice/
+data/piper-voice/
+data/temp/
+data/logs/
+rebuild_and_run_docker.sh
 
 # Git
 .git
