@@ -29,6 +29,10 @@ class Session(BaseModel):
     api_engine_modules: Optional[API_Sub_Engines] = None
     session_id: Optional[str] = None
 
+    def update(self, new_session: BaseModel):
+        self.session_settings = new_session.session_settings or self.session_settings
+        return self
+
     def fill_default_values(self):
         self.session_settings = (
             self.session_settings or Session_Settings().fill_default_values()

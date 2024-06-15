@@ -142,7 +142,8 @@ class AI_API_Engine(Base_Engine):
             )
             audio.export(new_file_name, format=target_format.codec)
             # remove old file
-            os.remove(audio_file_name)
+            if new_file_name != audio_file_name:
+                os.remove(audio_file_name)
             return new_file_name
         else:
             audio.export(

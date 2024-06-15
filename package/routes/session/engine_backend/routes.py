@@ -69,7 +69,9 @@ class Engine_Router(APIRouter):
         result = await self.session_engine.engine_backend.update_session_engines(
             session=session, engine_modules=engine_modules
         )
-        self.api_engine.session_backend.update(session_id=session_id, data=session)
+        await self.api_engine.session_backend.update(
+            session_id=session_id, data=session
+        )
         return result
 
     # == Engine Settings ==
@@ -89,7 +91,7 @@ class Engine_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         engine_module_name: str,
-        engine_settings: Annotated[Dict[str, Any], Body()],
+        engine_settings: Annotated[dict, Body()],
         session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> str | int:
         LOGGER.debug(f"Updating engine settings: {engine_settings}")
@@ -100,5 +102,7 @@ class Engine_Router(APIRouter):
                 engine_settings=engine_settings,
             )
         )
-        self.api_engine.session_backend.update(session_id=session_id, data=session)
+        await self.api_engine.session_backend.update(
+            session_id=session_id, data=session
+        )
         return result

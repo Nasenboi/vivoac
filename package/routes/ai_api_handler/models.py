@@ -24,6 +24,6 @@ class Voice_Settings(BaseModel):
 class Text_To_Speech(BaseModel):
     text: str = None
     voice: str = None
-    voice_settings: Voice_Settings = None
+    voice_settings: Optional[Voice_Settings] = None
     model: Optional[str] = None
     seed: Optional[int] = -1

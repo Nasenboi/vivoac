@@ -64,9 +64,8 @@ class Engine_Backend:
         self,
         session: Session,
         engine_module_name: str,
-        engine_settings: Dict[str, Any],
+        engine_settings: dict,
     ) -> str | int:
-
         session.api_engine_modules.__getattribute__(
             engine_module_name
         ).set_class_variables(**engine_settings)

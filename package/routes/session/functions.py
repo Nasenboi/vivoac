@@ -32,10 +32,13 @@ async def get_session(api_engine, session_id: str | int) -> Session:
 
 
 async def update_session(
-    api_engine, session_id: str | int, session: Session
+    api_engine, session_id: str | int, new_session: Session, session: Session
 ) -> Session:
     LOGGER.debug(f"Updating session: {session_id}")
     if session.session_id is not None and session_id != session.session_id:
         raise ValueError(f"Session ID mismatch: {session_id} != {session.session_id}")
+
+    session.update(new_session)
+
     await api_engine.session_backend.update(session_id=session_id, data=session)
     return session

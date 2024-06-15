@@ -6,7 +6,7 @@ Imports:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Header
+from fastapi import APIRouter, Body, Header, Response
 
 from ...utils.decorators import session_fetch
 from ..session.models import *
@@ -45,9 +45,9 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         data: Text_To_Speech,
         session: Optional[Session] = Body(None, include_in_schema=False),
-    ):
+    ) -> Response:
 
-        return await session.api_engine_modules.ai_api_engine.text_to_speech(
+        file_in_bytes: bytes = session.api_engine_modules.ai_api_engine.text_to_speech(
             api_key=api_key,
             text=data.text,
             voice=data.voice,
@@ -56,6 +56,10 @@ class AI_API_Handler_Router(APIRouter):
             seed=data.seed,
             audio_format=session.session_settings.audio_format,
         )
+
+        media_type = f"audio/{session.session_settings.audio_format}"
+
+        return Response(content=file_in_bytes, media_type=media_type)
 
     ############################################################
     # setter functions:

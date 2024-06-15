@@ -11,8 +11,10 @@
 #pragma once
 #include <JuceHeader.h>
 #include <curl/curl.h>
+#include <fstream>
 #include "nlohmann/json.hpp"
 #include "v_DataModels.h"
+
 
 typedef juce::AudioProcessorValueTreeState japvts;
 typedef std::pair<std::string, std::string> HEADER_PARAM;
@@ -29,6 +31,7 @@ public:
     void parameterChanged(const juce::String& parameterID, float newValue) override;
 
     // == ai api functions ==
+    void CURLtextToSpeech();
 
     // == Audio functions ==
     std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
@@ -101,9 +104,10 @@ private:
     };
 
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
+    static size_t WriteToFileCallback(void* ptr, size_t size, size_t nmemb, void* stream);
     std::string constructURL(const std::string& path = "", json query = json());
     CURLcode doCurl(const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
-        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true);
+        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true, bool isBinary = false, std::string destinationPath = "");
 
     // === The Data models as structures: ===
     // AI API:

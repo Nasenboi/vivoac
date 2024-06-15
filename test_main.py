@@ -47,6 +47,7 @@ if __name__ == "__main__":
             tests.Session_Tests(client=client),
             tests.Engine_Tests(client=client),
             tests.Script_Tests(client=client),
+            tests.AI_API_Tests(client=client),
         ]
 
         for test_class in test_classes:

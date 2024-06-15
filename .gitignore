@@ -6,6 +6,7 @@ front_ends/plugin/vivoac/Builds/
 front_ends/plugin/vivoac/JuceLibraryCode/
 piper-voice/
 data/external/
+data/excel_scripts/
 rebuild_and_run_docker.sh
 
 # Byte-compiled / optimized / DLL files

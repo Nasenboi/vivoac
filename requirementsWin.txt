@@ -6,6 +6,7 @@ colorama==0.4.6
 colorlog==6.8.2
 dnspython==2.6.1
 email_validator==2.1.1
+et-xmlfile==1.1.0
 exceptiongroup==1.2.1
 fastapi==0.111.0
 fastapi-cli==0.0.4
@@ -21,6 +22,7 @@ markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
 numpy==1.26.4
+openpyxl==3.1.4
 orjson==3.10.4
 pandas==2.2.2
 pi==0.1.2

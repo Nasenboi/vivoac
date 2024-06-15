@@ -33,6 +33,10 @@ v_GeneratorMenu::v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c): v_Base
     translation.setReturnKeyStartsNewLine(true);
     translation.addListener(this);
     addAndMakeVisible(translation);
+
+    // Buttons:
+    generateButton.addListener(this);
+    addAndMakeVisible(generateButton);
 }
 
 v_GeneratorMenu::~v_GeneratorMenu()
@@ -50,7 +54,8 @@ void v_GeneratorMenu::resized()
     generatorTable.getHeader().setColumnWidth(1, generatorTable.getWidth());
     audioFileView.setBounds(generatorTable.getRight() + margin, margin, getWidth() / 2 - 2 * margin, defaultHeight);
 
-    translation.setBounds(generatorTable.getRight() + margin + defaultLength, getHeight() / 2 + margin, getRight()-margin-(generatorTable.getRight() + margin + defaultLength), 3*defaultHeight);
+    generateButton.setBounds(getWidth() - margin - defaultLength, getHeight() - margin - defaultLength, defaultLength, defaultLength);
+    translation.setBounds(generatorTable.getRight() + margin + defaultLength, generateButton.getBottom() - generateButton.getHeight() - margin - 3 * defaultHeight, getRight() - margin - (generatorTable.getRight() + margin + defaultLength), 3 * defaultHeight);
 }
 
 void v_GeneratorMenu::loadGeneratedAudioFiles() {
@@ -81,6 +86,13 @@ void v_GeneratorMenu::onTextEditorDone(juce::TextEditor& editor) {
 		client.updateCurrentScriptLine(ScriptLineKeys::translation, translation.getText().toStdString());
 	}
 
+};
+
+void v_GeneratorMenu::buttonClicked(juce::Button* button) {
+	if (button == &generateButton) {
+		client.CURLtextToSpeech();
+        loadGeneratedAudioFiles();
+	}
 };
 
 void v_GeneratorMenu::onEnter() {

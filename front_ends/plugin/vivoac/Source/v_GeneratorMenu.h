@@ -19,7 +19,7 @@
 //==============================================================================
 /*
 */
-class v_GeneratorMenu  : public v_BaseMenuComponent, public juce::TextEditor::Listener
+class v_GeneratorMenu  : public v_BaseMenuComponent, public juce::TextEditor::Listener, juce::Button::Listener
 {
 public:
     v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c);
@@ -34,6 +34,8 @@ public:
     void textEditorReturnKeyPressed(juce::TextEditor& editor) override;
     void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
     void onTextEditorDone(juce::TextEditor& editor);
+    void buttonClicked(juce::Button* button) override;
+    void buttonStateChanged(juce::Button* button) override {};
 
     void onSelectedRowsChanged();
 
@@ -50,6 +52,7 @@ private:
     v_AudioFileView audioFileView;
     juce::Label translationLabel;
     juce::TextEditor translation;
+    juce::TextButton generateButton{ "SPEAK!" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_GeneratorMenu)
 };

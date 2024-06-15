@@ -4,10 +4,11 @@ Description:
 Imports:
 """
 
-from typing import Annotated, Union
+from typing import Annotated
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Body, Header
 
+from ...utils.decorators import session_fetch
 from .engine_backend.engine_backend import Engine_Backend
 from .engine_backend.routes import Engine_Router
 from .functions import *
@@ -62,15 +63,24 @@ class Session_Router(APIRouter):
             self=self, api_engine=self.api_engine, session_id=session_id
         )
 
+    @session_fetch
     async def get_session_route(
         self,
         session_id: Annotated[str, Header()],
+        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Session:
-        return await get_session(api_engine=self.api_engine, session_id=session_id)
+        return session
 
+    @session_fetch
     async def update_session_route(
-        self, session_id: Annotated[str, Header()], session: Session
+        self,
+        session_id: Annotated[str, Header()],
+        new_session: Session,
+        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Session:
         return await update_session(
-            api_engine=self.api_engine, session_id=session_id, session=session
+            api_engine=self.api_engine,
+            session_id=session_id,
+            new_session=new_session,
+            session=session,
         )

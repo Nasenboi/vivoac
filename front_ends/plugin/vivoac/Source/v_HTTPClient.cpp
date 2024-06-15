@@ -9,6 +9,7 @@
 */
 
 #include <curl/curl.h>
+#include <fstream>
 #include "v_HTTPClient.h"
 #include "nlohmann/json.hpp"
 
@@ -38,6 +39,7 @@
             }
             catch (json::parse_error& e) {
                 DBG("JSON parse error: " << e.what());
+                DBG("readBuffer: " << readBuffer);
             }
         }
     }
@@ -87,6 +89,7 @@ void HTTPClient::CURLinitSession() {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
         sessionID = "";
     }
     CURLupdateSession();
@@ -111,6 +114,7 @@ void HTTPClient::CURLcloseSession() {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
         sessionID = "";
     }
 }
@@ -124,8 +128,8 @@ void HTTPClient::CURLupdateSession() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
-    body["session_id"] = sessionID.c_str();
-    body["session_settings"] = sessionSettings;
+    body["new_session"]["session_id"] = sessionID.c_str();
+    body["new_session"]["session_settings"] = sessionSettings;
 
     DBG("---------------------------------------------");
     DBG("session to send:");
@@ -148,6 +152,7 @@ void HTTPClient::CURLupdateSession() {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
 }
 
@@ -175,6 +180,7 @@ void HTTPClient::CURLgetScriptLines() {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
 
     std::vector<json> lines;
@@ -216,15 +222,41 @@ std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFo
 
 // == ai api functions ==
 
+void HTTPClient::CURLtextToSpeech() {
+    DBG("---------------------------------------------------------------------------------");
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", "none"));
+
+    json body;
+    textToSpeech.text = currentScriptLine.translation;
+    textToSpeech.voice = "de_DE-markus_haase-ep=2665";
+    body["data"] = json{ textToSpeech }[0];
+    DBG(body.dump(4));
+    std::string timedate = juce::Time::getCurrentTime().formatted("%Y%m%d_%H%M%S").toStdString();
+    std::string target_path = generatedAudioPath + std::string(juce::File::getSeparatorString()) + timedate + "_" + currentScriptLine.character_name + "_" + currentScriptLine.id + ".wav";
+    DBG("target path: " << target_path);
+
+    CURLcode res = doCurl("/ai_api_handler/text_to_speech", HTTPMethod::Post, headers, body, {}, true, true, target_path);
+
+    if (res != CURLE_OK) {
+        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
+        return;
+    }
+    else {
+        DBG("Audio file generated successfully.");	
+    }
+
+}
 // == Engine Functions == 
 
 void HTTPClient::CURLupdateSessionEngines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
-    body = engineModules;
+    body["engine_modules"] = engineModules;
 
-    CURLcode res = doCurl("/engine/update", HTTPMethod::Post, headers, body);
+    CURLcode res = doCurl("/session/engine/update", HTTPMethod::Post, headers, body);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -237,6 +269,7 @@ void HTTPClient::CURLupdateSessionEngines() {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
 }
 
@@ -261,7 +294,7 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     json query = {};
     query["engine_module_name"] = engine_name;
 
-    CURLcode res = doCurl("/engine/settings/get", HTTPMethod::Get, headers, {}, query);
+    CURLcode res = doCurl("/session/engine/settings/get", HTTPMethod::Get, headers, {}, query);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -274,6 +307,7 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
 
     switch (key) {
@@ -313,11 +347,12 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json query = {};
     query["engine_module_name"] = engine_name;
-    json body = engine_settings;
+    json body;
+    body["engine_settings"] = engine_settings;
 
     DBG(body.dump(4));
 
-    CURLcode res = doCurl("/engine/settings/update", HTTPMethod::Post, headers, body, query);
+    CURLcode res = doCurl("/session/engine/settings/update", HTTPMethod::Post, headers, body, query);
 
     if (res != CURLE_OK) {
         DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(res));
@@ -330,6 +365,7 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
 }
 
@@ -359,13 +395,15 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
 /* Class functionality
 */
 CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
-    const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId) {
+    const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId, bool isBinary, std::string destinationPath) {
     if (checkSessionId && sessionID.empty()) return CURLE_AUTH_ERROR;
     CURLcode res;
     CURL* curl;
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
 
     // Set headers if any
     struct curl_slist* headers;
@@ -386,6 +424,8 @@ CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
     if (curlURL.empty()) return CURLE_FAILED_INIT;
 
     curl_easy_setopt(curl, CURLOPT_URL, curlURL.c_str());
+
+    
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
@@ -417,7 +457,6 @@ CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
         std::string bodyStr = body_params.dump();
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)bodyStr.size());
         curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, bodyStr.c_str());
-        DBG("body: " << bodyStr.c_str());
     }
 
     const CURLcode result = curl_easy_perform(curl);
@@ -427,6 +466,13 @@ CURLcode HTTPClient::doCurl(const std::string& path, const HTTPMethod& method,
     headers = NULL;
     curl_global_cleanup();
 
+    if (isBinary) {
+        std::ofstream file(destinationPath.c_str(), std::ios::binary);
+        if (file.is_open()) {
+            file << readBuffer;
+            file.close();
+        }
+	}
     return result;
 };
 
@@ -440,6 +486,12 @@ size_t HTTPClient::WriteCallback(void* contents, size_t size, size_t nmemb, std:
     }
     return newLength;
 };
+
+size_t HTTPClient::WriteToFileCallback(void* ptr, size_t size, size_t nmemb, void* stream) {
+    size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
+    return written;
+}
+
 
 std::string urlEncode(CURL* curl, const std::string& value) {
     char* output = curl_easy_escape(curl, value.c_str(), value.length());
@@ -604,6 +656,7 @@ void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
+        DBG("readBuffer: " << readBuffer);
     }
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:
@@ -654,6 +707,7 @@ void HTTPClient::updateCurrentScriptLine(const ScriptLineKeys& key, const std::s
         break;
     case ScriptLineKeys::translation:
         currentScriptLine.translation = value;
+        textToSpeech.text = value;
         break;
     case ScriptLineKeys::time_restriction:
         currentScriptLine.time_restriction = value;
