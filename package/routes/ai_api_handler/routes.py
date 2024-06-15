@@ -6,9 +6,10 @@ Imports:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Body, Header
 
 from ...utils.decorators import session_fetch
+from ..session.models import *
 from .models import *
 
 """
@@ -28,6 +29,12 @@ class AI_API_Handler_Router(APIRouter):
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
 
+        self.add_api_route(
+            path="/text_to_speech",
+            endpoint=self.text_to_speech,
+            methods=["POST"],
+        )
+
     ############################################################
     # getter functions:
 
@@ -37,8 +44,18 @@ class AI_API_Handler_Router(APIRouter):
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         data: Text_To_Speech,
+        session: Optional[Session] = Body(None, include_in_schema=False),
     ):
-        return await self.api_engine.text_to_speech(text="text", session_id=session_id)
+
+        return await session.api_engine_modules.ai_api_engine.text_to_speech(
+            api_key=api_key,
+            text=data.text,
+            voice=data.voice,
+            voice_settings=data.voice_settings,
+            model=data.model,
+            seed=data.seed,
+            audio_format=session.session_settings.audio_format,
+        )
 
     ############################################################
     # setter functions:

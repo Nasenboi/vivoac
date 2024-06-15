@@ -6,8 +6,14 @@ because thats what the modular child classes are for!
 Imports:
 """
 
+import os
+from io import BytesIO
 from typing import List
 
+from pydub import AudioSegment
+
+from ..routes.ai_api_handler.models import *
+from ..routes.audio.models import *
 from ..utils.decorators import virtual
 from .base_engine import Base_Engine
 
@@ -90,8 +96,56 @@ class AI_API_Engine(Base_Engine):
         api_key: str = None,
         text: str = None,
         voice: str = None,
-        voice_settings: dict = None,
+        voice_settings: Voice_Settings = None,
         model: str = None,
         seed: int = None,
+        audio_format: Audio_Format = None,
     ) -> bytes:
         pass
+
+    ############################################################
+    # Constant audio helper functions:
+
+    def apply_audio_format(
+        self,
+        target_format: Audio_Format,
+        audio_file_name: str = "",
+        audio_file: bytes = None,
+    ) -> str | bytes:
+        target_format.fill_default_values()
+
+        # Load the audio file
+        if audio_file_name:
+            audio = AudioSegment.from_file(audio_file_name)
+        elif audio_file:
+            audio = AudioSegment.from_file(BytesIO(audio_file))
+        else:
+            raise ValueError("No audio file provided")
+
+        # Apply normalization if needed
+        if target_format.normalization_type == "Peak":
+            audio = audio.apply_gain(-audio.max_dBFS)
+        elif target_format.normalization_type == "Loudness":
+            audio = audio.normalize()
+
+        # Convert to target format
+        audio = audio.set_frame_rate(target_format.sample_rate)
+        audio = audio.set_channels(target_format.channels)
+        audio = audio.set_sample_width(target_format.bit_depth // 8)
+
+        # Export the audio
+        output = BytesIO()
+
+        if audio_file_name:
+            new_file_name = audio_file_name.replace(
+                audio_file_name.split(".")[-1], target_format.codec
+            )
+            audio.export(new_file_name, format=target_format.codec)
+            # remove old file
+            os.remove(audio_file_name)
+            return new_file_name
+        else:
+            audio.export(
+                output, format=target_format.codec, bitrate=f"{target_format.bit_rate}k"
+            )
+            return output.getvalue()

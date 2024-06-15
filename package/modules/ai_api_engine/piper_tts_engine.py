@@ -18,6 +18,8 @@ if sys.platform == "linux":
 
 from ...base_classes import AI_API_Engine
 from ...globals import SETTINGS_GLOBAL
+from ...routes.ai_api_handler.models import *
+from ...routes.audio.models import *
 
 """
 Notes:
@@ -122,16 +124,25 @@ class Piper_TTS_Engine(AI_API_Engine):
         api_key: str = None,
         text: str = None,
         voice: str = None,
-        voice_settings: dict = None,
+        voice_settings: Voice_Settings = None,
         model: str = None,
         seed: int = None,
+        audio_format: Audio_Format = None,
     ) -> bytes:
+        if sys.platform != "linux":
+            raise OSError("This function is only available on linux devices!")
+
         temp_file = os.path.join(
             SETTINGS_GLOBAL.get("directories").get("temp"),
             "voice" + "_" + datetime.now().strftime("%-y%m%d_%H%M%S") + ".wav",
         )
         dt = Dimits(voice=voice, modelDirectory=self.piper_voice_directory)
-        dt.text_2_audio_file(text, temp_file, self.piper_voice_directory, format="wav")
+        dt.text_2_audio_file(
+            text, temp_file.split(".wav")[0], self.piper_voice_directory, format="wav"
+        )
+        temp_file: str = self.apply_audio_format(
+            target_format=audio_format, audio_file_name=temp_file
+        )
         with open(temp_file, "rb") as file:
             data = file.read()
         os.remove(temp_file)
