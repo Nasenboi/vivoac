@@ -54,5 +54,5 @@ LOGGER = colorlog.getLogger("main")
 
 # Create the other directories that are needed, if they dont exist:
 directories = SETTINGS_GLOBAL.get("directories")
-for directory in directories:
+for directory in directories.values():
     os.makedirs(directory, exist_ok=True)
