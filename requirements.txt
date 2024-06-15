@@ -70,6 +70,7 @@ pydantic-extra-types==2.8.1
 pydantic-settings==2.3.3
 pydantic_core==2.18.4
 pyDeprecate==0.3.2
+pydub==0.25.1
 Pygments==2.18.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
