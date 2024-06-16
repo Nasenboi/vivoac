@@ -7,7 +7,8 @@ Imports:
 from threading import Thread
 from time import sleep
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from uvicorn import Config, Server
 
@@ -40,6 +41,22 @@ class UvicornThread(Thread):
 # Essentials:
 
 
+async def log_request_info(request: Request):
+    try:
+        request_body = await request.json()
+    except Exception:
+        return
+
+    LOGGER.info(
+        f"{request.method} request to {request.url} metadata\n"
+        f"\tHeaders: {request.headers}\n"
+        f"\tBody: {request_body}\n"
+        f"\tPath Params: {request.path_params}\n"
+        f"\tQuery Params: {request.query_params}\n"
+        f"\tCookies: {request.cookies}\n"
+    )
+
+
 def init(self) -> None:
     LOGGER.debug("api engine - init")
     try:
@@ -51,7 +68,6 @@ def init(self) -> None:
             daemon=True,
             uvicorn_server=self.uvicorn_server,
         )
-
         # add routes
         self.routes = [
             API_Engine_Router(api_engine=self),
@@ -61,7 +77,9 @@ def init(self) -> None:
             Script_Router(api_engine=self),
         ]
         for route in self.routes:
-            self.app.include_router(route)
+            self.app.include_router(
+                route
+            )  # more verbose, dependencies=[Depends(log_request_info)]
 
         self.uvicorn_thread.setDaemon(True)
 

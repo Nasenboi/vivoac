@@ -38,10 +38,12 @@ class Session_Router(APIRouter):
         )
 
         self.add_api_route(
-            path="/create", endpoint=self.create_session_route, methods=["PUT"]
+            path="/create",
+            endpoint=self.create_session_route,
+            methods=["PUT", "POST", "GET"],
         )
         self.add_api_route(
-            path="/close", endpoint=self.close_session_route, methods=["POST"]
+            path="/close", endpoint=self.close_session_route, methods=["POST", "GET"]
         )
         self.add_api_route(
             path="/get", endpoint=self.get_session_route, methods=["GET"]
@@ -50,7 +52,9 @@ class Session_Router(APIRouter):
             path="/update", endpoint=self.update_session_route, methods=["POST"]
         )
 
-    async def create_session_route(self, session: Session = Session()) -> Session:
+    async def create_session_route(
+        self, session: Optional[Session] = Session()
+    ) -> Session:
         return await create_session(
             self=self, api_engine=self.api_engine, session=session
         )

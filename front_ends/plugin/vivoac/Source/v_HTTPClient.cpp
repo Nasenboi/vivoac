@@ -358,11 +358,83 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
 */
 void HTTPClient::doCurl(const std::function<void()> callback, const std::string& path, const HTTPMethod& method,
     const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId, bool isBinary, std::string destinationPath) {
+    DBG("=====================================================================================");
     if (checkSessionId && sessionID.empty()) {
         return;
     }
     std::lock_guard<std::mutex> lock(curlMutex);
 
+    readBuffer.clear();
+    auto curlURL = constructURL(path);
+    if (curlURL.empty()) return;
+    juce::URL curl(curlURL);
+
+    juce::String headers;
+    headers += juce::String("accept") + ": " + juce::String("application/ son") + "\r\n";
+    for (const auto& h : header_params) {
+        headers += juce::String(h.first) + ": " + juce::String(h.second) + "\r\n";
+    }
+
+    juce::StringPairArray parameters;
+    for (const auto& [key, value] : query_params.items()) {
+		parameters.set(key, value.get<std::string>());
+	}
+    curl = curl.withParameters(parameters);
+    if (!body_params.empty()) {
+        headers += juce::String("content-type") + ": " + juce::String("application/json") + "\r\n";
+        std::string bodyStr = body_params.dump();
+        curl = curl.withPOSTData(bodyStr.c_str());
+
+        DBG("Params in curl: " << curl.getPostData());
+    }
+
+    juce::String cmd;
+    switch (method) {
+    case HTTPMethod::Put:
+	    cmd = "PUT";
+	    break;
+    case HTTPMethod::Post:  
+        cmd = "POST";
+        break;
+    case HTTPMethod::Delete:
+        cmd = "DELETE";
+        break;
+    case HTTPMethod::Get:
+        cmd = "GET";
+	    break;
+    }
+
+
+    juce::URL::InputStreamOptions options = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
+        .withHttpRequestCmd(cmd)
+        .withExtraHeaders(headers);
+
+    DBG("options header: " << options.getExtraHeaders());
+
+    std::unique_ptr<juce::InputStream> stream(curl.createInputStream(options));
+
+    if (stream && !isBinary) {
+        auto line = stream->readString();
+        readBuffer += line.toStdString();
+	}
+    else if (stream) {
+        auto file = juce::File(destinationPath);
+        std::unique_ptr<juce::FileOutputStream> out(file.createOutputStream());
+        if (out) {
+            out->writeFromInputStream(*stream, -1);
+        }
+        else {
+            DBG("Failed to open stream.");
+        }
+    }
+	else {
+		DBG("Failed to open stream.");
+	}
+
+
+    DBG("=====================================================================================");
+
+    /*
     CURLcode res;
     CURL* curl;
 
@@ -444,7 +516,8 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
             file.close();
         }
 	}
-    
+    */
+
     if (callback) {
         callback();
     }

@@ -3,7 +3,7 @@
 <JUCERPROJECT id="lxTn9K" name="vivoac" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              version="0.0.0" pluginManufacturer="Christian B&#246;ndgen">
+              version="0.0.0" pluginManufacturer="Christian B&#246;ndgen" pluginFormats="buildAAX,buildStandalone,buildVST3">
   <MAINGROUP id="VFAJSV" name="vivoac">
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
       <GROUP id="{FE01D8A2-C99F-1DCE-28B8-8DAE49093A18}" name="API">
