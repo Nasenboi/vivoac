@@ -43,7 +43,7 @@ class Script_Router(APIRouter):
         session_id: Annotated[str, Header()],
         script_line: Optional[Script_Line] = Body(None, include_in_schema=False),
         session: Optional[Session] = Body(None, include_in_schema=False),
-    ) -> Union[List, Script_Line, Dict[str, Any]]:
+    ) -> List[Script_Line]:
         LOGGER.debug(f"Getting script lines for {script_line}")
         script_db_engine = session.api_engine_modules.script_db_engine
         script_lines = await get_script_lines(

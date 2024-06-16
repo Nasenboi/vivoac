@@ -4,7 +4,7 @@ Description: In here are the dictionary models that will be used for the script 
 Imports:
 """
 
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel
 
@@ -38,6 +38,13 @@ class Script_Line(BaseModel):
     generated_audio_path: Optional[str] = None
     comment: Optional[str] = None
     direction_notes: Optional[str] = None
+
+    def get_filter_params(self) -> Dict[str, Any]:
+        params_to_filter = {}
+        for key, value in self.__dict__.items():
+            if value is not None:
+                params_to_filter[key] = value
+        return params_to_filter
 
     def is_empty(self):
         return not self.__dict__

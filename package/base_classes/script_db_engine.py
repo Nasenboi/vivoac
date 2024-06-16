@@ -31,7 +31,7 @@ class Script_DB_Engine(Base_Engine):
     @virtual
     def get_script_lines(
         self, script: Optional[Script_Line] = Script_Line()
-    ) -> Union[List[Script_Line], Script_Line]:
+    ) -> List[Script_Line]:
         pass
 
     @virtual

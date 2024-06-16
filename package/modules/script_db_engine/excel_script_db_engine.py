@@ -70,7 +70,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
 
     def get_script_lines(
         self, script: Script_Line = Script_Line()
-    ) -> Union[List[Script_Line], Script_Line]:
+    ) -> List[Script_Line]:
         # Checks before we search the database:
         if not self.__check_excel_script():
             return Script_Line()
@@ -88,10 +88,6 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         if len(filtered_database) < 1:
             LOGGER.warning("No lines found in the database!")
             return Script_Line()
-        elif len(filtered_database) == 1:
-            return Script_Line(
-                {{key: value for key, value in filtered_database.iloc[0].items()}}
-            )
         else:
 
             def script_line_model_dump(line):
@@ -180,9 +176,9 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     def __filter_database(self, script: Script_Line) -> pd.DataFrame:
         # filter the database with the given script parameters:
         query = pd.Series([True] * len(self.excel_data_frame))
-        for key, value in script.model_dump():
-            if value is not None:
-                query &= self.excel_data_frame[key] == value
+        parameters_to_filter = script.get_filter_params()
+        for key, value in parameters_to_filter.items():
+            query &= self.excel_data_frame[key].astype(str) == str(value)
 
         filtered_database = self.excel_data_frame[query]
         return filtered_database
