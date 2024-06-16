@@ -239,19 +239,15 @@ void  v_ScriptMenu::updateComponents() {
     voiceTalent.setText(currentScriptLine.voice_talent, juce::dontSendNotification);
     characterName.setText(currentScriptLine.character_name, juce::dontSendNotification);
 
-    sourceLoader.setVisible(!currentScriptLine.reference_audio_path.empty());
-    translationLoader.setVisible(!currentScriptLine.delivery_audio_path.empty());
-    if (!currentScriptLine.delivery_audio_path.empty()) {
+    sourceLoader.setVisible(!currentScriptLine.reference_audio_path.empty() && juce::File{ currentScriptLine.reference_audio_path }.exists());
+    translationLoader.setVisible(!currentScriptLine.delivery_audio_path.empty() && juce::File{ currentScriptLine.delivery_audio_path }.exists());
+    if (sourceLoader.isVisible()) {
         scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.delivery_audio_path };
-        if (scriptAudioView.currentAudioFile.exists()) {
-            processor.loadAudioFile(scriptAudioView.currentAudioFile);
-        }
+        processor.loadAudioFile(scriptAudioView.currentAudioFile);
 	}
-	else if (!currentScriptLine.reference_audio_path.empty()) {
+	else if (translationLoader.isVisible()) {
         scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.reference_audio_path };
-        if (scriptAudioView.currentAudioFile.exists()) {
-            processor.loadAudioFile(scriptAudioView.currentAudioFile);
-        }
+        processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
 	else {
 		processor.clearAudio();
