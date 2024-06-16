@@ -146,6 +146,8 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
     }
     else if (button == &clearButton) {
         scriptTable.setSelectedRows(juce::SparseSet<int>());
+        client.setCurrentScriptLine(ScriptLine());
+        updateComponents();
         processor.clearAudio();
         scriptAudioView.repaint();
     }
@@ -216,12 +218,13 @@ bool v_ScriptMenu::isInterestedInFileDrag(const juce::StringArray& files) {
 
 void  v_ScriptMenu::updateComponents() {
     // Update text fields accordung to the current script line
-    id.setText(client.getCurrentScriptLine().id, juce::dontSendNotification);
-    sourceText.setText(client.getCurrentScriptLine().source_text, juce::dontSendNotification);
-    translation.setText(client.getCurrentScriptLine().translation, juce::dontSendNotification);
-    timeRestriction.setText(client.getCurrentScriptLine().time_restriction, juce::dontSendNotification);
-    voiceTalent.setText(client.getCurrentScriptLine().voice_talent, juce::dontSendNotification);
-    characterName.setText(client.getCurrentScriptLine().character_name, juce::dontSendNotification);
+    const ScriptLine currentScriptLine = client.getCurrentScriptLine();
+    id.setText(currentScriptLine.id, juce::dontSendNotification);
+    sourceText.setText(currentScriptLine.source_text, juce::dontSendNotification);
+    translation.setText(currentScriptLine.translation, juce::dontSendNotification);
+    timeRestriction.setText(currentScriptLine.time_restriction, juce::dontSendNotification);
+    voiceTalent.setText(currentScriptLine.voice_talent, juce::dontSendNotification);
+    characterName.setText(currentScriptLine.character_name, juce::dontSendNotification);
 }
 
 void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
@@ -235,7 +238,6 @@ void v_ScriptMenu::onEnter() {
     if (scriptAudioView.currentAudioFile.exists()) {
         processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
-
     updateComponents();
 }
 
