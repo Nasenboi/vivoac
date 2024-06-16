@@ -154,6 +154,18 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
     else if (button == &loadButton) {
         client.CURLgetScriptLines();
     }
+    else if (button == &sourceLoader) {
+        scriptAudioView.currentAudioFile = juce::File{ client.getCurrentScriptLine().reference_audio_path };
+        if (scriptAudioView.currentAudioFile.exists()) {
+            processor.loadAudioFile(scriptAudioView.currentAudioFile);
+        }
+    }
+    else if (button == &translationLoader) {
+        scriptAudioView.currentAudioFile = juce::File{ client.getCurrentScriptLine().delivery_audio_path };
+        if (scriptAudioView.currentAudioFile.exists()) {
+            processor.loadAudioFile(scriptAudioView.currentAudioFile);
+        }
+    }
 }
 
 void v_ScriptMenu::textEditorReturnKeyPressed(juce::TextEditor& editor) {
@@ -185,6 +197,7 @@ void v_ScriptMenu::onTextEditorDone(juce::TextEditor& editor) {
 void v_ScriptMenu::changeListenerCallback(juce::ChangeBroadcaster *source) {
     scriptTableModel.updateTable(client.getAllScriptLines());
     scriptTable.updateContent();
+    updateComponents();
 };
 
 juce::SparseSet<int> v_ScriptMenu::moveSelection(juce::SparseSet<int> selection, int direction) {
@@ -225,12 +238,32 @@ void  v_ScriptMenu::updateComponents() {
     timeRestriction.setText(currentScriptLine.time_restriction, juce::dontSendNotification);
     voiceTalent.setText(currentScriptLine.voice_talent, juce::dontSendNotification);
     characterName.setText(currentScriptLine.character_name, juce::dontSendNotification);
+
+    sourceLoader.setVisible(!currentScriptLine.reference_audio_path.empty());
+    translationLoader.setVisible(!currentScriptLine.delivery_audio_path.empty());
+    if (!currentScriptLine.delivery_audio_path.empty()) {
+        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.delivery_audio_path };
+        if (scriptAudioView.currentAudioFile.exists()) {
+            processor.loadAudioFile(scriptAudioView.currentAudioFile);
+        }
+	}
+	else if (!currentScriptLine.reference_audio_path.empty()) {
+        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.reference_audio_path };
+        if (scriptAudioView.currentAudioFile.exists()) {
+            processor.loadAudioFile(scriptAudioView.currentAudioFile);
+        }
+    }
+	else {
+		processor.clearAudio();
+	}
+    scriptAudioView.repaint();
 }
 
 void v_ScriptMenu::filesDropped(const juce::StringArray& files, int x, int y) {
     if (!isInterestedInFileDrag(files[0])) return;
     processor.loadAudioFile(files[0]);
     scriptAudioView.currentAudioFile = processor.getCurrentAudioFile();
+    DBG("Current Audio File: " << scriptAudioView.currentAudioFile.getFullPathName());
     scriptAudioView.repaint();
 };
 
