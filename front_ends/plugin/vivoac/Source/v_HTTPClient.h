@@ -20,10 +20,11 @@ typedef juce::AudioProcessorValueTreeState japvts;
 typedef std::pair<std::string, std::string> HEADER_PARAM;
 typedef std::vector<HEADER_PARAM> HEADER_PARAMS;
 
+
 //==============================================================================
 /* The HTTPClient Class
 */
-class HTTPClient : public japvts::Listener {
+class HTTPClient : public japvts::Listener, public juce::ChangeBroadcaster {
 public:
     HTTPClient();
     ~HTTPClient();
@@ -106,8 +107,11 @@ private:
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
     static size_t WriteToFileCallback(void* ptr, size_t size, size_t nmemb, void* stream);
     std::string constructURL(const std::string& path = "", json query = json());
-    CURLcode doCurl(const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
+    void doCurl(const std::function<void()> callback = std::function<void()>(), const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
         const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true, bool isBinary = false, std::string destinationPath = "");
+
+    // Listeners:
+    std::mutex curlMutex;
 
     // === The Data models as structures: ===
     // AI API:

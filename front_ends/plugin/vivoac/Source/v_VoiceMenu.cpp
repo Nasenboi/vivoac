@@ -34,3 +34,9 @@ void v_VoiceMenu::resized()
     // components that your component contains..
 
 }
+
+
+void v_VoiceMenu::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+	// Inherited from ChangeListener
+}

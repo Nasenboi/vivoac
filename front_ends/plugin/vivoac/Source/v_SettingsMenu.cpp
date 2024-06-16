@@ -182,7 +182,6 @@ void v_SettingsMenu::buttonClicked(juce::Button* button) {
                 generatedAudioPath.setText(file.getFullPathName());
                 client.setGeneratedAudioPath(generatedAudioPath.getText().toStdString());
             }
-
         });
     }
 };
@@ -233,3 +232,8 @@ void v_SettingsMenu::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
     }
     updateEngineComponents();
 };
+
+void v_SettingsMenu::changeListenerCallback(juce::ChangeBroadcaster *source) {
+    updateSessionComponents();
+    updateEngineComponents();
+}

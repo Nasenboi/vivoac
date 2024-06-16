@@ -36,6 +36,7 @@ public:
     void onTextEditorDone(juce::TextEditor& editor);
     void buttonClicked(juce::Button* button) override;
     void buttonStateChanged(juce::Button* button) override {};
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     void onSelectedRowsChanged();
 

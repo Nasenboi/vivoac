@@ -15,8 +15,7 @@
 //==============================================================================
 v_BaseMenuComponent::v_BaseMenuComponent(VivoacAudioProcessor& p, HTTPClient& c): processor(p), client(c)
 {
-
-
+    client.addChangeListener(this);
 }
 
 v_BaseMenuComponent::~v_BaseMenuComponent()

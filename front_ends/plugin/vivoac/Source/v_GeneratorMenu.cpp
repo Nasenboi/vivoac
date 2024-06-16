@@ -91,8 +91,11 @@ void v_GeneratorMenu::onTextEditorDone(juce::TextEditor& editor) {
 void v_GeneratorMenu::buttonClicked(juce::Button* button) {
 	if (button == &generateButton) {
 		client.CURLtextToSpeech();
-        loadGeneratedAudioFiles();
 	}
+};
+
+void v_GeneratorMenu::changeListenerCallback(juce::ChangeBroadcaster* source) {
+	loadGeneratedAudioFiles();
 };
 
 void v_GeneratorMenu::onEnter() {

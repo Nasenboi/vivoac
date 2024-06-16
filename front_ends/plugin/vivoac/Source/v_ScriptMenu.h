@@ -36,6 +36,7 @@ public:
     void textEditorReturnKeyPressed(juce::TextEditor& editor) override;
     void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
     void onTextEditorDone(juce::TextEditor& editor);
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;

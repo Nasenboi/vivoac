@@ -34,6 +34,7 @@ public:
     void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
     void onTextEditorDone(juce::TextEditor& editor);
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     void updateSessionComponents();
     void updateEngineComponents();

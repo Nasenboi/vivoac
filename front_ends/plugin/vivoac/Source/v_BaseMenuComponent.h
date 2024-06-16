@@ -18,7 +18,7 @@
 //==============================================================================
 /*
 */
-class v_BaseMenuComponent  : public juce::Component
+class v_BaseMenuComponent  : public juce::Component, public juce::ChangeListener
 {
 public:
     v_BaseMenuComponent(VivoacAudioProcessor& p, HTTPClient& c);
@@ -28,6 +28,8 @@ public:
     virtual void resized() override;
     virtual void onEnter() {};
     virtual void onLeave() {};
+
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override = 0;
 
 protected:
     VivoacAudioProcessor &processor;

@@ -151,8 +151,6 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
     }
     else if (button == &loadButton) {
         client.CURLgetScriptLines();
-        scriptTableModel.updateTable(client.getAllScriptLines());
-        scriptTable.updateContent();
     }
 }
 
@@ -182,6 +180,10 @@ void v_ScriptMenu::onTextEditorDone(juce::TextEditor& editor) {
     }
 };
 
+void v_ScriptMenu::changeListenerCallback(juce::ChangeBroadcaster *source) {
+    scriptTableModel.updateTable(client.getAllScriptLines());
+    scriptTable.updateContent();
+};
 
 juce::SparseSet<int> v_ScriptMenu::moveSelection(juce::SparseSet<int> selection, int direction) {
     juce::SparseSet<int> newSelection;

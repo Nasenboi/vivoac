@@ -24,6 +24,7 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     void onEnter() override {};
     void onLeave() override {};
