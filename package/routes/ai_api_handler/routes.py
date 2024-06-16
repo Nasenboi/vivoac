@@ -46,20 +46,24 @@ class AI_API_Handler_Router(APIRouter):
         data: Text_To_Speech,
         session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Response:
+        try:
+            file_in_bytes: bytes = (
+                session.api_engine_modules.ai_api_engine.text_to_speech(
+                    api_key=api_key,
+                    text=data.text,
+                    voice=data.voice,
+                    voice_settings=data.voice_settings,
+                    model=data.model,
+                    seed=data.seed,
+                    audio_format=session.session_settings.audio_format,
+                )
+            )
 
-        file_in_bytes: bytes = session.api_engine_modules.ai_api_engine.text_to_speech(
-            api_key=api_key,
-            text=data.text,
-            voice=data.voice,
-            voice_settings=data.voice_settings,
-            model=data.model,
-            seed=data.seed,
-            audio_format=session.session_settings.audio_format,
-        )
+            media_type = f"audio/{session.session_settings.audio_format}"
 
-        media_type = f"audio/{session.session_settings.audio_format}"
-
-        return Response(content=file_in_bytes, media_type=media_type)
+            return Response(content=file_in_bytes, media_type=media_type)
+        except Exception as e:
+            return Response(content=f"Error: {e}", media_type="text/plain")
 
     ############################################################
     # setter functions:
