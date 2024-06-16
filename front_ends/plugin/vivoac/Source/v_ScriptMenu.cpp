@@ -242,11 +242,11 @@ void  v_ScriptMenu::updateComponents() {
     sourceLoader.setVisible(!currentScriptLine.reference_audio_path.empty() && juce::File{ currentScriptLine.reference_audio_path }.exists());
     translationLoader.setVisible(!currentScriptLine.delivery_audio_path.empty() && juce::File{ currentScriptLine.delivery_audio_path }.exists());
     if (sourceLoader.isVisible()) {
-        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.delivery_audio_path };
+        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.reference_audio_path };
         processor.loadAudioFile(scriptAudioView.currentAudioFile);
 	}
 	else if (translationLoader.isVisible()) {
-        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.reference_audio_path };
+        scriptAudioView.currentAudioFile = juce::File{ currentScriptLine.delivery_audio_path };
         processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
 	else {
