@@ -156,15 +156,11 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
     }
     else if (button == &sourceLoader) {
         scriptAudioView.currentAudioFile = juce::File{ client.getCurrentScriptLine().reference_audio_path };
-        if (scriptAudioView.currentAudioFile.exists()) {
-            processor.loadAudioFile(scriptAudioView.currentAudioFile);
-        }
+        processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
     else if (button == &translationLoader) {
         scriptAudioView.currentAudioFile = juce::File{ client.getCurrentScriptLine().delivery_audio_path };
-        if (scriptAudioView.currentAudioFile.exists()) {
-            processor.loadAudioFile(scriptAudioView.currentAudioFile);
-        }
+        processor.loadAudioFile(scriptAudioView.currentAudioFile);
     }
 }
 
