@@ -145,7 +145,7 @@ void v_ScriptMenu::buttonClicked(juce::Button* button) {
         scriptTable.setSelectedRows(newSelection);
     }
     else if (button == &clearButton) {
-        scriptTable.setSelectedRows(juce::SparseSet<int>());
+        scriptTable.deselectAllRows();        
         client.setCurrentScriptLine(ScriptLine());
         updateComponents();
         processor.clearAudio();
