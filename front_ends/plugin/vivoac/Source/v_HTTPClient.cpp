@@ -61,12 +61,6 @@ HTTPClient::~HTTPClient() {
     CURLcloseSession();
 };
 
-//==============================================================================
-/* 
-*/
-void HTTPClient::parameterChanged(const juce::String& parameterID, float newValue) {
-    
-};
 
 //==============================================================================
 /* Actual API Functions
@@ -80,12 +74,12 @@ void HTTPClient::CURLinitSession() {
         json j;
         try {
             j = json::parse(readBuffer);
-            //DBG(j.dump(4));
+            DBG(j.dump(4));
             sessionID = j.value("session_id", "");
         }
         catch (json::parse_error& e) {
-            //DBG("JSON parse error: " << e.what());
-            //DBG("readBuffer: " << readBuffer);
+            DBG("JSON parse error: " << e.what());
+            DBG("readBuffer: " << readBuffer);
             sessionID = "";
         }
         CURLupdateSession();
@@ -106,19 +100,21 @@ void HTTPClient::CURLcloseSession() {
         json j;
         try {
             j = json::parse(readBuffer);
-            //DBG(j.dump(4));
+            DBG(j.dump(4));
             sessionID = "";
+            DBG("Session Closed!");
         }
         catch (json::parse_error& e) {
-            //DBG("JSON parse error: " << e.what());
-            //DBG("readBuffer: " << readBuffer);
+            DBG("JSON parse error: " << e.what());
+            DBG("readBuffer: " << readBuffer);
             sessionID = "";
         }
     };
     std::thread asyncThread([this, callback, headers]() {
         this->doCurl(callback, "/session/close", HTTPMethod::Post, headers);
     });
-    asyncThread.detach();    
+    // Do not detach, this session needs to be closed before the program ends!
+    asyncThread.join();    
 }
 
 void HTTPClient::reload() {
@@ -138,7 +134,7 @@ void HTTPClient::CURLupdateSession() {
     DBG(body.dump(4));
     DBG("---------------------------------------------");
 
-    std::function<void()> callback = []() {};
+    std::function<void()> callback = [this]() { sendChangeMessage();};
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/session/update", HTTPMethod::Post, headers, body);
         });
@@ -177,6 +173,7 @@ void HTTPClient::CURLgetScriptLines() {
         for (int i = 0; i < lines.size(); ++i) {
             scriptLines.push_back(lines[i]);
         }
+        sendChangeMessage();
     };
     
     std::thread asyncThread([this, callback, headers, body]() {
@@ -226,7 +223,7 @@ void HTTPClient::CURLtextToSpeech() {
     std::string target_path = generatedAudioPath + std::string(juce::File::getSeparatorString()) + timedate + "_" + currentScriptLine.character_name + "_" + currentScriptLine.id + ".wav";
     DBG("target path: " << target_path);
 
-    std::function<void()> callback = []() {};
+    std::function<void()> callback = [this]() { sendChangeMessage();};
     std::thread asyncThread([this, callback, headers, body, target_path]() {
         this->doCurl(callback, "/ai_api_handler/text_to_speech", HTTPMethod::Post, headers, body, {}, true, true, target_path);
     });
@@ -241,7 +238,7 @@ void HTTPClient::CURLupdateSessionEngines() {
     body["engine_modules"] = engineModules;
 
 
-    std::function<void()> callback = [](){};
+    std::function<void()> callback = [this]() { sendChangeMessage();};
     std::thread asyncThread([this, callback, headers, body]() {
          this->doCurl(callback, "/session/engine/update", HTTPMethod::Post, headers, body);
     });
@@ -282,9 +279,10 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
             }
         }
 		catch (json::parse_error& e) {
-			//DBG("JSON parse error: " << e.what());
-			//DBG("readBuffer: " << readBuffer);
+			DBG("JSON parse error: " << e.what());
+			DBG("readBuffer: " << readBuffer);
 		}
+        sendChangeMessage();
     };
 
     std::thread asyncThread([this, callback, headers, query]() {
@@ -325,7 +323,7 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
 
     DBG(body.dump(4));
 
-    std::function<void()> callback = [](){};
+    std::function<void()> callback = [this]() { sendChangeMessage();};
     std::thread asyncThread([this, callback, headers, body, query]() { 
         this->doCurl(callback, std::string("/session/engine/settings/update"), HTTPMethod::Post,
             headers, body, query, true, false, std::string());
@@ -450,7 +448,6 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     if (callback) {
         callback();
     }
-    sendChangeMessage();
 };
 
 size_t HTTPClient::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {

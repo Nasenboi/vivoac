@@ -24,12 +24,10 @@ typedef std::vector<HEADER_PARAM> HEADER_PARAMS;
 //==============================================================================
 /* The HTTPClient Class
 */
-class HTTPClient : public japvts::Listener, public juce::ChangeBroadcaster {
+class HTTPClient : public juce::ChangeBroadcaster {
 public:
     HTTPClient();
     ~HTTPClient();
-
-    void parameterChanged(const juce::String& parameterID, float newValue) override;
 
     // == ai api functions ==
     void CURLtextToSpeech();

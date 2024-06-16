@@ -19,7 +19,7 @@ VivoacAudioProcessor::VivoacAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), apvts(*this, nullptr, "Parameters", createParameters())
+                       )
 #endif
 {
     // Add voices to the sampler
@@ -182,14 +182,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new VivoacAudioProcessor();
 }
 
-//==============================================================================
-japvts::ParameterLayout VivoacAudioProcessor::createParameters() {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> p;
-
-    // p.push_back(std::make_unique<juce::Type>("KEY", "Name", opts));
-
-    return { p.begin(), p.end() };
-}
 
 //==============================================================================
 bool VivoacAudioProcessor::isPlayingAudio() {

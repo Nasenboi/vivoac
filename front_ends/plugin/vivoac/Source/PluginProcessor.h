@@ -10,7 +10,6 @@
 
 #include <JuceHeader.h>
 
-typedef juce::AudioProcessorValueTreeState japvts;
 
 //==============================================================================
 /**
@@ -55,8 +54,6 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    //==============================================================================
-    japvts apvts;
 
     //==============================================================================
     void loadAudioFile(std::function<void()> callback = [](){});
@@ -75,7 +72,6 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VivoacAudioProcessor)
     //==============================================================================
-    japvts::ParameterLayout createParameters();
 
     //==============================================================================
     juce::Synthesiser synth;
