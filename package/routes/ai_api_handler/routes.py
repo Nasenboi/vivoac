@@ -39,6 +39,32 @@ class AI_API_Handler_Router(APIRouter):
     # getter functions:
 
     @session_fetch
+    async def get_voices_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> List[str]:
+        return session.api_engine_modules.ai_api_engine.get_voices(api_key=api_key)
+
+    @session_fetch
+    async def get_voice_settings_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        voice_id: Annotated[str, Header()] = None,
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> Voice_Settings:
+        return session.api_engine_modules.ai_api_engine.get_voice_settings(
+            api_key=api_key, voice_id=voice_id
+        )
+
+    ############################################################
+    # setter functions:
+
+    ############################################################
+    # post functions:
+    @session_fetch
     async def text_to_speech(
         self,
         session_id: Annotated[str, Header()],
@@ -64,12 +90,6 @@ class AI_API_Handler_Router(APIRouter):
             return Response(content=file_in_bytes, media_type=media_type)
         except Exception as e:
             return Response(content=f"Error: {e}", media_type="text/plain")
-
-    ############################################################
-    # setter functions:
-
-    ############################################################
-    # post functions:
 
     ############################################################
     # put functions:

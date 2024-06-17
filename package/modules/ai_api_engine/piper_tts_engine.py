@@ -61,14 +61,27 @@ class Piper_TTS_Engine(AI_API_Engine):
             return name
         return ""
 
-    def get_voice_settings(self, api_key: str = None, voice_id: str = None) -> dict:
+    def get_voice_settings(
+        self, api_key: str = None, voice_id: str = None
+    ) -> Voice_Settings:
         settings_path = os.path.join(
             self.piper_voice_directory, f"{voice_id}.onnx.json"
         )
         if os.path.isfile(settings_path):
             with open(settings_path, "r") as file:
-                return json.load(file)
-        return {}
+                settings = json.load(file)
+        else:
+            settings = {}
+
+        voice_settings = Voice_Settings(
+            voice_id=voice_id,
+            name=voice_id,
+            settings=settings,
+            description="No description available!",
+            files="No files available!",
+            labels="No labels available!",
+        )
+        return voice_settings
 
     ############################################################
     # Voice editing functions:

@@ -53,7 +53,9 @@ class AI_API_Engine(Base_Engine):
         pass
 
     @virtual
-    def get_voice_settings(self, api_key: str = None, voice_id: str = None) -> dict:
+    def get_voice_settings(
+        self, api_key: str = None, voice_id: str = None
+    ) -> Voice_Settings:
         pass
 
     ############################################################
