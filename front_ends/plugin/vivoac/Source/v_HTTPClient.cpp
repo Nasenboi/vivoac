@@ -57,6 +57,11 @@ HTTPClient::HTTPClient() {
 };
 
 HTTPClient::~HTTPClient() {
+    // wait for all other threads to finish
+    while (threadRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
     savePluginSettings();
     CURLcloseSession();
 };
@@ -89,6 +94,7 @@ void HTTPClient::CURLinitSession() {
     std::thread asyncThread([this, callback]() {
         this->doCurl(callback, "/session/create", HTTPMethod::Put, {}, {}, {}, false);
     });
+    threadRunning = true;
     asyncThread.detach();
 };
 
@@ -134,10 +140,11 @@ void HTTPClient::CURLupdateSession() {
     DBG(body.dump(4));
     DBG("---------------------------------------------");
 
-    std::function<void()> callback = [this]() { sendChangeMessage();};
+    std::function<void()> callback = [this]() { afterCurl();};
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/session/update", HTTPMethod::Post, headers, body);
         });
+    threadRunning = true;
     asyncThread.detach();
 }
 
@@ -179,6 +186,7 @@ void HTTPClient::CURLgetScriptLines() {
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/script/get", HTTPMethod::Get, headers, body);
     });
+    threadRunning = true;
     asyncThread.detach();
 };
 
@@ -223,10 +231,11 @@ void HTTPClient::CURLtextToSpeech() {
     std::string target_path = generatedAudioPath + std::string(juce::File::getSeparatorString()) + timedate + "_" + currentScriptLine.character_name + "_" + currentScriptLine.id + ".wav";
     DBG("target path: " << target_path);
 
-    std::function<void()> callback = [this]() { sendChangeMessage();};
+    std::function<void()> callback = [this]() { afterCurl();};
     std::thread asyncThread([this, callback, headers, body, target_path]() {
         this->doCurl(callback, "/ai_api_handler/text_to_speech", HTTPMethod::Post, headers, body, {}, true, true, target_path);
     });
+    threadRunning = true;
     asyncThread.detach();
 }
 // == Engine Functions == 
@@ -238,10 +247,11 @@ void HTTPClient::CURLupdateSessionEngines() {
     body["engine_modules"] = engineModules;
 
 
-    std::function<void()> callback = [this]() { sendChangeMessage();};
+    std::function<void()> callback = [this]() { afterCurl();};
     std::thread asyncThread([this, callback, headers, body]() {
          this->doCurl(callback, "/session/engine/update", HTTPMethod::Post, headers, body);
     });
+    threadRunning = true;
     asyncThread.detach();
 }
 
@@ -282,12 +292,13 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
 			DBG("JSON parse error: " << e.what());
 			DBG("readBuffer: " << readBuffer);
 		}
-        sendChangeMessage();
+        afterCurl();
     };
 
     std::thread asyncThread([this, callback, headers, query]() {
         this->doCurl(callback, "/session/engine/settings/get", HTTPMethod::Get, headers, {}, query);;
     });
+    threadRunning = true;
     asyncThread.detach();
 }
 
@@ -323,11 +334,12 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
 
     DBG(body.dump(4));
 
-    std::function<void()> callback = [this]() { sendChangeMessage();};
+    std::function<void()> callback = [this]() { afterCurl();};
     std::thread asyncThread([this, callback, headers, body, query]() { 
         this->doCurl(callback, std::string("/session/engine/settings/update"), HTTPMethod::Post,
             headers, body, query, true, false, std::string());
     });
+    threadRunning = true;
     asyncThread.detach();
 }
 
@@ -358,15 +370,18 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
 */
 void HTTPClient::doCurl(const std::function<void()> callback, const std::string& path, const HTTPMethod& method,
     const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId, bool isBinary, std::string destinationPath) {
-    DBG("=====================================================================================");
-    if (checkSessionId && sessionID.empty()) {
-        return;
-    }
     std::lock_guard<std::mutex> lock(curlMutex);
 
     readBuffer.clear();
     auto curlURL = constructURL(path);
-    if (curlURL.empty()) return;
+    if (curlURL.empty() || (checkSessionId && sessionID.empty())) {
+        if (callback) {
+			callback();
+		}
+		return; 
+    }
+
+
     juce::URL curl(curlURL);
 
     juce::String headers;
@@ -384,8 +399,6 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
         headers += juce::String("content-type") + ": " + juce::String("application/json") + "\r\n";
         std::string bodyStr = body_params.dump();
         curl = curl.withPOSTData(bodyStr.c_str());
-
-        DBG("Params in curl: " << curl.getPostData());
     }
 
     juce::String cmd;
@@ -404,12 +417,9 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
 	    break;
     }
 
-
     juce::URL::InputStreamOptions options = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
         .withHttpRequestCmd(cmd)
         .withExtraHeaders(headers);
-
-    DBG("options header: " << options.getExtraHeaders());
 
     std::unique_ptr<juce::InputStream> stream(curl.createInputStream(options));
 
@@ -431,96 +441,14 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
 		DBG("Failed to open stream.");
 	}
 
-
-    DBG("=====================================================================================");
-
-    /*
-    CURLcode res;
-    CURL* curl;
-
-    curl_global_init(CURL_GLOBAL_ALL);
-    curl = curl_easy_init();
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-
-
-    // Set headers if any
-    struct curl_slist* headers;
-    headers = NULL;
-    for (const auto& h : header_params) {
-        std::string headerString = h.first + ": " + h.second;
-        headers = curl_slist_append(headers, headerString.c_str());
-    }
-    if (!body_params.empty()) {
-        headers = curl_slist_append(headers, "Content-Type: application/json");
-    }
-
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-    readBuffer.clear();
-
-    auto curlURL = constructURL(path, query_params);
-    if (curlURL.empty()) return;
-
-    curl_easy_setopt(curl, CURLOPT_URL, curlURL.c_str());
-
-    
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
-    switch (method) {
-    case HTTPMethod::Put:
-        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
-        break;
-    case HTTPMethod::Post:
-        curl_easy_setopt(curl, CURLOPT_POST, 1L);
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-        break;
-    case HTTPMethod::Delete:
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-        break;
-    case HTTPMethod::Get:
-        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-        break;
-    };
-
-    // Set body if it exists
-    if (!body_params.is_null()) {
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.38.0");
-        curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
-        curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-
-        std::string bodyStr = body_params.dump();
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)bodyStr.size());
-        curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, bodyStr.c_str());
-    }
-
-    const CURLcode result = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
-    curl = NULL;
-    curl_slist_free_all(headers);
-    headers = NULL;
-    curl_global_cleanup();
-
-
-    if (result != CURLE_OK) {
-        DBG("curl_easy_perform() failed: \n" << curl_easy_strerror(result));
-        return;
-    }
-    else if (isBinary) {
-        std::ofstream file(destinationPath.c_str(), std::ios::binary);
-        if (file.is_open()) {
-            file << readBuffer;
-            file.close();
-        }
-	}
-    */
-
     if (callback) {
         callback();
     }
+};
+
+void HTTPClient::afterCurl() {
+	threadRunning = false;
+	sendChangeMessage();
 };
 
 size_t HTTPClient::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {

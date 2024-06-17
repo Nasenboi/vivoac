@@ -54,9 +54,13 @@ public:
         return numRows;
     };
 
-
     std::string getAudioFile(int row) {
 		return generatedAudioFiles[row];
+	};
+
+    void removeAudioFileFromTable(int row) {
+		generatedAudioFiles.erase(generatedAudioFiles.begin() + row);
+		numRows = generatedAudioFiles.size();
 	};
 
 private:

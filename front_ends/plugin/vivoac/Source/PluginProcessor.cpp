@@ -230,6 +230,14 @@ void VivoacAudioProcessor::loadAudioFile(const juce::String& path) {
 }
 
 void VivoacAudioProcessor::loadAudioFile(const juce::File& file) {
+    if (!file.existsAsFile()) {
+		return;
+	}
+    juce::WildcardFileFilter filter{ formatManager.getWildcardForAllFormats(), {}, {} };
+    if (!filter.isFileSuitable(file)) {
+		return;
+	}
+
     synth.clearSounds();
     currentAudioFile = juce::File{ file };
     formatReader.reset(formatManager.createReaderFor(currentAudioFile));

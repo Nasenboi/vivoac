@@ -37,6 +37,8 @@ v_GeneratorMenu::v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c): v_Base
     // Buttons:
     generateButton.addListener(this);
     addAndMakeVisible(generateButton);
+    deleteButton.addListener(this);
+    addAndMakeVisible(deleteButton);
 }
 
 v_GeneratorMenu::~v_GeneratorMenu()
@@ -53,6 +55,7 @@ void v_GeneratorMenu::resized()
     generatorTable.setBounds(margin, margin, getWidth() / 2 - 2 * margin, getHeight() - 2 * margin);
     generatorTable.getHeader().setColumnWidth(1, generatorTable.getWidth());
     audioFileView.setBounds(generatorTable.getRight() + margin, margin, getWidth() / 2 - 2 * margin, defaultHeight);
+    deleteButton.setBounds(generatorTable.getRight() + margin, audioFileView.getBottom() + margin, defaultHeight, defaultHeight);
 
     generateButton.setBounds(getWidth() - margin - defaultLength, getHeight() - margin - defaultLength, defaultLength, defaultLength);
     translation.setBounds(generatorTable.getRight() + margin + defaultLength, generateButton.getBottom() - generateButton.getHeight() - margin - 3 * defaultHeight, getRight() - margin - (generatorTable.getRight() + margin + defaultLength), 3 * defaultHeight);
@@ -63,6 +66,11 @@ void v_GeneratorMenu::loadGeneratedAudioFiles() {
     juce::Array<juce::File> generatedAudioFiles = generatedAudioFolder.findChildFiles(juce::File::findFiles, true);
     std::vector<std::string> generatedAudioFileNames;
 
+    // Sort the files by date:
+    std::sort(generatedAudioFiles.begin(), generatedAudioFiles.end(), [](const juce::File& a, const juce::File& b) {
+		return a.getLastModificationTime() > b.getLastModificationTime();
+	});
+
     for (auto& file : generatedAudioFiles) {
 		generatedAudioFileNames.push_back(file.getFullPathName().toStdString());
 	}
@@ -71,6 +79,9 @@ void v_GeneratorMenu::loadGeneratedAudioFiles() {
 }
 
 void v_GeneratorMenu::onSelectedRowsChanged() {
+    if (generatorTable.getSelectedRow() < 0) {
+		return;
+	}
     audioFileView.currentAudioFile = generatorTableModel.getAudioFile(generatorTable.getSelectedRow());
     processor.loadAudioFile(audioFileView.currentAudioFile);
     repaint();
@@ -85,20 +96,33 @@ void v_GeneratorMenu::onTextEditorDone(juce::TextEditor& editor) {
     if (&editor == &translation) {
 		client.updateCurrentScriptLine(ScriptLineKeys::translation, translation.getText().toStdString());
 	}
-
 };
 
 void v_GeneratorMenu::buttonClicked(juce::Button* button) {
 	if (button == &generateButton) {
 		client.CURLtextToSpeech();
 	}
+    else if (button == &deleteButton) {
+        const int row = generatorTable.getSelectedRow();
+        if (row < 0) {
+			return;
+		}
+        juce::File generatedFile = juce::File{ generatorTableModel.getAudioFile(row) };
+        if (!generatedFile.exists()) {
+            return;
+        }
+        processor.clearAudio();
+        generatedFile.deleteFile();
+        generatorTableModel.removeAudioFileFromTable(row);
+        refreshComponents();
+    }
 };
 
 void v_GeneratorMenu::changeListenerCallback(juce::ChangeBroadcaster* source) {
 	loadGeneratedAudioFiles();
 };
 
-void v_GeneratorMenu::onEnter() {
+void v_GeneratorMenu::refreshComponents() {
     loadGeneratedAudioFiles();
 
     if (audioFileView.currentAudioFile.exists()) {
@@ -107,6 +131,12 @@ void v_GeneratorMenu::onEnter() {
 
     translation.setText(client.getCurrentScriptLine().translation, juce::dontSendNotification);
 }
+
+void v_GeneratorMenu::onEnter() {
+    refreshComponents();
+}
 void v_GeneratorMenu::onLeave() {
     processor.clearAudio();
 }
+
+

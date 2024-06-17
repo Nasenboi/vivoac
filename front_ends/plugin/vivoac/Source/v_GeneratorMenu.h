@@ -53,7 +53,9 @@ private:
     v_AudioFileView audioFileView;
     juce::Label translationLabel;
     juce::TextEditor translation;
-    juce::TextButton generateButton{ "SPEAK!" };
+    juce::TextButton generateButton{ "SPEAK!" }, deleteButton{ "Delete" };
+
+    void refreshComponents();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_GeneratorMenu)
 };

@@ -107,9 +107,11 @@ private:
     std::string constructURL(const std::string& path = "", json query = json());
     void doCurl(const std::function<void()> callback = std::function<void()>(), const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
         const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true, bool isBinary = false, std::string destinationPath = "");
+    void afterCurl();
 
     // Listeners:
     std::mutex curlMutex;
+    bool threadRunning = false;
 
     // === The Data models as structures: ===
     // AI API:

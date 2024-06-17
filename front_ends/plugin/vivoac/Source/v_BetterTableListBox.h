@@ -17,6 +17,7 @@ public:
 
     v_BetterTableListBox(const juce::String& componentName = juce::String(), juce::TableListBoxModel* model = nullptr) : juce::TableListBox(componentName, model), callback(nullptr)
     {
+        setMultipleSelectionEnabled(false);
     }
 
     void setSelectedRowsChangedCallback(std::function<void(int)> cb)
