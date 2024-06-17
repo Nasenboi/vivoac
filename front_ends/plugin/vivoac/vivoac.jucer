@@ -49,8 +49,8 @@
               file="Source/v_VoiceTableModel.h"/>
       </GROUP>
       <GROUP id="{99BB4DED-7F6C-5038-AD85-F5A46ACF9B38}" name="Assets">
-        <FILE id="o6MovQ" name="ViVoAc_Logo_1.0.png" compile="0" resource="1"
-              file="../../../../../../ViVoAc_Logo_1.0.png"/>
+        <FILE id="eMcV5G" name="ViVoAc_Logo_1.0.png" compile="0" resource="1"
+              file="../../../data/assets/ViVoAc_Logo_1.0.png"/>
       </GROUP>
       <FILE id="RJOYdk" name="v_LookAndFeel.h" compile="0" resource="0" file="Source/v_LookAndFeel.h"/>
       <FILE id="M4DwjK" name="v_Colors.h" compile="0" resource="0" file="Source/v_Colors.h"/>
