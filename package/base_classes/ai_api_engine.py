@@ -65,10 +65,7 @@ class AI_API_Engine(Base_Engine):
     def create_voice(
         self,
         api_key: str = None,
-        name: str = None,
-        description: str = None,
-        files: List[str] = None,
-        labels: dict = None,
+        voice_settings: Voice_Settings = None,
     ) -> str:
         pass
 
@@ -76,12 +73,7 @@ class AI_API_Engine(Base_Engine):
     def edit_voice_settings(
         self,
         api_key: str = None,
-        voice_id: str = None,
-        name: str = None,
-        description: str = None,
-        files: List[str] = None,
-        labels: dict = None,
-        settings: dict = None,
+        voice_settings: Voice_Settings = None,
     ) -> None:
         pass
 

@@ -39,6 +39,24 @@ class AI_API_Handler_Router(APIRouter):
     # getter functions:
 
     @session_fetch
+    async def get_user_data_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> dict:
+        return session.api_engine_modules.ai_api_engine.get_user_data(api_key=api_key)
+
+    @session_fetch
+    async def get_models_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> dict:
+        return session.api_engine_modules.ai_api_engine.get_models(api_key=api_key)
+
+    @session_fetch
     async def get_voices_route(
         self,
         session_id: Annotated[str, Header()],
@@ -61,6 +79,32 @@ class AI_API_Handler_Router(APIRouter):
 
     ############################################################
     # setter functions:
+
+    @session_fetch
+    async def create_voice_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        voice_settings: Voice_Settings,
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> str:
+        return session.api_engine_modules.ai_api_engine.create_voice(
+            api_key=api_key,
+            voice_settings=voice_settings,
+        )
+
+    @session_fetch
+    async def edit_voice_settings_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        voice_settings: Voice_Settings,
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> None:
+        return session.api_engine_modules.ai_api_engine.edit_voice_settings(
+            api_key=api_key,
+            voice_settings=voice_settings,
+        )
 
     ############################################################
     # post functions:
@@ -96,3 +140,14 @@ class AI_API_Handler_Router(APIRouter):
 
     ############################################################
     # delete functions:
+    @session_fetch
+    async def delete_voice_route(
+        self,
+        session_id: Annotated[str, Header()],
+        api_key: Annotated[str, Header()],
+        voice_id: Annotated[str, Header()],
+        session: Optional[Session] = Body(None, include_in_schema=False),
+    ) -> None:
+        return session.api_engine_modules.ai_api_engine.delete_voice(
+            api_key=api_key, voice_id=voice_id
+        )

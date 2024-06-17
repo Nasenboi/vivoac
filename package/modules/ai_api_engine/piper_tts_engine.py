@@ -89,29 +89,21 @@ class Piper_TTS_Engine(AI_API_Engine):
     def create_voice(
         self,
         api_key: str = None,
-        name: str = None,
-        description: str = None,
-        files: List[str] = None,
-        labels: dict = None,
+        voice_settings: Voice_Settings = None,
     ) -> str:
         raise NotImplementedError
 
     def edit_voice_settings(
         self,
         api_key: str = None,
-        voice_id: str = None,
-        name: str = None,
-        description: str = None,
-        files: List[str] = None,
-        labels: dict = None,
-        settings: dict = None,
+        voice_settings: Voice_Settings = None,
     ) -> None:
         settings_path = os.path.join(
-            self.piper_voice_directory, f"{voice_id}.onnx.json"
+            self.piper_voice_directory, f"{voice_settings.voice_id}.onnx.json"
         )
         if os.path.isfile(settings_path):
             with open(settings_path, "w") as file:
-                json.dump(settings, file)
+                json.dump(voice_settings.settings, file)
 
         return
 
