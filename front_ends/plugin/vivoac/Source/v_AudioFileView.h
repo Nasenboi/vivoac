@@ -18,7 +18,7 @@
 //==============================================================================
 /*
 */
-class v_AudioFileView  : public juce::Component, public juce::Button::Listener
+class v_AudioFileView  : public juce::Component, public juce::Button::Listener, public juce::DragAndDropContainer
 {
 public:
     v_AudioFileView(VivoacAudioProcessor& p, HTTPClient& c, const bool hasLoadButton = true);
@@ -29,6 +29,12 @@ public:
 
     void buttonClicked(juce::Button* button) override;
     void buttonStateChanged(juce::Button* button) override {};
+
+    void mouseDrag(const juce::MouseEvent& event) override {
+        juce::StringArray files;
+        files.add(currentAudioFile.getFullPathName());
+        performExternalDragDropOfFiles(files, true);
+    };
 
     juce::File currentAudioFile;
 

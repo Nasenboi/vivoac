@@ -53,7 +53,7 @@ private:
     v_AudioFileView audioFileView;
     juce::Label translationLabel;
     juce::TextEditor translation;
-    juce::TextButton generateButton{ "SPEAK!" }, deleteButton{ "Delete" };
+    juce::TextButton generateButton{ "SPEAK!" }, deleteButton{ "Delete" }, openButton{ "Open" };
 
     void refreshComponents();
 

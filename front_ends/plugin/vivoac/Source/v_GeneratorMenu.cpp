@@ -39,6 +39,8 @@ v_GeneratorMenu::v_GeneratorMenu(VivoacAudioProcessor& p, HTTPClient& c): v_Base
     addAndMakeVisible(generateButton);
     deleteButton.addListener(this);
     addAndMakeVisible(deleteButton);
+    openButton.addListener(this);
+    addAndMakeVisible(openButton);
 }
 
 v_GeneratorMenu::~v_GeneratorMenu()
@@ -55,8 +57,9 @@ void v_GeneratorMenu::resized()
     generatorTable.setBounds(margin, margin, getWidth() / 2 - 2 * margin, getHeight() - 2 * margin);
     generatorTable.getHeader().setColumnWidth(1, generatorTable.getWidth());
     audioFileView.setBounds(generatorTable.getRight() + margin, margin, getWidth() / 2 - 2 * margin, defaultHeight);
-    deleteButton.setBounds(generatorTable.getRight() + margin, audioFileView.getBottom() + margin, defaultHeight, defaultHeight);
+    openButton.setBounds(generatorTable.getRight() + margin, audioFileView.getBottom() + margin, defaultHeight, defaultHeight);
 
+    deleteButton.setBounds(generatorTable.getRight()+margin, getHeight() - margin - defaultLength, defaultLength, defaultLength);
     generateButton.setBounds(getWidth() - margin - defaultLength, getHeight() - margin - defaultLength, defaultLength, defaultLength);
     translation.setBounds(generatorTable.getRight() + margin + defaultLength, generateButton.getBottom() - generateButton.getHeight() - margin - 3 * defaultHeight, getRight() - margin - (generatorTable.getRight() + margin + defaultLength), 3 * defaultHeight);
 }
@@ -116,10 +119,24 @@ void v_GeneratorMenu::buttonClicked(juce::Button* button) {
         generatorTableModel.removeAudioFileFromTable(row);
         refreshComponents();
     }
+    else if (button == &openButton) {
+        const int row = generatorTable.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
+        juce::File generatedFile = juce::File{ generatorTableModel.getAudioFile(row) };
+        if (!generatedFile.exists()) {
+            return;
+        }
+        generatedFile.revealToUser();
+    }
 };
 
 void v_GeneratorMenu::changeListenerCallback(juce::ChangeBroadcaster* source) {
 	loadGeneratedAudioFiles();
+    if (generatorTable.getNumRows() > 0) {
+        generatorTable.selectRow(0);
+    }
 };
 
 void v_GeneratorMenu::refreshComponents() {
