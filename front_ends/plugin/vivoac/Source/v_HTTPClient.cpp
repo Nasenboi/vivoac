@@ -58,7 +58,9 @@ HTTPClient::HTTPClient() {
 
 HTTPClient::~HTTPClient() {
     // wait for all other threads to finish
-    while (threadRunning) {
+    const int closeTimeout = 1500;
+    const int startTimeInMs = juce::Time::getMillisecondCounter();
+    while (threadRunning && (juce::Time::getMillisecondCounter() - startTimeInMs) < closeTimeout) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
