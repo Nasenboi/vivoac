@@ -87,12 +87,10 @@ void HTTPClient::CURLinitSession() {
         json j;
         try {
             j = json::parse(readBuffer);
-            DBG(j.dump(4));
             sessionID = j.value("session_id", "");
         }
         catch (json::parse_error& e) {
             DBG("JSON parse error: " << e.what());
-            DBG("readBuffer: " << readBuffer);
             sessionID = "";
         }
         CURLupdateSession();
@@ -114,13 +112,10 @@ void HTTPClient::CURLcloseSession() {
         json j;
         try {
             j = json::parse(readBuffer);
-            DBG(j.dump(4));
             sessionID = "";
-            DBG("Session Closed!");
         }
         catch (json::parse_error& e) {
             DBG("JSON parse error: " << e.what());
-            DBG("readBuffer: " << readBuffer);
             sessionID = "";
         }
     };
@@ -250,16 +245,15 @@ void HTTPClient::CURLgetVoices() {
             json j = json::parse(readBuffer);
             voices.clear();
             for (auto& [key, value] : j.items()) {
-                voices.push_back(key);
+                voices.push_back(value);
 			}
 		}
 		catch (json::parse_error& e) {
 			DBG("JSON parse error: " << e.what());
-			DBG("readBuffer: " << readBuffer);
 		}
 	};
     std::thread asyncThread([this, callback, headers]() {
-		this->doCurl(callback, "/ai_api_handler/get_voices", HTTPMethod::Get, headers);
+        this->doCurl(callback, "/ai_api_handler/get_voices", HTTPMethod::Get, headers);
 	});
     asyncThread.detach();
 }
@@ -270,7 +264,8 @@ void HTTPClient::CURLgetVoiceSettings(const std::string& voice_id) {
     headers.push_back(HEADER_PARAM("voice-id", voice_id.c_str()));
     std::function<void()> callback = [this]() {
 		try {
-            currentVoiceSettings = VoiceSettings{ json::parse(readBuffer) };
+            json j = json::parse(readBuffer);
+            currentVoiceSettings = j;
 		}
         catch (json::parse_error& e) {
 			DBG("JSON parse error: " << e.what());
@@ -449,7 +444,8 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     }
     juce::URL curl(curlURL);
     juce::String headers;
-    headers += juce::String("accept") + ": " + juce::String("application/ son") + "\r\n";
+    headers += juce::String("accept") + ": " + juce::String("application/json") + "\r\n";
+    headers += juce::String("content-type") + ": " + juce::String("application/json") + "\r\n";
     for (const auto& h : header_params) {
         headers += juce::String(h.first) + ": " + juce::String(h.second) + "\r\n";
     }
@@ -458,9 +454,10 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     for (const auto& [key, value] : query_params.items()) {
 		parameters.set(key, value.get<std::string>());
 	}
-    curl = curl.withParameters(parameters);
+    if (parameters.size() > 0) {
+        curl = curl.withParameters(parameters);
+    }
     if (!body_params.empty()) {
-        headers += juce::String("content-type") + ": " + juce::String("application/json") + "\r\n";
         std::string bodyStr = body_params.dump();
         curl = curl.withPOSTData(bodyStr.c_str());
     }
@@ -485,7 +482,11 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
         .withHttpRequestCmd(cmd)
         .withExtraHeaders(headers);
 
+    DBG("URL: " << curl.toString(true));
+    DBG("Headers: " << options.getExtraHeaders().toStdString());
+
     std::unique_ptr<juce::InputStream> stream(curl.createInputStream(options));
+
 
     if (stream && !isBinary) {
         auto line = stream->readString();

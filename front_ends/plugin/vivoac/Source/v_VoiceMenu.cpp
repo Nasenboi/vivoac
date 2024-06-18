@@ -20,7 +20,6 @@ v_VoiceMenu::v_VoiceMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuCom
     voiceTable.getViewport()->setScrollBarsShown(false, false, true, false);
     addAndMakeVisible(voiceTable);
     voiceTable.getHeader().addColumn("Voices", 1, defaultLength);
-
 }
 
 v_VoiceMenu::~v_VoiceMenu()
@@ -41,7 +40,7 @@ void v_VoiceMenu::resized()
 
 void v_VoiceMenu::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-
+    refreshComponents();
 }
 
 void v_VoiceMenu::onSelectedRowsChanged()
@@ -50,12 +49,12 @@ void v_VoiceMenu::onSelectedRowsChanged()
 }
 
 void v_VoiceMenu::refreshComponents() {
-    client.CURLgetVoices();
     voiceTableModel.updateTable(client.getVoices());
     voiceTable.updateContent();
 }
 
 void v_VoiceMenu::onEnter() {
+    client.CURLgetVoices();
     refreshComponents();
 }
 void v_VoiceMenu::onLeave() {

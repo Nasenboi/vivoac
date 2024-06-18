@@ -63,7 +63,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             file for file in os.listdir(self.script_path) if file.endswith(".xlsx")
         ]
 
-        if len(scripts) < 1:
+        if not scripts or len(scripts) < 1:
             LOGGER.warning("No scripts found in the given path!")
             return []
         return scripts
@@ -73,7 +73,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     ) -> List[Script_Line]:
         # Checks before we search the database:
         if not self.__check_excel_script():
-            return Script_Line()
+            return []
         if script == None:
             LOGGER.warning("No Script_Line given, returning all script lines!")
             script = Script_Line()
@@ -85,9 +85,9 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             filtered_database = self.__filter_database(script)
 
         # Return the results properly:
-        if len(filtered_database) < 1:
+        if not filtered_database or len(filtered_database) < 1:
             LOGGER.warning("No lines found in the database!")
-            return Script_Line()
+            return []
         else:
 
             def script_line_model_dump(line):
@@ -143,11 +143,12 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     def __load_excel_script(self) -> pd.DataFrame:
         # check if excel paths are given and the excel file exists:
         if self.script_path == None or self.script_file_name == None:
-            raise ValueError("Excel file path or name not given!")
-
+            LOGGER.error("No script path or file name given!")
+            return
+        if not os.path.exists(os.path.join(self.script_path, self.script_file_name)):
+            LOGGER.error("Excel file does not exist!")
+            return
         full_path = self.script_path + "/" + self.script_file_name
-        LOGGER.debug(f"Loading excel script: {full_path}")
-
         self.excel_data_frame = pd.read_excel(full_path)
         self.__apply_field_mapping()
 

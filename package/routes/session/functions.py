@@ -21,7 +21,10 @@ async def create_session(self, api_engine, session: Session) -> Session:
 
 async def close_session(self, api_engine, session_id: str | int) -> Session:
     LOGGER.debug(f"Closing session: {session_id}")
-    await api_engine.session_backend.delete(session_id)
+    try:
+        await api_engine.session_backend.delete(session_id)
+    except Exception as e:
+        LOGGER.error(f"Error closing session: {e}")
     return session_id
 
 

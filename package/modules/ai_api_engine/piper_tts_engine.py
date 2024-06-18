@@ -54,6 +54,7 @@ class Piper_TTS_Engine(AI_API_Engine):
         return []
 
     def get_voices(self, api_key: str = None) -> List[str]:
+        self.__get_voice_names()
         return self.voice_names
 
     def get_character_voice(self, api_key: str = None, name: str = None) -> str:
@@ -67,10 +68,13 @@ class Piper_TTS_Engine(AI_API_Engine):
         settings_path = os.path.join(
             self.piper_voice_directory, f"{voice_id}.onnx.json"
         )
-        if os.path.isfile(settings_path):
-            with open(settings_path, "r") as file:
-                settings = json.load(file)
-        else:
+        settings = {}
+        try:
+            if os.path.isfile(settings_path):
+                with open(settings_path, "r") as file:
+                    settings = json.load(file)
+        except Exception as e:
+            LOGGER.error(f"Error getting voice settings: {e}")
             settings = {}
 
         voice_settings = Voice_Settings(
@@ -78,9 +82,10 @@ class Piper_TTS_Engine(AI_API_Engine):
             name=voice_id,
             settings=settings,
             description="No description available!",
-            files="No files available!",
-            labels="No labels available!",
+            files=["No files available!"],
+            labels={"Messages": "No labels available!"},
         )
+        LOGGER.debug(f"Voice settings: {voice_settings}")
         return voice_settings
 
     ############################################################
@@ -160,12 +165,15 @@ class Piper_TTS_Engine(AI_API_Engine):
     # Private Functions:
 
     def __get_voice_names(self) -> None:
-        if (
-            self.piper_voice_directory == ""
-            or os.path.isdir(self.piper_voice_directory) == False
+        self.voice_names = []
+        if self.piper_voice_directory == "" or not os.path.isdir(
+            self.piper_voice_directory
         ):
-            self.voice_names = []
             return
+
+        for file in os.listdir(self.piper_voice_directory):
+            if file.endswith(".onnx"):
+                self.voice_names.append(file.split(".")[0])
 
         # get all files inside of the voice directory
         ending = ".onnx"

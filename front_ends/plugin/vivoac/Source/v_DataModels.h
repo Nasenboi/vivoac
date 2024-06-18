@@ -16,21 +16,6 @@ using json = nlohmann::json;
 //==============================================================================
 /* The Data Models for the HTTPClient connection
 
-enum class NameKeys {
-
-};
-struct Name {
-
-};
-inline void from_json(const json& j, Name& s) {
-    s.key = j.value("key", "");
-}
-inline void to_json(json& j, const Name& s) {
-    j = json{};
-    if (!s.key.empty()) {j["key"]=s.key;}
-}
-*/
-
 
 //==============================================================================
 /* The AI API Models

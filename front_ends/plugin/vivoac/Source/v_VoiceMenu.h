@@ -41,7 +41,6 @@ private:
     v_VoiceTableModel voiceTableModel;
     v_BetterTableListBox voiceTable{ "Voices", &voiceTableModel };
 
-
     // private functions
     void refreshComponents();
     void onSelectedRowsChanged();
