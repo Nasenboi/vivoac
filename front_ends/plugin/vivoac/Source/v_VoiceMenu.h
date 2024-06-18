@@ -18,7 +18,7 @@
 //==============================================================================
 /*
 */
-class v_VoiceMenu  : public v_BaseMenuComponent
+class v_VoiceMenu  : public v_BaseMenuComponent, public juce::TextEditor::Listener
 {
 public:
     v_VoiceMenu(VivoacAudioProcessor& p, HTTPClient& c);
@@ -26,6 +26,9 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void textEditorReturnKeyPressed(juce::TextEditor& editor) override;
+    void textEditorFocusLost(juce::TextEditor& editor) override { onTextEditorDone(editor); };
+    void onTextEditorDone(juce::TextEditor& editor);
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     void onEnter() override;
@@ -34,12 +37,14 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_VoiceMenu)
     // UI Sizes
-    int margin = 10;
+    int margin = 20;
     int defaultLength = 100, defaultHeight = 50;
 
     // UI components
     v_VoiceTableModel voiceTableModel;
     v_BetterTableListBox voiceTable{ "Voices", &voiceTableModel };
+    juce::TextEditor voiceId, voiceName, voiceDescription, voiceFiles, voiceLabels, voiceSettings;
+    juce::Label voiceIdLabel, voiceNameLabel, voiceDescriptionLabel, voiceFilesLabel, voiceLabelsLabel, voiceSettingsLabel;
 
     // private functions
     void refreshComponents();

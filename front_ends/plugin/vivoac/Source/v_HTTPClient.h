@@ -46,6 +46,7 @@ public:
     void CURLgetVoiceSettings(const std::string& voice_id);
     void CURLupdateVoiceSettings();
     std::vector<std::string> getVoices() { return voices; };
+    VoiceSettings& getCurrentVoiceSettings() { return currentVoiceSettings; };
 
     // == Audio functions ==
     std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);

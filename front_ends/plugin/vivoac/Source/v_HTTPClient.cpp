@@ -294,16 +294,17 @@ void HTTPClient::CURLtextToSpeech() {
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
     json body;
-    textToSpeech.text = currentScriptLine.translation;
-    textToSpeech.voice = "de_DE-markus_haase-ep=2665";
+    textToSpeech.text = currentScriptLine.translation.c_str();
+    textToSpeech.voice = currentVoiceSettings.voice_id.c_str();
     body["data"] = json{ textToSpeech }[0];
     std::string timedate = juce::Time::getCurrentTime().formatted("%Y%m%d_%H%M%S").toStdString();
     std::string target_path = generatedAudioPath + std::string(juce::File::getSeparatorString()) + timedate + "_" + currentScriptLine.character_name + "_" + currentScriptLine.id + ".wav";
-    std::function<void()> callback = []() {};
+    std::function<void()> callback = []() {
+        DBG("Callback!");
+     };
     std::thread asyncThread([this, callback, headers, body, target_path]() {
         this->doCurl(callback, "/ai_api_handler/text_to_speech", HTTPMethod::Post, headers, body, {}, true, true, target_path);
     });
-    threadRunning = true;
     asyncThread.detach();
 }
 // == Engine Functions == 
@@ -444,8 +445,8 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     }
     juce::URL curl(curlURL);
     juce::String headers;
-    headers += juce::String("accept") + ": " + juce::String("application/json") + "\r\n";
-    headers += juce::String("content-type") + ": " + juce::String("application/json") + "\r\n";
+    headers += juce::String(juce::CharPointer_UTF8("accept")) + ": " + juce::String(juce::CharPointer_UTF8("application/json")) + "\r\n";
+    headers += juce::String(juce::CharPointer_UTF8("content-type")) + ": " + juce::String(juce::CharPointer_UTF8("application/json")) + "\r\n";
     for (const auto& h : header_params) {
         headers += juce::String(h.first) + ": " + juce::String(h.second) + "\r\n";
     }
@@ -459,7 +460,7 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     }
     if (!body_params.empty()) {
         std::string bodyStr = body_params.dump();
-        curl = curl.withPOSTData(bodyStr.c_str());
+        curl = curl.withPOSTData(juce::String(bodyStr));
     }
 
     juce::String cmd;
@@ -481,9 +482,6 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     juce::URL::InputStreamOptions options = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
         .withHttpRequestCmd(cmd)
         .withExtraHeaders(headers);
-
-    DBG("URL: " << curl.toString(true));
-    DBG("Headers: " << options.getExtraHeaders().toStdString());
 
     std::unique_ptr<juce::InputStream> stream(curl.createInputStream(options));
 

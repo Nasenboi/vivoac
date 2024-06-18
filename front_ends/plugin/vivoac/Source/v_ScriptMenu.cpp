@@ -109,21 +109,21 @@ void v_ScriptMenu::resized()
     scriptTable.setBounds(margin, margin, 2 * margin + 3 * defaultLength, getHeight() - (2*margin + defaultHeight));
 
     // Text Boxes
-    id.setBounds(7 * margin + 3 * defaultLength, margin, defaultLength, defaultHeight / 2);
-    timeRestriction.setBounds(7 * margin + 3 * defaultLength, 3 * margin + defaultHeight / 2, defaultLength, defaultHeight / 2);
+    timeRestriction.setBounds(scriptTable.getRight() + margin + 0.75 * defaultLength, margin, defaultLength, defaultHeight / 2);
+    id.setBounds(getWidth() - margin - 1.5 * defaultLength, margin, 1.5 * defaultLength, defaultHeight / 2);
 
-    voiceTalent.setBounds(getWidth() - 1.5 * defaultLength - margin, margin, 1.5 * defaultLength, defaultHeight / 2);
-    characterName.setBounds(getWidth() - 1.5 * defaultLength - margin, 3 * margin + defaultHeight / 2, 1.5 * defaultLength, defaultHeight / 2);
+    voiceTalent.setBounds(scriptTable.getRight() + margin + 0.75 * defaultLength, timeRestriction.getBottom() + margin, defaultLength, defaultHeight / 2);
+    characterName.setBounds(getWidth() - margin - 1.5 * defaultLength, id.getBottom() + margin, 1.5 * defaultLength, defaultHeight / 2);
 
-    sourceText.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 6 * margin - 7 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight) ;
-
-    translation.setBounds(getWidth() - margin - 3.5 * defaultLength, getHeight() - 4 * margin - 4 * defaultHeight, 3.5 * defaultLength, 3 * defaultHeight);
+    sourceText.setBounds(scriptTable.getRight() + margin + 0.75 * defaultLength, voiceTalent.getBottom() + margin, getWidth() - scriptTable.getWidth() - 3 * margin - 0.75 * defaultLength, defaultHeight * 1.5);
+    translation.setBounds(scriptTable.getRight() + margin + 0.75 * defaultLength, sourceText.getBottom() + margin, getWidth() - scriptTable.getWidth() - 3 * margin - 0.75 * defaultLength, defaultHeight * 1.5);
+    
     clearButton.setBounds(getWidth() - margin - defaultHeight, getHeight() - margin - defaultHeight, defaultHeight, defaultHeight);
 
-    scriptAudioView.setBounds(getWidth() - 2 * margin - defaultHeight - 3*defaultLength, getHeight() - margin - defaultHeight, 3 * defaultLength, defaultHeight);
-    const int loadButtonSize = (defaultHeight-margin)/2;
-    sourceLoader.setBounds(4 * defaultLength, getHeight() - 2 * (margin + loadButtonSize), loadButtonSize, loadButtonSize);
-    translationLoader.setBounds(4 * defaultLength, getHeight() - margin - loadButtonSize, loadButtonSize, loadButtonSize );
+    const int loadButtonSize = (defaultHeight) / 2 - 0.25 * margin;
+    sourceLoader.setBounds(scriptTable.getRight() + defaultHeight + 0.5 * margin, getHeight() - defaultHeight - margin, loadButtonSize, loadButtonSize);
+    translationLoader.setBounds(scriptTable.getRight() + defaultHeight + 0.5 * margin, getHeight() - loadButtonSize - margin, loadButtonSize, loadButtonSize);
+    scriptAudioView.setBounds(sourceLoader.getRight() + 0.5 * margin, getHeight() - defaultHeight - margin, getWidth() - scriptTable.getWidth() - 3 * margin - 3 * defaultHeight, defaultHeight);
 }
 
 void v_ScriptMenu::onSelectedRowsChanged() {

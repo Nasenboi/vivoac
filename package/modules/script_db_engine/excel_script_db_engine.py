@@ -63,8 +63,12 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             file for file in os.listdir(self.script_path) if file.endswith(".xlsx")
         ]
 
-        if not scripts or len(scripts) < 1:
-            LOGGER.warning("No scripts found in the given path!")
+        try:
+            if len(scripts) < 1:
+                LOGGER.warning("No scripts found in the given path!")
+                return []
+        except Exception as e:
+            LOGGER.error(f"Error getting script names: {e}")
             return []
         return scripts
 
@@ -85,8 +89,12 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             filtered_database = self.__filter_database(script)
 
         # Return the results properly:
-        if not filtered_database or len(filtered_database) < 1:
-            LOGGER.warning("No lines found in the database!")
+        try:
+            if len(filtered_database) < 1:
+                LOGGER.warning("No lines found in the database!")
+                return []
+        except Exception as e:
+            LOGGER.error(f"Error getting script lines: {e}")
             return []
         else:
 

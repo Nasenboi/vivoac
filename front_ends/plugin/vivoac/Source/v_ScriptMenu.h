@@ -46,7 +46,7 @@ public:
 
 private:
     // UI Sizes
-    int margin = 10;
+    int margin = 20;
     int defaultLength = 100, defaultHeight = 50;
 
     // UI components

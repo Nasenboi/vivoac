@@ -56,12 +56,15 @@ void v_GeneratorMenu::resized()
 {
     generatorTable.setBounds(margin, margin, getWidth() / 2 - 2 * margin, getHeight() - 2 * margin);
     generatorTable.getHeader().setColumnWidth(1, generatorTable.getWidth());
-    audioFileView.setBounds(generatorTable.getRight() + margin, margin, getWidth() / 2 - 2 * margin, defaultHeight);
+    audioFileView.setBounds(generatorTable.getRight() + margin, margin, getWidth() / 2 - margin, defaultHeight);
     openButton.setBounds(generatorTable.getRight() + margin, audioFileView.getBottom() + margin, defaultHeight, defaultHeight);
+    deleteButton.setBounds(generatorTable.getRight() + margin, openButton.getBottom() + 0.5 * margin, defaultHeight, defaultHeight);
 
-    deleteButton.setBounds(generatorTable.getRight()+margin, getHeight() - margin - defaultLength, defaultLength, defaultLength);
-    generateButton.setBounds(getWidth() - margin - defaultLength, getHeight() - margin - defaultLength, defaultLength, defaultLength);
-    translation.setBounds(generatorTable.getRight() + margin + defaultLength, generateButton.getBottom() - generateButton.getHeight() - margin - 3 * defaultHeight, getRight() - margin - (generatorTable.getRight() + margin + defaultLength), 3 * defaultHeight);
+    generateButton.setBounds(getWidth() - margin - defaultLength, audioFileView.getBottom() + margin, defaultLength, defaultLength);
+    
+
+
+    translation.setBounds(generatorTable.getRight() + margin + 0.75 * defaultLength, generateButton.getBottom() + margin, getWidth() / 2 - margin - 0.75 * defaultLength, getHeight() - generateButton.getBottom() - 2 * margin);
 }
 
 void v_GeneratorMenu::loadGeneratedAudioFiles() {
@@ -115,6 +118,7 @@ void v_GeneratorMenu::buttonClicked(juce::Button* button) {
             return;
         }
         processor.clearAudio();
+        audioFileView.currentAudioFile = juce::File{};
         generatedFile.deleteFile();
         generatorTableModel.removeAudioFileFromTable(row);
         refreshComponents();
@@ -145,6 +149,7 @@ void v_GeneratorMenu::refreshComponents() {
     if (audioFileView.currentAudioFile.exists()) {
         processor.loadAudioFile(audioFileView.currentAudioFile);
     }
+    audioFileView.repaint();
 
     translation.setText(client.getCurrentScriptLine().translation, juce::dontSendNotification);
 }
