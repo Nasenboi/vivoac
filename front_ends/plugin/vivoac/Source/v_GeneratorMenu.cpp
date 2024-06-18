@@ -65,7 +65,7 @@ void v_GeneratorMenu::resized()
 }
 
 void v_GeneratorMenu::loadGeneratedAudioFiles() {
-    juce::File generatedAudioFolder{ client.getGeneratedAudioPath() };
+    juce::File generatedAudioFolder{ client.generatedAudioPath };
     juce::Array<juce::File> generatedAudioFiles = generatedAudioFolder.findChildFiles(juce::File::findFiles, true);
     std::vector<std::string> generatedAudioFileNames;
 

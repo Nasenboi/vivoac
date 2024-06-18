@@ -137,13 +137,7 @@ void HTTPClient::CURLupdateSession() {
     json body = {};
     body["new_session"]["session_id"] = sessionID.c_str();
     body["new_session"]["session_settings"] = sessionSettings;
-
-    DBG("---------------------------------------------");
-    DBG("session to send:");
-    DBG(body.dump(4));
-    DBG("---------------------------------------------");
-
-    std::function<void()> callback = [this]() { afterCurl();};
+    std::function<void()> callback = []() {};
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/session/update", HTTPMethod::Post, headers, body);
         });
@@ -169,17 +163,11 @@ void HTTPClient::CURLgetScriptLines() {
             DBG("readBuffer: " << readBuffer);
         }
         std::vector<json> lines;
-        if (j.is_array()) {
-            lines = j;
-        }
-        else {
-            DBG("No script lines found.");
-        }
+        lines = j;
         scriptLines.clear();
         for (int i = 0; i < lines.size(); ++i) {
             scriptLines.push_back(lines[i]);
         }
-        sendChangeMessage();
     };
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/script/get", HTTPMethod::Get, headers, body);
@@ -216,27 +204,42 @@ std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFo
 }
 
 // == ai api functions ==
-void HTTPClient::CURLgetVoiceSettings() {
+
+void HTTPClient::CURLgetUserData() {
 
 }
-
-
-void HTTPClient::CURLtextToSpeech() {
-    DBG("---------------------------------------------------------------------------------");
+void HTTPClient::CURLgetModels() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
-    headers.push_back(HEADER_PARAM("api-key", "none"));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+}
+void HTTPClient::CURLgetVoices() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+}
+void HTTPClient::CURLgetVoiceSettings() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+}
+void HTTPClient::CURLupdateVoiceSettings() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+}
 
+void HTTPClient::CURLtextToSpeech() {
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
     json body;
     textToSpeech.text = currentScriptLine.translation;
     textToSpeech.voice = "de_DE-markus_haase-ep=2665";
     body["data"] = json{ textToSpeech }[0];
-    DBG(body.dump(4));
     std::string timedate = juce::Time::getCurrentTime().formatted("%Y%m%d_%H%M%S").toStdString();
     std::string target_path = generatedAudioPath + std::string(juce::File::getSeparatorString()) + timedate + "_" + currentScriptLine.character_name + "_" + currentScriptLine.id + ".wav";
-    DBG("target path: " << target_path);
-
-    std::function<void()> callback = [this]() { afterCurl();};
+    std::function<void()> callback = []() {};
     std::thread asyncThread([this, callback, headers, body, target_path]() {
         this->doCurl(callback, "/ai_api_handler/text_to_speech", HTTPMethod::Post, headers, body, {}, true, true, target_path);
     });
@@ -252,7 +255,7 @@ void HTTPClient::CURLupdateSessionEngines() {
     body["engine_modules"] = engineModules;
 
 
-    std::function<void()> callback = [this]() { afterCurl();};
+    std::function<void()> callback = [](){};
     std::thread asyncThread([this, callback, headers, body]() {
          this->doCurl(callback, "/session/engine/update", HTTPMethod::Post, headers, body);
     });
@@ -297,7 +300,6 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
 			DBG("JSON parse error: " << e.what());
 			DBG("readBuffer: " << readBuffer);
 		}
-        afterCurl();
     };
 
     std::thread asyncThread([this, callback, headers, query]() {
@@ -339,7 +341,7 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
 
     DBG(body.dump(4));
 
-    std::function<void()> callback = [this]() { afterCurl();};
+    std::function<void()> callback = []() {};
     std::thread asyncThread([this, callback, headers, body, query]() { 
         this->doCurl(callback, std::string("/session/engine/settings/update"), HTTPMethod::Post,
             headers, body, query, true, false, std::string());
@@ -383,6 +385,7 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
         if (callback) {
 			callback();
 		}
+		afterCurl();
 		return; 
     }
 
@@ -449,6 +452,7 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     if (callback) {
         callback();
     }
+    afterCurl();
 };
 
 void HTTPClient::afterCurl() {

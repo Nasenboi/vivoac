@@ -19,20 +19,20 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     apiUrlLabel.setText("URL:", juce::dontSendNotification);
     apiUrlLabel.attachToComponent(&apiUrl, true);
     addAndMakeVisible(apiUrlLabel);
-    apiUrl.setText(client.getUrl());
+    apiUrl.setText(client.url);
     apiUrl.addListener(this);
     addAndMakeVisible(apiUrl);
     apiPortLabel.setText("Port:", juce::dontSendNotification);
     apiPortLabel.attachToComponent(&apiPort, true);
     addAndMakeVisible(apiPortLabel);
-    apiPort.setText(client.getPort());
+    apiPort.setText(client.port);
     apiPort.addListener(this);
     addAndMakeVisible(apiPort);
     apiKeyLabel.setText("API Key:", juce::dontSendNotification);
     apiKeyLabel.attachToComponent(&apiKey, true);
     addAndMakeVisible(apiKeyLabel);
     apiKey.addListener(this);
-    apiKey.setText(client.getApiKey());
+    apiKey.setText(client.apiKey);
     addAndMakeVisible(apiKey);
     sessionIdLabel.setText("Session:", juce::dontSendNotification);
     sessionIdLabel.attachToComponent(&sessionId, true);
@@ -45,7 +45,7 @@ v_SettingsMenu::v_SettingsMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseM
     generatedAudioPathLabel.setText("AI Audio Path:", juce::dontSendNotification);
     generatedAudioPathLabel.attachToComponent(&generatedAudioPath, true);
     addAndMakeVisible(generatedAudioPathLabel);
-    generatedAudioPath.setText(client.getGeneratedAudioPath());
+    generatedAudioPath.setText(client.generatedAudioPath);
     generatedAudioPath.addListener(this);
     addAndMakeVisible(generatedAudioPath);
     choosePathButton.addListener(this);
@@ -153,7 +153,7 @@ void v_SettingsMenu::resized()
 }
 
 void v_SettingsMenu::updateSessionComponents() {
-    sessionId.setText(client.getSessionID());
+    sessionId.setText(client.sessionID);
 
     targetAudioFormat.setSelectetItemByText(std::get<std::string>(client.getAudioFormatParameter(AudioFormatKeys::codec)));
     targetSampleRate.setText(juce::String(std::get<int>(client.getAudioFormatParameter(AudioFormatKeys::sample_rate))));
@@ -180,7 +180,7 @@ void v_SettingsMenu::buttonClicked(juce::Button* button) {
             juce::File file = chooser.getResult();
             if (file.isDirectory()) {
                 generatedAudioPath.setText(file.getFullPathName());
-                client.setGeneratedAudioPath(generatedAudioPath.getText().toStdString());
+                client.generatedAudioPath =generatedAudioPath.getText().toStdString();
             }
         });
     }
@@ -194,16 +194,16 @@ void v_SettingsMenu::textEditorReturnKeyPressed(juce::TextEditor& editor) {
 
 void v_SettingsMenu::onTextEditorDone(juce::TextEditor& editor) {
     if (&editor == &apiUrl) {
-        client.setUrl(apiUrl.getText().toStdString());
+        client.url = apiUrl.getText().toStdString();
     }
     else if (&editor == &apiPort) {
-        client.setPort(apiPort.getText().toStdString());
+        client.port = apiPort.getText().toStdString();
     }
     else if (&editor == &apiKey) {
-        client.setApiKey(apiKey.getText().toStdString());
+        client.apiKey = apiKey.getText().toStdString();
     }
     else if (&editor == &generatedAudioPath) {
-        client.setGeneratedAudioPath(generatedAudioPath.getText().toStdString());
+        client.generatedAudioPath =generatedAudioPath.getText().toStdString();
     }
     else if (&editor == &targetNumChannels) {
         client.updateAudioFormat(AudioFormatKeys::channels, targetNumChannels.getText().getIntValue());

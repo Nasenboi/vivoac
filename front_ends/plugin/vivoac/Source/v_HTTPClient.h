@@ -26,6 +26,15 @@ typedef std::vector<HEADER_PARAM> HEADER_PARAMS;
 */
 class HTTPClient : public juce::ChangeBroadcaster {
 public:
+    // ==== public variables ====
+    PossibleEngineModules possibleEngineModules;
+    std::string url = "http://localhost";
+    std::string port = "8080";
+    std::string sessionID;
+    std::string apiKey = "none";
+    std::string generatedAudioPath;
+
+    // ==== public functions ====
     HTTPClient();
     ~HTTPClient();
 
@@ -39,11 +48,11 @@ public:
 
     // == Audio functions ==
     std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
-    void setGeneratedAudioPath(const std::string& k) { generatedAudioPath = k; }
-    std::string& getGeneratedAudioPath() { return generatedAudioPath; };
 
     // == Engine functions ==
-    PossibleEngineModules possibleEngineModules;
+    void CURLgetEngineSettings(EngineModulesKeys key);
+    void CURLupdateSingleSessionEngineSettings(EngineModulesKeys key);
+    void CURLupdateSessionEngines();
     std::string getSessionEngine(EngineModulesKeys key);
     std::string getEngineSettingsString(EngineModulesKeys key, int dump = 4);
 
@@ -56,18 +65,10 @@ public:
     void setCurrentScriptLine(const int& index);
 
     // == Session functions ==
-
     void CURLinitSession();
     void CURLcloseSession();
+    void CURLupdateSession();
     void reload();
-
-    std::string getSessionID() { return sessionID; }
-    void setUrl(const std::string& u) { url = u; }
-    std::string& getUrl() { return url; };
-    void setPort(const std::string& p) { port = p; }
-    std::string& getPort() { return port; };
-    void setApiKey(const std::string& k) { apiKey = k; }
-    std::string& getApiKey() { return apiKey; };
 
     // == Boring Update Functions ==
     // AI API:
@@ -96,29 +97,9 @@ public:
     void updateSessionSettings(const SessionSettingsKeys& key, const AudioFormat& value);
 
 private:
-    // == Curl opts ===
-    std::string readBuffer;
-    std::string url = "http://localhost", port = "8080";
-    std::string sessionID;
-    std::string apiKey;
-    std::string generatedAudioPath;
-
-    enum HTTPMethod {
-        Get, Post, Put, Delete
-    };
-
-    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
-    static size_t WriteToFileCallback(void* ptr, size_t size, size_t nmemb, void* stream);
-    std::string constructURL(const std::string& path = "", json query = json());
-    void doCurl(const std::function<void()> callback = std::function<void()>(), const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
-        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true, bool isBinary = false, std::string destinationPath = "");
-    void afterCurl();
-
-    // Listeners:
-    std::mutex curlMutex;
-    bool threadRunning = false;
-
-    // === The Data models as structures: ===
+    // ==== private variables ====
+    // Plugin Settings
+    PluginSettings settings;
     // AI API:
     VoiceSettings currentVoiceSettings;
     TextToSpeech textToSpeech;
@@ -129,11 +110,6 @@ private:
     // Engine Modules:
     EngineModules engineModules;
     json aiApiEngineSettings, audioFileEngineSettings, scriptDbEngineSettings;
-    void getAllEngineSettings();
-    void CURLgetEngineSettings(EngineModulesKeys key);
-    void CURLupdateSessionEngines();
-    void updateSessionEngineSettings();
-    void CURLupdateSingleSessionEngineSettings(EngineModulesKeys key);
 
     // Script
     CharacterInfo characterInfo;
@@ -142,10 +118,41 @@ private:
 
     // Session
     SessionSettings sessionSettings;
-    void CURLupdateSession();
 
-    // Settings
+    enum HTTPMethod {
+        Get, Post, Put, Delete
+    };
+
+    std::string readBuffer;
+
+    // Listeners:
+    std::mutex curlMutex;
+    bool threadRunning = false;
+
+    // ==== private functions ====
+    // curl
+    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
+    static size_t WriteToFileCallback(void* ptr, size_t size, size_t nmemb, void* stream);
+    std::string constructURL(const std::string& path = "", json query = json());
+    void doCurl(const std::function<void()> callback = std::function<void()>(), const std::string& path = "", const HTTPMethod& method = HTTPMethod::Get,
+        const HEADER_PARAMS header_params = {}, json body_params = json(), json query_params = json(), bool checkSessionId = true, bool isBinary = false, std::string destinationPath = "");
+    void afterCurl();
+
+    // plugin settings
     void loadPluginSettings();
     void savePluginSettings();
-    PluginSettings settings;
+
+    // Ai API
+
+    // Audio
+
+    // Engine Modules
+    void getAllEngineSettings();
+    void updateSessionEngineSettings();
+
+    // Script
+
+    // Session
+
+
 };
