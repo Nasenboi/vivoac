@@ -206,29 +206,94 @@ std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFo
 // == ai api functions ==
 
 void HTTPClient::CURLgetUserData() {
-
+    HEADER_PARAMS headers = {};
+    headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
+    headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+    std::function<void()> callback = [this]() {
+        try {
+            userData = json::parse(readBuffer);
+        }
+		catch (json::parse_error& e) {
+			DBG("JSON parse error: " << e.what());
+			DBG("readBuffer: " << readBuffer);
+		}
+    };
+    std::thread asyncThread([this, callback, headers]() {
+		this->doCurl(callback, "/ai_api_handler/get_user_data", HTTPMethod::Get, headers);
+	});
+    asyncThread.detach();
 }
 void HTTPClient::CURLgetModels() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+    std::function<void()> callback = [this]() {
+        try {
+            models = json::parse(readBuffer);
+        }
+        catch (json::parse_error& e) {
+            DBG("JSON parse error: " << e.what());
+            DBG("readBuffer: " << readBuffer);
+        }
+    };
+    std::thread asyncThread([this, callback, headers]() {
+		this->doCurl(callback, "/ai_api_handler/get_models", HTTPMethod::Get, headers);
+	});
+    asyncThread.detach();
 }
 void HTTPClient::CURLgetVoices() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+    std::function<void()> callback = [this]() {
+		try {
+            json j = json::parse(readBuffer);
+            voices.clear();
+            for (auto& [key, value] : j.items()) {
+                voices.push_back(key);
+			}
+		}
+		catch (json::parse_error& e) {
+			DBG("JSON parse error: " << e.what());
+			DBG("readBuffer: " << readBuffer);
+		}
+	};
+    std::thread asyncThread([this, callback, headers]() {
+		this->doCurl(callback, "/ai_api_handler/get_voices", HTTPMethod::Get, headers);
+	});
+    asyncThread.detach();
 }
-void HTTPClient::CURLgetVoiceSettings() {
+void HTTPClient::CURLgetVoiceSettings(const std::string& voice_id) {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
+    headers.push_back(HEADER_PARAM("voice-id", voice_id.c_str()));
+    std::function<void()> callback = [this]() {
+		try {
+            currentVoiceSettings = VoiceSettings{ json::parse(readBuffer) };
+		}
+        catch (json::parse_error& e) {
+			DBG("JSON parse error: " << e.what());
+		}
+    };
+	std::thread asyncThread([this, callback, headers]() {
+		this->doCurl(callback, "/ai_api_handler/get_voice_settings", HTTPMethod::Get, headers);
+	});
+    asyncThread.detach();
 }
 void HTTPClient::CURLupdateVoiceSettings() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
-}
+    json body = {};
+    body["voice_settings"] = currentVoiceSettings;
 
+    std::function<void()> callback = []() {};
+    std::thread asyncThread([this, callback, headers, body]() {
+		this->doCurl(callback, "/ai_api_handler/update_voice_settings", HTTPMethod::Post, headers, body);
+	});
+    asyncThread.detach();
+}
 void HTTPClient::CURLtextToSpeech() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
@@ -298,7 +363,6 @@ void HTTPClient::CURLgetEngineSettings(EngineModulesKeys key) {
         }
 		catch (json::parse_error& e) {
 			DBG("JSON parse error: " << e.what());
-			DBG("readBuffer: " << readBuffer);
 		}
     };
 
@@ -331,16 +395,12 @@ void HTTPClient::CURLupdateSingleSessionEngineSettings(EngineModulesKeys key) {
         CURLgetEngineSettings(key);
         return;
     }
-
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json query = {};
     query["engine_module_name"] = engine_name;
     json body;
     body["engine_settings"] = engine_settings;
-
-    DBG(body.dump(4));
-
     std::function<void()> callback = []() {};
     std::thread asyncThread([this, callback, headers, body, query]() { 
         this->doCurl(callback, std::string("/session/engine/settings/update"), HTTPMethod::Post,
@@ -378,7 +438,6 @@ std::string  HTTPClient::getEngineSettingsString(EngineModulesKeys key, int dump
 void HTTPClient::doCurl(const std::function<void()> callback, const std::string& path, const HTTPMethod& method,
     const HEADER_PARAMS header_params, json body_params, json query_params, bool checkSessionId, bool isBinary, std::string destinationPath) {
     std::lock_guard<std::mutex> lock(curlMutex);
-
     readBuffer.clear();
     auto curlURL = constructURL(path);
     if (curlURL.empty() || (checkSessionId && sessionID.empty())) {
@@ -388,10 +447,7 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
 		afterCurl();
 		return; 
     }
-
-
     juce::URL curl(curlURL);
-
     juce::String headers;
     headers += juce::String("accept") + ": " + juce::String("application/ son") + "\r\n";
     for (const auto& h : header_params) {
@@ -487,7 +543,6 @@ std::string urlEncode(CURL* curl, const std::string& value) {
 }
 
 std::string HTTPClient::constructURL(const std::string& path, json query_params) {
-    DBG("Path: " << path);
     std::stringstream ss;
     ss << url;
     if (!port.empty()) {
@@ -496,7 +551,6 @@ std::string HTTPClient::constructURL(const std::string& path, json query_params)
     if (!path.empty()) {
         ss << path;
     }
-
     if (!query_params.empty()) {
         ss << "?";
         CURL* curl = curl_easy_init(); // Initialize a CURL instance for URL encoding
@@ -518,8 +572,6 @@ std::string HTTPClient::constructURL(const std::string& path, json query_params)
         }
         curl_easy_cleanup(curl); // Clean up the CURL instance after encoding
     }
-
-    DBG(ss.str());
     return ss.str();
 }
 
@@ -638,7 +690,6 @@ void HTTPClient::updateSessionEngineSettings(const EngineModulesKeys& key, const
     }
     catch (json::parse_error& e) {
         DBG("JSON parse error: " << e.what());
-        DBG("readBuffer: " << readBuffer);
     }
     switch (key) {
     case EngineModulesKeys::ai_api_engine_module:

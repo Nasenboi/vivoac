@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 #include "v_BaseMenuComponent.h"
+#include "v_VoiceTableModel.h"
+#include "v_BetterTableListBox.h"
 
 //==============================================================================
 /*
@@ -26,10 +28,21 @@ public:
     void resized() override;
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
-    void onEnter() override {};
-    void onLeave() override {};
+    void onEnter() override;
+    void onLeave() override;
 
 private:
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (v_VoiceMenu)
+    // UI Sizes
+    int margin = 10;
+    int defaultLength = 100, defaultHeight = 50;
+
+    // UI components
+    v_VoiceTableModel voiceTableModel;
+    v_BetterTableListBox voiceTable{ "Voices", &voiceTableModel };
+
+
+    // private functions
+    void refreshComponents();
+    void onSelectedRowsChanged();
 };

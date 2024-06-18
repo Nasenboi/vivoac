@@ -43,8 +43,9 @@ public:
     void CURLgetUserData();
     void CURLgetModels();
     void CURLgetVoices();
-    void CURLgetVoiceSettings();
+    void CURLgetVoiceSettings(const std::string& voice_id);
     void CURLupdateVoiceSettings();
+    std::vector<std::string> getVoices() { return voices; };
 
     // == Audio functions ==
     std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
@@ -103,6 +104,9 @@ private:
     // AI API:
     VoiceSettings currentVoiceSettings;
     TextToSpeech textToSpeech;
+    json userData;
+    json models;
+    std::vector<std::string> voices;
 
     // Audio
     AudioFormat audioFormat;

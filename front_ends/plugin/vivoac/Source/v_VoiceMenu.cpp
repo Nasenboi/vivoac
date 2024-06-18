@@ -14,8 +14,12 @@
 //==============================================================================
 v_VoiceMenu::v_VoiceMenu(VivoacAudioProcessor& p, HTTPClient& c) : v_BaseMenuComponent(p,c)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    voiceTable.setSelectedRowsChangedCallback([this](int lastRowSelected) {
+        this->onSelectedRowsChanged();
+        });
+    voiceTable.getViewport()->setScrollBarsShown(false, false, true, false);
+    addAndMakeVisible(voiceTable);
+    voiceTable.getHeader().addColumn("Voices", 1, defaultLength);
 
 }
 
@@ -30,13 +34,30 @@ void v_VoiceMenu::paint (juce::Graphics& g)
 
 void v_VoiceMenu::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    voiceTable.setBounds(margin, margin, getWidth() / 2 - 2 * margin, getHeight() - 2 * margin);
+    voiceTable.getHeader().setColumnWidth(1, voiceTable.getWidth());
 }
 
 
 void v_VoiceMenu::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	// Inherited from ChangeListener
+
+}
+
+void v_VoiceMenu::onSelectedRowsChanged()
+{
+	client.CURLgetVoiceSettings(voiceTableModel.getVoiceID(voiceTable.getSelectedRow()));
+}
+
+void v_VoiceMenu::refreshComponents() {
+    client.CURLgetVoices();
+    voiceTableModel.updateTable(client.getVoices());
+    voiceTable.updateContent();
+}
+
+void v_VoiceMenu::onEnter() {
+    refreshComponents();
+}
+void v_VoiceMenu::onLeave() {
+
 }
