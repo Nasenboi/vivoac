@@ -30,6 +30,36 @@ class AI_API_Handler_Router(APIRouter):
         self.api_engine = api_engine
 
         self.add_api_route(
+            path="/get_user_data",
+            endpoint=self.get_user_data_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/get_models",
+            endpoint=self.get_models_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/get_voices",
+            endpoint=self.get_voices_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/get_voice_settings",
+            endpoint=self.get_voice_settings_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/create_voice",
+            endpoint=self.create_voice_route,
+            methods=["POST"],
+        )
+        self.add_api_route(
+            path="/edit_voice_settings",
+            endpoint=self.edit_voice_settings_route,
+            methods=["PUT"],
+        )
+        self.add_api_route(
             path="/text_to_speech",
             endpoint=self.text_to_speech,
             methods=["POST"],

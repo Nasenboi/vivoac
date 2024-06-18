@@ -13,43 +13,11 @@
 #include "v_HTTPClient.h"
 #include "nlohmann/json.hpp"
 
-/*
-    DBG("---------------------------");
-
-    CURL* curl;
-    CURLcode res;
-    std::string url = "file://C:/Users/cboen/Documents/Programmierungen/GitStuff/vivoac/project-settings.json";
-    std::string readBuffer;
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-
-        if (res != CURLE_OK) {
-            DBG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        }
-        else {
-            try {
-                json jsonObject = json::parse(readBuffer);
-                DBG(jsonObject.dump(4));
-            }
-            catch (json::parse_error& e) {
-                DBG("JSON parse error: " << e.what());
-                DBG("readBuffer: " << readBuffer);
-            }
-        }
-    }
-    else {
-        DBG("Failed to initialize CURL.");
-    }
-    DBG("---------------------------");
-*/
-
 using json = nlohmann::json;
+
+//==============================================================================
+/* Simple Class functions
+*/
 
 HTTPClient::HTTPClient() {
     loadPluginSettings();
@@ -63,20 +31,58 @@ HTTPClient::~HTTPClient() {
     while (threadRunning && (juce::Time::getMillisecondCounter() - startTimeInMs) < closeTimeout) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
     savePluginSettings();
     CURLcloseSession();
 };
 
+void HTTPClient::reload() {
+    CURLcloseSession();
+    CURLinitSession();
+}
+
+//==============================================================================
+/* Plugin Settings
+*/
+void HTTPClient::loadPluginSettings() {
+    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
+    const juce::File settingsFile{ settingsLocation };
+    settingsFile.create();
+    const json settingsJ = json::parse(settingsFile.loadFileAsString().toStdString());
+    settings = settingsJ;
+    textToSpeech = settings.textToSpeech;
+    engineModules = settings.engineModules;
+    sessionSettings = settings.sessionSettings;
+    audioFormat = sessionSettings.audio_format;
+    generatedAudioPath = settings.generatedAudioPath;
+    aiApiEngineSettings = settings.aiApiEngineSettings;
+    audioFileEngineSettings = settings.audioFileEngineSettings;
+    scriptDbEngineSettings = settings.scriptDbEngineSettings;
+    url = settings.url;
+    port = settings.port;
+    apiKey = settings.api_key;
+};
+void HTTPClient::savePluginSettings() {
+    settings.textToSpeech = textToSpeech;
+    settings.engineModules = engineModules;
+    settings.sessionSettings = sessionSettings;
+    settings.generatedAudioPath = generatedAudioPath;
+    settings.aiApiEngineSettings = aiApiEngineSettings;
+    settings.audioFileEngineSettings = audioFileEngineSettings;
+    settings.scriptDbEngineSettings = scriptDbEngineSettings;
+    settings.url = url;
+    settings.port = port;
+    settings.api_key = apiKey;
+    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
+    const juce::File settingsFile{ settingsLocation };
+    settingsFile.replaceWithText(json{ settings } [0] .dump());
+};
 
 //==============================================================================
 /* Actual API Functions
 */
 
 // == Session functions ==
-
 void HTTPClient::CURLinitSession() {
-
     std::function<void()> callback = [this]() {
         json j;
         try {
@@ -125,11 +131,6 @@ void HTTPClient::CURLcloseSession() {
     asyncThread.join();    
 }
 
-void HTTPClient::reload() {
-    CURLcloseSession();
-    CURLinitSession();
-}
-
 void HTTPClient::CURLupdateSession() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
@@ -151,16 +152,13 @@ void HTTPClient::CURLupdateSession() {
 }
 
 // == Script functions ==
-
 void HTTPClient::CURLgetScriptLines() {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     json body = {};
-
     if (!isEmpty(currentScriptLine)) {
         body["script_line"] = currentScriptLine;
     }
-
     std::function<void()> callback = [this]() {
         json j;
         try {
@@ -170,7 +168,6 @@ void HTTPClient::CURLgetScriptLines() {
             DBG("JSON parse error: " << e.what());
             DBG("readBuffer: " << readBuffer);
         }
-
         std::vector<json> lines;
         if (j.is_array()) {
             lines = j;
@@ -184,7 +181,6 @@ void HTTPClient::CURLgetScriptLines() {
         }
         sendChangeMessage();
     };
-    
     std::thread asyncThread([this, callback, headers, body]() {
         this->doCurl(callback, "/script/get", HTTPMethod::Get, headers, body);
     });
@@ -192,6 +188,9 @@ void HTTPClient::CURLgetScriptLines() {
     asyncThread.detach();
 };
 
+void HTTPClient::setCurrentScriptLine(const int& index) {
+    currentScriptLine = scriptLines[index];
+};
 // == Audio functions ==
 std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFormatKeys& key) {
     switch (key) {
@@ -217,6 +216,10 @@ std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFo
 }
 
 // == ai api functions ==
+void HTTPClient::CURLgetVoiceSettings() {
+
+}
+
 
 void HTTPClient::CURLtextToSpeech() {
     DBG("---------------------------------------------------------------------------------");
@@ -521,37 +524,36 @@ std::string HTTPClient::constructURL(const std::string& path, json query_params)
 void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, const std::string& value ) {
     switch(key) {
     case VoiceSettingsKeys::voice_id :
-        voiceSettings.voice_id = value;
+        currentVoiceSettings.voice_id = value;
         break;
     case VoiceSettingsKeys::name:
-        voiceSettings.name = value;
+        currentVoiceSettings.name = value;
         break;
     case VoiceSettingsKeys::description:
-        voiceSettings.description = value;
+        currentVoiceSettings.description = value;
         break;
     }
-    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, currentVoiceSettings);
 };
 void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, const json& value) {
     switch (key) {
     case VoiceSettingsKeys::settings:
-        voiceSettings.settings = value;
+        currentVoiceSettings.settings = value;
         break;
     case VoiceSettingsKeys::labels:
-        voiceSettings.labels = value;
+        currentVoiceSettings.labels = value;
         break;
     }
-    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, currentVoiceSettings);
 };
 void HTTPClient::updateVoiceSettings(const VoiceSettingsKeys& key, std::vector<std::string>& value) {
     switch (key) {
     case VoiceSettingsKeys::files:
-        voiceSettings.files = value;
+        currentVoiceSettings.files = value;
         break;
     }
-    updateTextToSpeech(TextToSpeechKeys::voice_settings, voiceSettings);
+    updateTextToSpeech(TextToSpeechKeys::voice_settings, currentVoiceSettings);
 };
-
 void HTTPClient::updateTextToSpeech(const TextToSpeechKeys& key, const std::string& value ) {
     switch (key) {
     case TextToSpeechKeys::text:
@@ -706,10 +708,6 @@ void HTTPClient::updateCurrentScriptLine(const ScriptLineKeys& key, const std::s
     };
 };
 
-void HTTPClient::setCurrentScriptLine(const int& index) {
-	currentScriptLine = scriptLines[index];
-};
-
 // Session
 void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const std::string& value ) {
     // Nothing to see here UwU
@@ -721,47 +719,4 @@ void HTTPClient::updateSessionSettings(const SessionSettingsKeys& key, const Aud
         sessionSettings.audio_format = value;
     }
     CURLupdateSession();
-};
-
-
-// Plugin
-void HTTPClient::loadPluginSettings() {
-    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json"};
-    const juce::File settingsFile{ settingsLocation };
-    settingsFile.create();
-    const json settingsJ = json::parse(settingsFile.loadFileAsString().toStdString());
-    settings = settingsJ;
-
-    textToSpeech = settings.textToSpeech;
-    engineModules = settings.engineModules;
-    sessionSettings = settings.sessionSettings;
-    audioFormat = sessionSettings.audio_format;
-    generatedAudioPath = settings.generatedAudioPath;
-    aiApiEngineSettings = settings.aiApiEngineSettings;
-    audioFileEngineSettings = settings.audioFileEngineSettings;
-    scriptDbEngineSettings = settings.scriptDbEngineSettings;
-    url = settings.url;
-    port = settings.port;
-    apiKey = settings.api_key;
-    DBG(json{ settings }.dump(4));
-};
-
-void HTTPClient::savePluginSettings() {
-    settings.textToSpeech = textToSpeech;
-    settings.engineModules = engineModules;
-    settings.sessionSettings = sessionSettings;
-    settings.generatedAudioPath = generatedAudioPath;
-    settings.aiApiEngineSettings = aiApiEngineSettings;
-    settings.audioFileEngineSettings = audioFileEngineSettings;
-    settings.scriptDbEngineSettings = scriptDbEngineSettings;
-    settings.url = url;
-    settings.port = port;
-    settings.api_key = apiKey;
-
-    DBG(json{ settings }.dump(4));
-
-    const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
-    const juce::File settingsFile{ settingsLocation };
-
-    settingsFile.replaceWithText(json{ settings } [0] .dump());
 };

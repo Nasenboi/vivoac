@@ -31,9 +31,16 @@ public:
 
     // == ai api functions ==
     void CURLtextToSpeech();
+    void CURLgetUserData();
+    void CURLgetModels();
+    void CURLgetVoices();
+    void CURLgetVoiceSettings();
+    void CURLupdateVoiceSettings();
 
     // == Audio functions ==
     std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
+    void setGeneratedAudioPath(const std::string& k) { generatedAudioPath = k; }
+    std::string& getGeneratedAudioPath() { return generatedAudioPath; };
 
     // == Engine functions ==
     PossibleEngineModules possibleEngineModules;
@@ -42,10 +49,11 @@ public:
 
 
     // == Script functions ==
+    void CURLgetScriptLines();
     ScriptLine& getCurrentScriptLine() { return currentScriptLine; };
     void setCurrentScriptLine(const ScriptLine& newScriptLine) { currentScriptLine = newScriptLine; };
     std::vector<ScriptLine>& getAllScriptLines() { return scriptLines; };
-    void CURLgetScriptLines();
+    void setCurrentScriptLine(const int& index);
 
     // == Session functions ==
 
@@ -73,8 +81,6 @@ public:
     // Audio
     void updateAudioFormat(const AudioFormatKeys& key, const std::string& value);
     void updateAudioFormat(const AudioFormatKeys& key, const int& value);
-    void setGeneratedAudioPath(const std::string& k) { generatedAudioPath = k; }
-    std::string& getGeneratedAudioPath() { return generatedAudioPath; };
 
     // Engine Modules
     void updateSessionEngines(const EngineModulesKeys& key, const std::string& value);
@@ -84,7 +90,6 @@ public:
     void updateCharacterInfo(const CharacterInfoKeys& key, const std::string& value);
     void updateCharacterInfo(const CharacterInfoKeys& key, const int& value);
     void updateCurrentScriptLine(const ScriptLineKeys& key, const std::string& value);
-    void setCurrentScriptLine(const int& index);
 
     // Session
     void updateSessionSettings(const SessionSettingsKeys& key, const std::string& value);
@@ -115,7 +120,7 @@ private:
 
     // === The Data models as structures: ===
     // AI API:
-    VoiceSettings voiceSettings;
+    VoiceSettings currentVoiceSettings;
     TextToSpeech textToSpeech;
 
     // Audio
