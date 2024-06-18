@@ -50,10 +50,6 @@ msgpack==1.0.8
 multidict==6.0.5
 numba==0.59.1
 numpy==1.26.4
-nvidia-cublas-cu11==11.10.3.66
-nvidia-cuda-nvrtc-cu11==11.7.99
-nvidia-cuda-runtime-cu11==11.7.99
-nvidia-cudnn-cu11==8.5.0.96
 onnxruntime==1.18.0
 orjson==3.10.4
 packaging==24.1
