@@ -46,8 +46,21 @@ void HTTPClient::reload() {
 void HTTPClient::loadPluginSettings() {
     const juce::String settingsLocation{ juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory).getFullPathName() + juce::File::getSeparatorString() + "vivoac" + juce::File::getSeparatorString() + "settings.json" };
     const juce::File settingsFile{ settingsLocation };
-    settingsFile.create();
-    const json settingsJ = json::parse(settingsFile.loadFileAsString().toStdString());
+    json settingsJ;
+    if (!settingsFile.exists()) {
+        settingsFile.create();
+        settingsJ = json(PluginSettings{});
+	}
+    else {
+        try {
+            settingsJ = json::parse(settingsFile.loadFileAsString().toStdString());
+        }
+        catch (json::parse_error& e) {
+			DBG("JSON parse error: " << e.what());
+			settingsJ = json(PluginSettings{});
+		}
+    }
+
     settings = settingsJ;
     textToSpeech = settings.textToSpeech;
     engineModules = settings.engineModules;
