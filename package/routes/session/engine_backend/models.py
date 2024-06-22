@@ -18,6 +18,7 @@ from ....modules import *
 ai_api_engine_modules: Dict[str, Type[AI_API_Engine]] = {
     # "AI_API_Engine": AI_API_Engine,
     "Piper_TTS_Engine": Piper_TTS_Engine,
+    "ElevenLabs_TTS_Engine": ElevenLabs_TTS_Engine,
 }
 script_db_engine_modules: Dict[str, Type[Script_DB_Engine]] = {
     # "Script_DB_Engine": Script_DB_Engine,
@@ -26,7 +27,9 @@ script_db_engine_modules: Dict[str, Type[Script_DB_Engine]] = {
 
 
 class Engine_Modules(BaseModel):
-    ai_api_engine_module: Optional[Literal["Piper_TTS_Engine"]] = None
+    ai_api_engine_module: Optional[
+        Literal["Piper_TTS_Engine", "ElevenLabs_TTS_Engine"]
+    ] = None
     script_db_engine_module: Optional[Literal["Excel_Script_DB_Engine"]] = None
 
     def fill_default_values(self):

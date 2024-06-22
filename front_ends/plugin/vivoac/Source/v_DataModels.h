@@ -163,8 +163,8 @@ inline void to_json(json& j, const EngineModules& s) {
     if (!s.script_db_engine_module.empty()) { j["script_db_engine_module"] = s.script_db_engine_module; }
 }
 const struct PossibleEngineModules {
-    const std::array<std::string, 1> ai_api_engine_modules {
-        "Piper_TTS_Engine"
+    const std::array<std::string, 2> ai_api_engine_modules {
+        "Piper_TTS_Engine", "ElevenLabs_TTS_Engine"
     };
     const std::array<std::string, 1> script_db_engine_modules {
         "Excel_Script_DB_Engine"
