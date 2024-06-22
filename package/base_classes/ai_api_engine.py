@@ -23,7 +23,6 @@ from .base_engine import Base_Engine
 
 class AI_API_Engine(Base_Engine):
     # class variables:
-    api_key: str = None  # the api token or key to use the service
     base_url: str = None  # the base url of the api
     model: str = None  # the model to use for the api
 
