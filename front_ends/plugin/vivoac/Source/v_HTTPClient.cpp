@@ -270,11 +270,11 @@ void HTTPClient::CURLgetVoices() {
 	});
     asyncThread.detach();
 }
-void HTTPClient::CURLgetVoiceSettings(const std::string& voice_id) {
+void HTTPClient::CURLgetVoiceSettings(const std::string& name) {
     HEADER_PARAMS headers = {};
     headers.push_back(HEADER_PARAM("session-id", sessionID.c_str()));
     headers.push_back(HEADER_PARAM("api-key", apiKey.c_str()));
-    headers.push_back(HEADER_PARAM("voice-id", voice_id.c_str()));
+    headers.push_back(HEADER_PARAM("name", name.c_str()));
     std::function<void()> callback = [this]() {
 		try {
             json j = json::parse(readBuffer);

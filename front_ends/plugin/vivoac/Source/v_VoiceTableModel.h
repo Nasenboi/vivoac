@@ -53,7 +53,7 @@ public:
         return numRows;
     };
 
-    std::string getVoiceID(int row) {
+    std::string getVoiceName(int row) {
         return voices[row];
     };
 

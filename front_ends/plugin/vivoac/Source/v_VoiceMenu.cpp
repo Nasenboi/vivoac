@@ -124,7 +124,7 @@ void v_VoiceMenu::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 void v_VoiceMenu::onSelectedRowsChanged()
 {
-	client.CURLgetVoiceSettings(voiceTableModel.getVoiceID(voiceTable.getSelectedRow()));
+	client.CURLgetVoiceSettings(voiceTableModel.getVoiceName(voiceTable.getSelectedRow()));
 }
 
 void v_VoiceMenu::refreshComponents() {

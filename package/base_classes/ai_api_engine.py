@@ -53,7 +53,7 @@ class AI_API_Engine(Base_Engine):
 
     @virtual
     def get_voice_settings(
-        self, api_key: str = None, voice_id: str = None
+        self, api_key: str = None, voice_id: str = None, name: str = None
     ) -> Voice_Settings:
         pass
 
@@ -77,7 +77,9 @@ class AI_API_Engine(Base_Engine):
         pass
 
     @virtual
-    def delete_voice(self, api_key: str = None, voice_id: str = None) -> None:
+    def delete_voice(
+        self, api_key: str = None, voice_id: str = None, name: str = None
+    ) -> None:
         pass
 
     ############################################################

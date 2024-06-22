@@ -63,8 +63,10 @@ class Piper_TTS_Engine(AI_API_Engine):
         return ""
 
     def get_voice_settings(
-        self, api_key: str = None, voice_id: str = None
+        self, api_key: str = None, voice_id: str = None, name: str = None
     ) -> Voice_Settings:
+        if voice_id is None:
+            voice_id = name
         settings_path = os.path.join(
             self.piper_voice_directory, f"{voice_id}.onnx.json"
         )
@@ -112,7 +114,11 @@ class Piper_TTS_Engine(AI_API_Engine):
 
         return
 
-    def delete_voice(self, api_key: str = None, voice_id: str = None) -> None:
+    def delete_voice(
+        self, api_key: str = None, voice_id: str = None, name: str = None
+    ) -> None:
+        if voice_id is None:
+            voice_id = name
         # This may be a bit dangerous, but we will allow it for now!
         voice_path = os.path.join(self.piper_voice_directory, f"{voice_id}.onnx")
         settings_path = os.path.join(
