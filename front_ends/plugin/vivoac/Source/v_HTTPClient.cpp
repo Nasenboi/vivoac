@@ -101,17 +101,17 @@ void HTTPClient::CURLinitSession() {
         try {
             j = json::parse(readBuffer);
             sessionID = j.value("session_id", "");
+            CURLupdateSession();
+            CURLupdateSessionEngines();
+            updateSessionEngineSettings();
         }
         catch (json::parse_error& e) {
             DBG("JSON parse error: " << e.what());
             sessionID = "";
         }
-        CURLupdateSession();
-        CURLupdateSessionEngines();
-        updateSessionEngineSettings();
     };
     std::thread asyncThread([this, callback]() {
-        this->doCurl(callback, "/session/create", HTTPMethod::Put, {}, {}, {}, false);
+        this->doCurl(callback, "/session/create", HTTPMethod::Get, {}, {}, {}, false);
     });
     threadRunning = true;
     asyncThread.detach();
@@ -459,7 +459,7 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     juce::URL curl(curlURL);
     juce::String headers;
     headers += juce::String(juce::CharPointer_UTF8("accept")) + ": " + juce::String(juce::CharPointer_UTF8("application/json")) + "\r\n";
-    headers += juce::String(juce::CharPointer_UTF8("content-type")) + ": " + juce::String(juce::CharPointer_UTF8("application/json")) + "\r\n";
+    headers += juce::String(juce::CharPointer_UTF8("Content-Type")) + ": " + juce::String(juce::CharPointer_UTF8("application/json")) + "\r\n";
     for (const auto& h : header_params) {
         headers += juce::String(h.first) + ": " + juce::String(h.second) + "\r\n";
     }
@@ -495,6 +495,9 @@ void HTTPClient::doCurl(const std::function<void()> callback, const std::string&
     juce::URL::InputStreamOptions options = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
         .withHttpRequestCmd(cmd)
         .withExtraHeaders(headers);
+
+    DBG("Body:" << curl.toString(true));
+    DBG("Headers:" << options.getExtraHeaders());
 
     std::unique_ptr<juce::InputStream> stream(curl.createInputStream(options));
 
