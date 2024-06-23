@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 
 class Voice_Settings(BaseModel):
-    voice_id: str | int = None
+    voice_id: str = None
     name: str = None
     settings: dict = None
     description: Optional[str] = None
