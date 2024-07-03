@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginCharacteristicsValue="pluginAAXDisableBypass,pluginAAXDisableMultiMono,pluginIsSynth,pluginWantsMidiIn"
               version="0.0.0" pluginManufacturer="Christian B&#246;ndgen" pluginFormats="buildAAX,buildStandalone,buildVST3"
-              pluginAAXCategory="0,1,1024,128,16,2,2048,256,32,4,4096,512,64,8,8192">
+              pluginAAXCategory="0">
   <MAINGROUP id="VFAJSV" name="vivoac">
     <GROUP id="{8D15B214-40B5-624D-BC65-C0154DC277DD}" name="Source">
       <GROUP id="{FE01D8A2-C99F-1DCE-28B8-8DAE49093A18}" name="API">
@@ -81,7 +81,8 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" aaxFolder="..\..\..\..\..\ProToolsSDK\aax-sdk-2-7-0">
+    <VS2022 targetFolder="Builds/VisualStudio2022" aaxFolder="..\..\..\..\..\ProToolsSDK\aax-sdk-2-7-0"
+            extraCompilerFlags="-IAACLibrary_libcpp">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="vivoac" headerPath="C:\Program Files\CLibs\curl\x64 Debug\include;&#10;C:\Program Files\CLibs\cpr\include;&#10;C:\Program Files\CLibs\nlohmann\include"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="vivoac" headerPath="C:\Program Files\CLibs\curl\x64 Release\include;&#10;C:\Program Files\CLibs\cpr\include;&#10;C:\Program Files\CLibs\nlohmann\include"/>
