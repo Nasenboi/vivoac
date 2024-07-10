@@ -8,6 +8,7 @@ piper-voice/
 data/external/
 data/excel_scripts/
 rebuild_and_run_docker.sh
+data/test/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

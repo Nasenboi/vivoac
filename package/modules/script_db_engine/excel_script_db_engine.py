@@ -76,6 +76,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
         self, script: Script_Line = Script_Line()
     ) -> List[Script_Line]:
         # Checks before we search the database:
+        filtered_database = []
         if not self.__check_excel_script():
             return []
         if script == None:
@@ -177,13 +178,16 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
 
         try:
             self.__load_excel_script()
-            return True
+            if self.excel_data_frame is not None:
+                return True
         except Exception as e:
             LOGGER.warning(f"Error loading excel script: {e}")
-            return False
+        return False
 
     def __filter_database(self, script: Script_Line) -> pd.DataFrame:
         # filter the database with the given script parameters:
+        if not self.__check_excel_script():
+            return pd.DataFrame()
         query = pd.Series([True] * len(self.excel_data_frame))
         parameters_to_filter = script.get_filter_params()
         for key, value in parameters_to_filter.items():
@@ -204,6 +208,8 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
     def __gather_character_info(self, character_info: Character_Info) -> Character_Info:
         # gather all character info from the excel script
         # using search parameters from the given character_info object
+        if not self.__check_excel_script():
+            return Character_Info()
         character_info.voice_talent = self.excel_data_frame[
             self.excel_data_frame["character_name"] == character_info.character_name
         ]["voice_talent"].unique()[0]

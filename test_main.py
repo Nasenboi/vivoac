@@ -8,6 +8,7 @@ Imports:
 import os
 
 os.environ["SETTINGS_VARIATION_PATH"] = "./project-settings-test.json"
+import json
 from logging.handlers import TimedRotatingFileHandler
 
 import package as p
@@ -33,6 +34,11 @@ if __name__ == "__main__":
     ]
     streamhandler.doRollover()
 
+    test_results = []
+    test_result_file = p.SETTINGS_GLOBAL.get("test-settings", {}).get(
+        "test_result_file", ""
+    )
+
     # start the application loop
     p.LOGGER.info(f"Starting the Tests!")
     try:
@@ -51,7 +57,19 @@ if __name__ == "__main__":
         ]
 
         for test_class in test_classes:
-            test_class.test_script()
+            result = test_class.test_script()
+            test_results.append(result)
+
+        # store the tesults in a file:
+        if test_result_file != "":
+            p.LOGGER.info(f"Storing the test results in {test_result_file}")
+            test_results_as_dict = []
+            for result in test_results:
+                for test in result:
+                    test_results_as_dict.append(test.dict())
+
+            with open(test_result_file, "w") as file:
+                json.dump(test_results_as_dict, file, indent=4)
 
     except KeyboardInterrupt:
         p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")

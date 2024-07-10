@@ -34,7 +34,6 @@ class Script_Tests(Test_Class):
             message=str(response.json()),
             error_message=None,
         )
-        LOGGER.debug(f"Results: {results}")
         return results
 
     test_functions = [get_script]

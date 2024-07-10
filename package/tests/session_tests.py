@@ -36,7 +36,6 @@ class Session_Tests(Test_Class):
             message=str(response.json()),
             error_message=None,
         )
-        LOGGER.debug(f"Results: {results}")
         return results
 
     def get_session(self) -> test_function_return:
@@ -51,7 +50,6 @@ class Session_Tests(Test_Class):
             message=str(response.json()),
             error_message=None,
         )
-        LOGGER.debug(f"Results: {results}")
         return results
 
     def update_session(self) -> test_function_return:
@@ -67,7 +65,6 @@ class Session_Tests(Test_Class):
             message=str(response.json()),
             error_message=None,
         )
-        LOGGER.debug(f"Results: {results}")
         return results
 
     def delete_session(self) -> test_function_return:
@@ -82,11 +79,10 @@ class Session_Tests(Test_Class):
             message=str(response.json()),
             error_message=None,
         )
-        LOGGER.debug(f"Results: {results}")
         return results
 
-    def create_test_session(self):
-        self.create_session()
+    def create_test_session(self) -> test_function_return:
+        return self.create_session()
 
     test_functions = [
         create_session,
