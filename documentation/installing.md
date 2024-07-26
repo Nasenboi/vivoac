@@ -1,5 +1,12 @@
+<!---         
+    Hier kommt rein:
+    Wie der code installiert wird!
+
+
+      -->
+
 ### Installing
-When you have installed all the dependencies open up a terminal and create a new python environment:  
+When you have installed all the dependencies (see [readme.md](../README.md)) open up a terminal and create a new python environment:  
 **unix:**
 ```sh
 python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
@@ -12,7 +19,7 @@ Wait a minute until all the packages are installed . . .
 
 ### Deployment
 Here are the two options to deploy the API-Server.
-One way is to do it locally, on you machine.
+One way is to do it locally, on your machine.
 The other uses the Dockerfile, to create a Docker Image, so that you can containerize this application.
 
 #### Local
