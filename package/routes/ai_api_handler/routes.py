@@ -8,7 +8,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Header, Response
 
-from ...utils.decorators import session_fetch
+from ...utils.functions import fetch_session
 from ..session.models import *
 from .models import *
 
@@ -52,101 +52,114 @@ class AI_API_Handler_Router(APIRouter):
         self.add_api_route(
             path="/create_voice",
             endpoint=self.create_voice_route,
-            methods=["POST"],
+            methods=["PUT"],
         )
         self.add_api_route(
             path="/edit_voice_settings",
             endpoint=self.edit_voice_settings_route,
-            methods=["PUT"],
+            methods=["POST"],
         )
         self.add_api_route(
             path="/text_to_speech",
             endpoint=self.text_to_speech,
             methods=["POST"],
         )
+        self.add_api_route(
+            path="/delete_voice",
+            endpoint=self.delete_voice_route,
+            methods=["DELETE"],
+        )
 
     ############################################################
     # getter functions:
 
-    @session_fetch
     async def get_user_data_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> dict:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.get_user_data(api_key=api_key)
 
-    @session_fetch
     async def get_models_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> dict:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.get_models(api_key=api_key)
 
-    @session_fetch
     async def get_voices_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> List[str]:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.get_voices(api_key=api_key)
 
-    @session_fetch
     async def get_voice_settings_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         voice_id: Annotated[str, Header()] = None,
         name: Annotated[str, Header()] = None,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Voice_Settings:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.get_voice_settings(
             api_key=api_key, voice_id=voice_id, name=name
         )
 
     ############################################################
-    # setter functions:
+    # put functions:
 
-    @session_fetch
     async def create_voice_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         voice_settings: Voice_Settings,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> str:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.create_voice(
             api_key=api_key,
             voice_settings=voice_settings,
         )
 
-    @session_fetch
+    ############################################################
+
     async def edit_voice_settings_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         voice_settings: Voice_Settings,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> None:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.edit_voice_settings(
             api_key=api_key,
             voice_settings=voice_settings,
         )
 
-    ############################################################
     # post functions:
-    @session_fetch
     async def text_to_speech(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         data: Text_To_Speech,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Response:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         try:
             file_in_bytes: bytes = (
                 session.api_engine_modules.ai_api_engine.text_to_speech(
@@ -167,19 +180,16 @@ class AI_API_Handler_Router(APIRouter):
             return Response(content=f"Error: {e}", media_type="text/plain")
 
     ############################################################
-    # put functions:
-
-    ############################################################
     # delete functions:
-    @session_fetch
     async def delete_voice_route(
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
         voice_id: Annotated[str, Header()],
-        name: Annotated[str, Header()] = None,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> None:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session.api_engine_modules.ai_api_engine.delete_voice(
             api_key=api_key, voice_id=voice_id, name=None
         )
