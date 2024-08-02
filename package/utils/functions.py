@@ -4,10 +4,6 @@ Description: This file contains useful functions that are used throughout the pr
 Imports:
 """
 
-from ..api_engine.api_engine import API_Engine
-from ..globals import LOGGER
-from ..routes.session.models import Session
-
 """
 ########################################################################################"""
 
@@ -37,9 +33,7 @@ def json_update(json_obj: dict, new_json_obj: dict) -> dict:
     return json_obj
 
 
-async def fetch_session(
-    api_engine: API_Engine, session_id: str
-) -> tuple[bool, Session]:
+async def fetch_session(api_engine: object, session_id: str) -> tuple[bool, object]:
     """
     This function will fetch a session object with the given session_id from the api_engine.
     :param api_engine: The api_engine
@@ -52,5 +46,4 @@ async def fetch_session(
         session = await api_engine.session_backend.read(session_id=session_id)
         return (True, session)
     except Exception as e:
-        LOGGER.error(f"Failed to fetch session with id {session_id}. Error: {e}")
         return (False, session)
