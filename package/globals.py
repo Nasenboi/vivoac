@@ -11,6 +11,7 @@ import logging.config
 import os
 
 import colorlog
+from pymongo import MongoClient
 
 from .utils.functions import json_update
 
@@ -56,3 +57,16 @@ LOGGER = colorlog.getLogger("main")
 directories = SETTINGS_GLOBAL.get("directories")
 for directory in directories.values():
     os.makedirs(directory, exist_ok=True)
+
+"""
+# Create the client for the mongo database:
+connection_string = SETTINGS_GLOBAL.get("database", {}).get(
+    "url", {}
+) + SETTINGS_GLOBAL.get("database", {}).get("name", {})
+if connection_string != "":
+    CLIENT = MongoClient(connection_string)
+else:
+    raise ValueError(
+        "No connection string for the database was provided in the settings file"
+    )
+"""

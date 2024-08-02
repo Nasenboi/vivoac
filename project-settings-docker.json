@@ -6,6 +6,9 @@
         "piper-voice": "/piper-voice",
         "temp": "/tmp/vivoac"
     },
+    "database": {
+        "url": "mongodb://mongo:27017"
+    },
     "logging-config": {
         "handlers": {
             "file": {

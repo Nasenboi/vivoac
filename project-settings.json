@@ -18,6 +18,10 @@
         "piper-voice": "./data/piper-voice",
         "temp": "./data/temp"
     },
+    "database": {
+        "url": "mongodb://localhost:27017",
+        "name": "vivoac"
+    },
     "logging-config": {
         "version": 1,
         "disable_existing_loggers": false,
