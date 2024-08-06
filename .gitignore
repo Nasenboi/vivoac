@@ -10,6 +10,7 @@ data/excel_scripts/
 rebuild_and_run_docker.sh
 data/test/*
 data/docker_files/*
+start_local_db.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
