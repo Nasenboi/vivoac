@@ -1,17 +1,23 @@
-version: 3
-
 services:
   vivoac:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: deploy
     ports:
       - "8080:8080"
     volumes:
-      - "./data/docker_files/logs:/var/log/vivoac/vivoac.log"
+      - "./data/docker_files/logs:/var/log/vivoac"
       - "./data/piper-voice:/piper-voice"
     depends_on:
       - mongo
+    restart: unless-stopped
 
   mongo:
     image: "mongo:7.0"
     ports:
       - "27017:27017"
+    volumes:
+      - "./data/docker_files/mongo:/data/db"
+    restart: unless-stopped
+

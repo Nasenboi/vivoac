@@ -9,9 +9,11 @@ Imports:
 import json
 import logging.config
 import os
+from typing import Dict
 
 import colorlog
 from pymongo import MongoClient
+from pymongo.collection import Collection
 
 from .utils.functions import json_update
 
@@ -47,7 +49,7 @@ SETTINGS_GLOBAL = load_project_settings()
 # Logger with its config:
 # create log file if it does not exist, logger will get angry if it does not exist
 filename = SETTINGS_GLOBAL.get("logging-config")["handlers"]["file"]["filename"]
-os.makedirs(os.path.dirname(filename), exist_ok=True)
+os.makedirs("/".join(filename.split("/")[:-1]), exist_ok=True)
 with open(filename, "w") as f:
     pass
 logging.config.dictConfig(SETTINGS_GLOBAL.get("logging-config"))
@@ -58,15 +60,18 @@ directories = SETTINGS_GLOBAL.get("directories")
 for directory in directories.values():
     os.makedirs(directory, exist_ok=True)
 
-"""
+
 # Create the client for the mongo database:
-connection_string = SETTINGS_GLOBAL.get("database", {}).get(
-    "url", {}
-) + SETTINGS_GLOBAL.get("database", {}).get("name", {})
-if connection_string != "":
-    CLIENT = MongoClient(connection_string)
-else:
-    raise ValueError(
-        "No connection string for the database was provided in the settings file"
-    )
-"""
+DB_CLIENT = MongoClient(SETTINGS_GLOBAL.get("database", {}).get("url", None))
+db_name = SETTINGS_GLOBAL.get("database", {}).get("collection", "vivoac")
+VIVOAC_DB = DB_CLIENT[db_name]
+
+# Initialize and create the collections if they dont exist:
+DB_COLLECTIONS: Dict[str, Collection] = {
+    "session": None,
+    "user": None,
+    "voice": None,
+    "voice_talent": None,
+}
+for collection in DB_COLLECTIONS.keys():
+    DB_COLLECTIONS[collection] = VIVOAC_DB[collection]

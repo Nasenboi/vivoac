@@ -1,6 +1,6 @@
 # --------------------------------------------
 # Firstly create a base image installing the dependencies and the piper TTS engine
-FROM python:3.10 as base
+FROM python:3.10 AS base
 
 WORKDIR /vivoac
 
@@ -14,10 +14,10 @@ RUN apt-get update && \
     espeak-ng \
     git \
     ffmpeg 
-RUN pip3 install --upgrade pip wheel setuptools
-RUN git clone https://github.com/rhasspy/piper.git /piper
+RUN pip3 install --upgrade wheel setuptools
+# RUN git clone --branch v1.2.0 --depth 1 https://github.com/rhasspy/piper.git /piper
 # To save some time there is a copy of piper in the project under data/external/piper
-# RUN mv data/external/piper /piper
+RUN mv data/external/piper /piper
 RUN pip install -e /piper/src/python
 RUN mkdir -p /piper/src/python/piper_train/vits/monotonic_align/monotonic_align
 RUN cd /piper/src/python/piper_train/vits/monotonic_align && cythonize -i core.pyx && mv core*.so monotonic_align/
@@ -27,7 +27,7 @@ RUN pip install -r requirements.txt
 
 # --------------------------------------------
 # create one deployment image for the main.py file
-FROM base as deploy
+FROM base AS deploy
 WORKDIR /vivoac
 ENV SETTINGS_VARIATION_PATH="./project-settings-docker.json"
 EXPOSE 8080
@@ -36,7 +36,7 @@ CMD ["python", "main.py"]
 
 # --------------------------------------------
 # create one image for the testing
-FROM base as test
+FROM base AS test
 WORKDIR /vivoac
 ENV SETTINGS_VARIATION_PATH="./project-settings-docker.json"
 COPY . .
