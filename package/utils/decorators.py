@@ -42,3 +42,6 @@ def session_fetch(func):
         return await func(*args, **kwargs)
 
     return wrapper
+
+
+# TODO maybe add a decorator as an endpoint wrapper to handle exceptions and return a proper error response

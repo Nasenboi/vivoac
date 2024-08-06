@@ -34,7 +34,7 @@ class Engine_Router(APIRouter):
             path="/get", endpoint=self.get_session_engines_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/update", endpoint=self.update_session_engines_route, methods=["POST"]
+            path="/update", endpoint=self.update_session_engines_route, methods=["PUT"]
         )
         self.add_api_route(
             path="/settings/get",
@@ -44,7 +44,7 @@ class Engine_Router(APIRouter):
         self.add_api_route(
             path="/settings/update",
             endpoint=self.update_engine_settings_route,
-            methods=["POST"],
+            methods=["PUT"],
         )
 
     @session_fetch

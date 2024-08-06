@@ -8,7 +8,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Header
 
-from ...utils.decorators import session_fetch
+from ...utils.functions import fetch_session
 from .functions import *
 from .models import *
 
@@ -46,7 +46,7 @@ class Session_Router(APIRouter):
                     """,
         )
         self.add_api_route(
-            path="/close", endpoint=self.close_session_route, methods=["POST", "GET"]
+            path="/close", endpoint=self.close_session_route, methods=["POST"]
         )
         self.add_api_route(
             path="/get", endpoint=self.get_session_route, methods=["GET"]
@@ -71,21 +71,23 @@ class Session_Router(APIRouter):
             self=self, api_engine=self.api_engine, session_id=session_id
         )
 
-    @session_fetch
     async def get_session_route(
         self,
         session_id: Annotated[str, Header()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Session:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return session
 
-    @session_fetch
     async def update_session_route(
         self,
         session_id: Annotated[str, Header()],
         new_session: Session,
-        session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Session:
+        session_fetched, session = fetch_session(self.api_engine, session_id)
+        if not session_fetched:
+            return {"error": "Failed to fetch session."}
         return await update_session(
             api_engine=self.api_engine,
             session_id=session_id,

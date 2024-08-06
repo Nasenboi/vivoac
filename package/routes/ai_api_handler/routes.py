@@ -52,12 +52,12 @@ class AI_API_Handler_Router(APIRouter):
         self.add_api_route(
             path="/create_voice",
             endpoint=self.create_voice_route,
-            methods=["PUT"],
+            methods=["POST"],
         )
         self.add_api_route(
-            path="/edit_voice_settings",
+            path="/update_voice_settings",
             endpoint=self.edit_voice_settings_route,
-            methods=["POST"],
+            methods=["PUT"],
         )
         self.add_api_route(
             path="/text_to_speech",

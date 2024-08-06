@@ -6,11 +6,9 @@ Imports:
 
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from fastapi import APIRouter, Body, Header
+from fastapi import APIRouter, Depends, Header
 
 from ...globals import LOGGER, SETTINGS_GLOBAL
-from ...utils.decorators import session_fetch
-from ..session.models import Session
 from .functions import *
 from .models import *
 
@@ -37,15 +35,13 @@ class Script_Router(APIRouter):
             methods=["GET"],
         )
 
-    @session_fetch
     async def get_script_lines_route(
         self,
         session_id: Annotated[str, Header()],
-        script_line: Optional[Script_Line] = Body(None, include_in_schema=False),
-        session: Optional[Session] = Body(None, include_in_schema=False),
+        script_line: Script_Line = Depends(),
     ) -> List[Script_Line]:
         LOGGER.debug(f"Getting script lines for {script_line}")
-        script_db_engine = session.api_engine_modules.script_db_engine
+        script_db_engine = self.api_engine.engine_backend.script_db_engine
         script_lines = await get_script_lines(
             script_line=script_line, script_db_engine=script_db_engine
         )

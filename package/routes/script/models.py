@@ -6,6 +6,7 @@ Imports:
 
 from typing import Any, Dict, Optional, Union
 
+from fastapi import Query
 from pydantic import BaseModel
 
 """

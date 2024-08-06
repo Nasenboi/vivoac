@@ -7,7 +7,7 @@ Imports:
 from threading import Thread
 from time import sleep
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from uvicorn import Config, Server
