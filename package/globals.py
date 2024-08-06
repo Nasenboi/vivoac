@@ -12,6 +12,8 @@ import os
 from typing import Dict
 
 import colorlog
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
@@ -74,3 +76,20 @@ DB_COLLECTIONS: Dict[str, Collection] = {
 }
 for collection in DB_COLLECTIONS.keys():
     DB_COLLECTIONS[collection] = VIVOAC_DB[collection]
+
+try:
+    with open(".env/key", "r") as f:
+        SECRET_KEY = f.read().strip()
+
+    with open(".env/algorithm", "r") as f:
+        ALGORITHM = f.read().strip()
+except FileNotFoundError:
+    LOGGER.error(
+        "Could not find the secret key or algorithm file in the .env directory using randoms!"
+    )
+    SECRET_KEY = os.urandom(32)
+    ALGORITHM = "HS256"
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+PASSWORD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
+OAUTH_2_SCHEME = OAuth2PasswordBearer(tokenUrl="token")

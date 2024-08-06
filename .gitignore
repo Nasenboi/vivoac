@@ -11,6 +11,7 @@ rebuild_and_run_docker.sh
 data/test/*
 data/docker_files/*
 start_local_db.sh
+.env/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
