@@ -60,7 +60,6 @@ directories = SETTINGS_GLOBAL.get("directories")
 for directory in directories.values():
     os.makedirs(directory, exist_ok=True)
 
-
 # Create the client for the mongo database:
 DB_CLIENT = MongoClient(SETTINGS_GLOBAL.get("database", {}).get("url", None))
 db_name = SETTINGS_GLOBAL.get("database", {}).get("collection", "vivoac")
@@ -68,10 +67,10 @@ VIVOAC_DB = DB_CLIENT[db_name]
 
 # Initialize and create the collections if they dont exist:
 DB_COLLECTIONS: Dict[str, Collection] = {
-    "session": None,
-    "user": None,
-    "voice": None,
-    "voice_talent": None,
+    "sessions": None,
+    "users": None,
+    "voices": None,
+    "voice_talents": None,
 }
 for collection in DB_COLLECTIONS.keys():
     DB_COLLECTIONS[collection] = VIVOAC_DB[collection]
