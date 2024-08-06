@@ -15,7 +15,7 @@ import colorlog
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
-from .utils.functions import json_update
+from .utils import functions as utils_functions
 
 """
 ########################################################################################"""
@@ -38,7 +38,7 @@ def load_project_settings() -> dict:
     if "SETTINGS_VARIATION_PATH" in globals():
         with open(SETTINGS_VARIATION_PATH, "r") as file:
             settings_variation = json.load(file)
-        settings = json_update(settings, settings_variation)
+        settings = utils_functions.json_update(settings, settings_variation)
 
     return settings
 

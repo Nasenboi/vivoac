@@ -4,6 +4,10 @@ Description: This file contains useful functions that are used throughout the pr
 Imports:
 """
 
+from fastapi import Request
+
+from .. import globals
+
 """
 ########################################################################################"""
 
@@ -47,3 +51,19 @@ async def fetch_session(api_engine: object, session_id: str) -> tuple[bool, obje
         return (True, session)
     except Exception as e:
         return (False, session)
+
+
+async def log_request_info(request: Request):
+    try:
+        request_body = await request.json()
+    except Exception:
+        return
+
+    globals.LOGGER.info(
+        f"{request.method} request to {request.url} metadata\n"
+        f"\tHeaders: {request.headers}\n"
+        f"\tBody: {request_body}\n"
+        f"\tPath Params: {request.path_params}\n"
+        f"\tQuery Params: {request.query_params}\n"
+        f"\tCookies: {request.cookies}\n"
+    )

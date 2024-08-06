@@ -42,22 +42,6 @@ class UvicornThread(Thread):
 # Essentials:
 
 
-async def log_request_info(request: Request):
-    try:
-        request_body = await request.json()
-    except Exception:
-        return
-
-    LOGGER.info(
-        f"{request.method} request to {request.url} metadata\n"
-        f"\tHeaders: {request.headers}\n"
-        f"\tBody: {request_body}\n"
-        f"\tPath Params: {request.path_params}\n"
-        f"\tQuery Params: {request.query_params}\n"
-        f"\tCookies: {request.cookies}\n"
-    )
-
-
 def init(self) -> None:
     LOGGER.debug("api engine - init")
     try:
