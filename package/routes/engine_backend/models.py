@@ -8,8 +8,8 @@ from typing import Dict, Literal, Optional, Type
 
 from pydantic import BaseModel, field_serializer
 
-from ....base_classes import *
-from ....modules import *
+from ...base_classes import *
+from ...modules import *
 
 """
 ########################################################################################"""
@@ -45,8 +45,8 @@ class Engine_Modules(BaseModel):
 
 # api_engine_sub_engines
 class API_Sub_Engines(BaseModel):
-    ai_api_engine: Optional[object] = None
-    script_db_engine: Optional[object] = None
+    ai_api_engine: Optional[Type[AI_API_Engine]] = None
+    script_db_engine: Optional[Type[Script_DB_Engine]] = None
 
     @field_serializer("ai_api_engine")
     def serialize_ai_api_engine(self, engine: AI_API_Engine, _info):

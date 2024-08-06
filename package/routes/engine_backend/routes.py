@@ -8,9 +8,9 @@ from typing import Annotated, Any, Dict
 
 from fastapi import APIRouter, Body, Header
 
-from ....globals import LOGGER
-from ....utils.decorators import session_fetch
-from ..models import *
+from ...globals import LOGGER
+from ...utils.decorators import session_fetch
+from ..session.models import Session
 from .models import *
 
 """
@@ -25,10 +25,9 @@ class Engine_Router(APIRouter):
         "responses": {404: {"description": "Not found"}},
     }
 
-    def __init__(self, session_engine, api_engine, **kwargs):
+    def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)
         super().__init__(**self.route_parameters)
-        self.session_engine = session_engine
         self.api_engine = api_engine
 
         self.add_api_route(

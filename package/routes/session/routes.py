@@ -9,8 +9,6 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Header
 
 from ...utils.decorators import session_fetch
-from .engine_backend.engine_backend import Engine_Backend
-from .engine_backend.routes import Engine_Router
 from .functions import *
 from .models import *
 
@@ -32,15 +30,10 @@ class Session_Router(APIRouter):
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
 
-        self.engine_backend = Engine_Backend()
-        self.include_router(
-            Engine_Router(session_engine=self, api_engine=api_engine),
-        )
-
         self.add_api_route(
             path="/create",
             endpoint=self.create_session_route,
-            methods=["PUT", "POST", "GET"],
+            methods=["POST"],
             description="""
                         Create a new session for this api.
                         You can pass known session settings as input and let the api fill out the rest.

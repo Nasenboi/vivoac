@@ -6,8 +6,8 @@ Imports:
 
 from typing import Any, Dict, List, Optional
 
-from ....globals import LOGGER
-from ..models import *
+from ...globals import LOGGER
+from ..session.models import Session
 from .models import *
 
 """
