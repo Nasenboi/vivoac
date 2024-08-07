@@ -4,7 +4,7 @@ Description: This file contains useful functions that are used throughout the pr
 Imports:
 """
 
-from fastapi import Request
+from fastapi import HTTPException, Request
 
 from .. import globals
 
@@ -37,20 +37,21 @@ def json_update(json_obj: dict, new_json_obj: dict) -> dict:
     return json_obj
 
 
-async def fetch_session(api_engine: object, session_id: str) -> tuple[bool, object]:
+async def fetch_session(api_engine: object, session_id: str):
     """
     This function will fetch a session object with the given session_id from the api_engine.
     :param api_engine: The api_engine
     :param session_id: The session id
-    :return success: A boolean indicating if the session was fetched successfully
     :return session: The session object
     """
     session = None
     try:
         session = await api_engine.session_backend.read(session_id=session_id)
-        return (True, session)
+        return session
     except Exception as e:
-        return (False, session)
+        raise HTTPException(
+            status_code=404, detail=f"Session with id {session_id} not found: {e}"
+        )
 
 
 async def log_request_info(request: Request):
