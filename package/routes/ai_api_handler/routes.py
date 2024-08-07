@@ -78,9 +78,7 @@ class AI_API_Handler_Router(APIRouter):
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
     ) -> dict:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_user_data(api_key=api_key)
 
     async def get_models_route(
@@ -88,9 +86,7 @@ class AI_API_Handler_Router(APIRouter):
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
     ) -> dict:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_models(api_key=api_key)
 
     async def get_voices_route(
@@ -98,9 +94,7 @@ class AI_API_Handler_Router(APIRouter):
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
     ) -> List[str]:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_voices(api_key=api_key)
 
     async def get_voice_settings_route(
@@ -110,9 +104,7 @@ class AI_API_Handler_Router(APIRouter):
         voice_id: Annotated[str, Header()] = None,
         name: Annotated[str, Header()] = None,
     ) -> Voice_Settings:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_voice_settings(
             api_key=api_key, voice_id=voice_id, name=name
         )
@@ -126,9 +118,7 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         voice_settings: Voice_Settings,
     ) -> str:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.create_voice(
             api_key=api_key,
             voice_settings=voice_settings,
@@ -142,9 +132,7 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         voice_settings: Voice_Settings,
     ) -> None:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.edit_voice_settings(
             api_key=api_key,
             voice_settings=voice_settings,
@@ -157,9 +145,7 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         data: Text_To_Speech,
     ) -> Response:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         try:
             file_in_bytes: bytes = (
                 session.api_engine_modules.ai_api_engine.text_to_speech(
@@ -187,9 +173,7 @@ class AI_API_Handler_Router(APIRouter):
         api_key: Annotated[str, Header()],
         voice_id: Annotated[str, Header()],
     ) -> None:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.delete_voice(
             api_key=api_key, voice_id=voice_id, name=None
         )

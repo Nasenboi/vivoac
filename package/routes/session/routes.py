@@ -4,9 +4,9 @@ Description:
 Imports:
 """
 
-from typing import Annotated
+from typing import Annotated, Callable
 
-from fastapi import APIRouter, Body, Header
+from fastapi import APIRouter, Header
 
 from ...utils.functions import fetch_session
 from .functions import *
@@ -75,9 +75,7 @@ class Session_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
     ) -> Session:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return session
 
     async def update_session_route(
@@ -85,9 +83,7 @@ class Session_Router(APIRouter):
         session_id: Annotated[str, Header()],
         new_session: Session,
     ) -> Session:
-        session_fetched, session = fetch_session(self.api_engine, session_id)
-        if not session_fetched:
-            return {"error": "Failed to fetch session."}
+        session = await fetch_session(self.api_engine, session_id)
         return await update_session(
             api_engine=self.api_engine,
             session_id=session_id,
