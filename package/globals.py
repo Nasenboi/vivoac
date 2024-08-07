@@ -9,19 +9,17 @@ Imports:
 import json
 import logging.config
 import os
-from typing import Dict
 
 import colorlog
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from pymongo import MongoClient
-from pymongo.collection import Collection
+from dotenv import load_dotenv
 
 from .utils import functions as utils_functions
 
 """
 ########################################################################################"""
 
+# load env variables
+load_dotenv()
 
 # Firstly load the settings for the project, they should be in a json file
 # and most of the settings are globals anyway so lets read them in here
@@ -61,35 +59,3 @@ LOGGER = colorlog.getLogger("main")
 directories = SETTINGS_GLOBAL.get("directories")
 for directory in directories.values():
     os.makedirs(directory, exist_ok=True)
-
-# Create the client for the mongo database:
-DB_CLIENT = MongoClient(SETTINGS_GLOBAL.get("database", {}).get("url", None))
-db_name = SETTINGS_GLOBAL.get("database", {}).get("collection", "vivoac")
-VIVOAC_DB = DB_CLIENT[db_name]
-
-# Initialize and create the collections if they dont exist:
-DB_COLLECTIONS: Dict[str, Collection] = {
-    "sessions": None,
-    "users": None,
-    "voices": None,
-    "voice_talents": None,
-}
-for collection in DB_COLLECTIONS.keys():
-    DB_COLLECTIONS[collection] = VIVOAC_DB[collection]
-
-try:
-    with open(".env/key", "r") as f:
-        SECRET_KEY = f.read().strip()
-
-    with open(".env/algorithm", "r") as f:
-        ALGORITHM = f.read().strip()
-except FileNotFoundError:
-    LOGGER.error(
-        "Could not find the secret key or algorithm file in the .env directory using randoms!"
-    )
-    SECRET_KEY = os.urandom(32)
-    ALGORITHM = "HS256"
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-PASSWORD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
-OAUTH_2_SCHEME = OAuth2PasswordBearer(tokenUrl="token")
