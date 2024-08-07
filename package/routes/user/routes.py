@@ -4,7 +4,9 @@ Description:
 Imports:
 """
 
-from fastapi import APIRouter
+from typing import List
+
+from fastapi import APIRouter, Depends
 
 from .functions import *
 from .models import *
@@ -38,8 +40,8 @@ class User_Router(APIRouter):
     async def add_user_route(self, user: UserForEdit) -> User:
         return await add_user(user)
 
-    async def get_user_route(self, user_id: str) -> User:
-        return await get_user(user_id)
+    async def get_user_route(self, user: User = Depends(User)) -> User | List[User]:
+        return await get_user(user)
 
     async def update_user_route(self, user_id: str, user: UserForEdit) -> User:
         return await update_user(user_id, user)

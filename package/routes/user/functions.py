@@ -4,10 +4,13 @@ Description:
 Imports:
 """
 
+from typing import List
+
 from bson import ObjectId
 from fastapi import HTTPException
 
-from ...globals import DB_COLLECTIONS, LOGGER, PASSWORD_CONTEXT
+from ...db import DB_COLLECTIONS, PASSWORD_CONTEXT
+from ...globals import LOGGER
 from .models import *
 
 """
@@ -17,13 +20,30 @@ from .models import *
 async def add_user(user: UserForEdit) -> User:
     user_for_db = UserInDB(**user.model_dump())
     user_for_db.hashed_password = PASSWORD_CONTEXT.hash(user.password)
+
+    # check if user with this exact full_name already exists
+    if DB_COLLECTIONS["users"].find_one({"username": user_for_db.username}):
+        LOGGER.error("User with this username already exists.")
+        return HTTPException(
+            status_code=400, detail="User with this username already exists."
+        )
+
     DB_COLLECTIONS["users"].insert_one(user_for_db.model_dump())
     return User(**user.model_dump())
 
 
-async def get_user(user_id: int | str) -> User:
-    user = DB_COLLECTIONS["users"].find_one({"_id": ObjectId(user_id)})
-    return User(**user)
+async def get_user(user: User) -> User | List[User]:
+    query = {k: v for k, v in user.model_dump().items() if v is not None}
+
+    try:
+        users = list(DB_COLLECTIONS["users"].find(query))
+
+        if len(users) == 1:
+            return User(**users[0])
+        else:
+            return [User(**user) for user in users]
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="User not found.")
 
 
 async def update_user(user_id: int | str, user: UserForEdit) -> User:
