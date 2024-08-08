@@ -26,6 +26,7 @@ class UserForEdit(User):
 
 class UserInDB(User):
     hashed_password: Optional[str] = None
+    id: Optional[str] = None
 
 
 class Token(BaseModel):

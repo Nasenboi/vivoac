@@ -1,6 +1,7 @@
 """########################################################################################
 Name: db.py
-Description: 
+Description: This script will setup the mongo database and create the defaut admin user,
+if it does not exist.
 Imports:
 """
 
