@@ -55,7 +55,7 @@ if not DB_COLLECTIONS["users"].find_one({"username": ADMIN_USER}):
         {
             "username": ADMIN_USER,
             "full_name": "admin",
-            "password": PASSWORD_CONTEXT.hash(ADMIN_PASSWORD),
+            "hashed_password": PASSWORD_CONTEXT.hash(ADMIN_PASSWORD),
             "role": "admin",
             "disabled": False,
         }
