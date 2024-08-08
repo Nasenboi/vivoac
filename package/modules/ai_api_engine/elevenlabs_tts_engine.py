@@ -206,7 +206,7 @@ class ElevenLabs_TTS_Engine(AI_API_Engine):
         return Voice_Settings()
 
     def __get_voice_settings_from_id(
-        self, voice_id: int | str = None
+        self, voice_id: Union[int, str] = None
     ) -> Voice_Settings:
         for voice in self.voices:
             if voice.voice_id == voice_id:

@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, EmailStr
 
@@ -35,4 +35,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str = None
-    id: int | str = None
+    id: Union[int, str] = None

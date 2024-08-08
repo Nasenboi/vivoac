@@ -40,7 +40,7 @@ class User_Router(APIRouter):
     async def add_user_route(self, user: UserForEdit) -> User:
         return await add_user(user)
 
-    async def get_user_route(self, user: User = Depends(User)) -> User | List[User]:
+    async def get_user_route(self, user: User = Depends(User)) -> Union[User, List[User]]:
         return await get_user(user)
 
     async def update_user_route(self, user_id: str, user: UserForEdit) -> User:

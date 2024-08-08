@@ -106,7 +106,7 @@ class AI_API_Engine(Base_Engine):
         target_format: Audio_Format,
         audio_file_name: str = "",
         audio_file: bytes = None,
-    ) -> str | bytes:
+    ) -> Union[str, bytes]:
         target_format.fill_default_values()
 
         # Load the audio file

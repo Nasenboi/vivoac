@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Annotated, Any, Dict
+from typing import Annotated, Any, Dict, Union
 
 from fastapi import APIRouter, Body, Header
 
@@ -63,7 +63,7 @@ class Engine_Router(APIRouter):
         session_id: Annotated[str, Header()],
         engine_modules: Engine_Modules,
         session: Optional[Session] = Body(None, include_in_schema=False),
-    ) -> str | int:
+    ) -> Union[str, int]:
         LOGGER.debug(f"Updating session engines: {engine_modules}")
         result = await self.session_engine.engine_backend.update_session_engines(
             session=session, engine_modules=engine_modules
@@ -92,7 +92,7 @@ class Engine_Router(APIRouter):
         engine_module_name: str,
         engine_settings: Annotated[dict, Body()],
         session: Optional[Session] = Body(None, include_in_schema=False),
-    ) -> str | int:
+    ) -> Union[str, int]:
         LOGGER.debug(f"Updating engine settings: {engine_settings}")
         result = (
             await self.session_engine.engine_backend.update_session_engine_settings(

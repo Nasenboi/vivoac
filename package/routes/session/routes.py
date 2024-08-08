@@ -66,7 +66,7 @@ class Session_Router(APIRouter):
     async def close_session_route(
         self,
         session_id: Annotated[str, Header()],
-    ) -> str | int:
+    ) ->  Union[str, int]:
         return await close_session(
             self=self, api_engine=self.api_engine, session_id=session_id
         )

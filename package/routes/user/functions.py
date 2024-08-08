@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import List
+from typing import List, Union
 
 from bson import ObjectId
 from fastapi import HTTPException
@@ -32,7 +32,7 @@ async def add_user(user: UserForEdit) -> User:
     return User(**user.model_dump())
 
 
-async def get_user(user: User) -> User | List[User]:
+async def get_user(user: User) -> Union[User, List[User]]:
     query = {k: v for k, v in user.model_dump().items() if v is not None}
 
     try:
@@ -46,7 +46,7 @@ async def get_user(user: User) -> User | List[User]:
         raise HTTPException(status_code=404, detail="User not found.")
 
 
-async def update_user(user_id: int | str, user: UserForEdit) -> User:
+async def update_user(user_id: Union[int, str], user: UserForEdit) -> User:
     if ObjectId(user_id) != user.get("_id", ""):
         LOGGER.error("User ID does not match the ID in the user object.")
         return HTTPException(

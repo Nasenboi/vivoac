@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from ...globals import LOGGER
 from ..session.models import Session
@@ -33,7 +33,7 @@ class Engine_Backend:
         self,
         session: Session,
         engine_modules: Engine_Modules,
-    ) -> str | int:
+    ) -> Union[str, int]:
         if engine_modules.is_empty():
             return -1
         if engine_modules.ai_api_engine_module is not None:
@@ -65,7 +65,7 @@ class Engine_Backend:
         session: Session,
         engine_module_name: str,
         engine_settings: dict,
-    ) -> str | int:
+    ) -> Union[str, int]:
         session.api_engine_modules.__getattribute__(
             engine_module_name
         ).set_class_variables(**engine_settings)
