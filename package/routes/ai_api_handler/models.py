@@ -13,9 +13,9 @@ from pydantic import BaseModel
 
 
 class Voice_Settings(BaseModel):
-    voice_id: str = None
-    name: str = None
-    settings: dict = None
+    voice_id: Optional[Union[str, int]] = None
+    name: Optional[Union[str, int]] = None
+    settings: Optional[dict] = None
     description: Optional[str] = None
     files: Optional[List[str]] = None
     labels: Optional[dict] = None
