@@ -14,7 +14,7 @@ RUN apt-get update && \
     espeak-ng \
     git \
     ffmpeg 
-RUN pip3 install --upgrade pip wheel setuptools
+RUN pip3 install --upgrade wheel setuptools
 RUN git clone https://github.com/rhasspy/piper.git /piper
 # To save some time there is a copy of piper in the project under data/external/piper
 # RUN mv data/external/piper /piper
