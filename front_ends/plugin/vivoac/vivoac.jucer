@@ -2,8 +2,8 @@
 
 <JUCERPROJECT id="PtVpLe" name="vivoac" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              pluginCharacteristicsValue="pluginAAXDisableBypass,pluginAAXDisableMultiMono,pluginIsSynth,pluginWantsMidiIn"
-              version="0.0.0" pluginManufacturer="Christian Boendgen" pluginFormats="buildAAX,buildStandalone,buildVST3"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              version="0.0.0" pluginManufacturer="Christian Boendgen" pluginFormats="buildStandalone,buildVST3"
               pluginAAXCategory="0" companyName="rain productions" companyCopyright="None"
               companyWebsite="www.rain-productions.de" companyEmail="contact@rain-productions.de">
   <MAINGROUP id="VFAJSV" name="vivoac">

@@ -49,7 +49,7 @@ public:
 	VoiceSettings& getCurrentVoiceSettings() { return currentVoiceSettings; };
 
 	// == Audio functions ==
-	std::variant<int, std::string> getAudioFormatParameter(const AudioFormatKeys& key);
+	std::string getAudioFormatParameter(const AudioFormatKeys& key);
 
 	// == Engine functions ==
 	void CURLgetEngineSettings(EngineModulesKeys key);

@@ -188,31 +188,24 @@ void HTTPClient::setCurrentScriptLine(const int& index) {
 	currentScriptLine = scriptLines[index];
 };
 // == Audio functions ==
-std::variant<int, std::string> HTTPClient::getAudioFormatParameter(const AudioFormatKeys& key) {
+std::string HTTPClient::getAudioFormatParameter(const AudioFormatKeys& key) {
 	switch (key) {
 	case AudioFormatKeys::codec:
 		return audioFormat.codec;
-		break;
 	case AudioFormatKeys::bit_depth:
 		return audioFormat.bit_depth;
-		break;
 	case AudioFormatKeys::bit_rate:
 		return audioFormat.bit_rate;
-		break;
 	case AudioFormatKeys::normalization_type:
 		return audioFormat.normalization_type;
-		break;
 	case AudioFormatKeys::sample_rate:
-		return audioFormat.sample_rate;
-		break;
+		return std::to_string(audioFormat.sample_rate);
 	case AudioFormatKeys::channels:
-		return audioFormat.channels;
-		break;
+		return std::to_string(audioFormat.channels);
 	default:
-		return -1;
+		return "";
 	}
 }
-
 // == ai api functions ==
 
 void HTTPClient::CURLgetUserData() {

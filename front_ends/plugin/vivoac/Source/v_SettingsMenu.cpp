@@ -155,9 +155,9 @@ void v_SettingsMenu::resized()
 void v_SettingsMenu::updateSessionComponents() {
 	sessionId.setText(client.sessionID);
 
-	targetAudioFormat.setSelectetItemByText(std::get<std::string>(client.getAudioFormatParameter(AudioFormatKeys::codec)));
-	targetSampleRate.setText(juce::String(std::get<int>(client.getAudioFormatParameter(AudioFormatKeys::sample_rate))));
-	targetNumChannels.setText(juce::String(std::get<int>(client.getAudioFormatParameter(AudioFormatKeys::channels))));
+	targetAudioFormat.setSelectetItemByText(client.getAudioFormatParameter(AudioFormatKeys::codec));
+	targetSampleRate.setText(juce::String(client.getAudioFormatParameter(AudioFormatKeys::sample_rate)));
+	targetNumChannels.setText(juce::String(client.getAudioFormatParameter(AudioFormatKeys::channels)));
 }
 void v_SettingsMenu::updateEngineComponents() {
 	aiApiEngine.setSelectetItemByText(client.getSessionEngine(EngineModulesKeys::ai_api_engine_module));
