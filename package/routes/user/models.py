@@ -16,8 +16,8 @@ class User(BaseModel):
     username: Optional[str] = None
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
-    role: Optional[Literal["admin", "user"]] = "user"
-    disabled: Optional[bool] = False
+    role: Optional[Literal["admin", "user"]] = None
+    disabled: Optional[bool] = None
 
 
 class UserForEdit(User):
