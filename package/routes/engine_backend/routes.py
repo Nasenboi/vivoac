@@ -6,21 +6,19 @@ Imports:
 
 from typing import Annotated, Any, Dict, Union
 
-from fastapi import APIRouter, Body, Header
+from fastapi import APIRouter, Depends, Header, Body
 
 from ...globals import LOGGER
-from ...utils.decorators import session_fetch
-from ..session.models import Session
 from .models import *
 from ..user.models import User
-from ..user.dependencies import get_admin_user
+from ..user.dependencies import get_admin_user, get_current_user
 
 """
 ########################################################################################"""
 
 
 class Engine_Router(APIRouter):
-    engine = None
+    api_engine = None
     route_parameters: dict = {
         "prefix": "/engine",
         "tags": ["engine"],
@@ -36,7 +34,7 @@ class Engine_Router(APIRouter):
             path="/get", endpoint=self.get_engines_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/update", endpoint=self.update_engines_route, methods=["PUT"]
+            path="/set", endpoint=self.set_engines_route, methods=["PUT"]
         )
         self.add_api_route(
             path="/settings/get",
@@ -49,61 +47,52 @@ class Engine_Router(APIRouter):
             methods=["PUT"],
         )
 
-    @session_fetch
     async def get_engines_route(
         self,
         session_id: Annotated[str, Header()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
-    ) -> Engine_Modules:
-        return await self.engine.engine_backend.get_engine_names(
-            session=session
-        )
+        current_user: Annotated[User, Depends(get_current_user)],
+    ) -> Dict[str, str]:
+        return {
+            "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_name(),
+            "script_db_engine": await self.api_engine.engine_backend.get_script_db_engine_name(),
+        }
 
-    @session_fetch
-    async def update_engines_route(
+    async def set_engines_route(
         self,
         session_id: Annotated[str, Header()],
-        engine_modules: Engine_Modules,
-        session: Optional[Session] = Body(None, include_in_schema=False),
+        current_user: Annotated[User, Depends(get_admin_user)],
+        ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = Body(),
+        script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = Body(),
     ) -> Union[str, int]:
-        LOGGER.debug(f"Updating session engines: {engine_modules}")
-        result = await self.engine.engine_backend.update_engines(
-            session=session, engine_modules=engine_modules
+        LOGGER.debug(
+            f"Updating session engines: {ai_api_engine_module}, {script_db_engine_module}"
         )
-        await self.api_engine.session_backend.update(
-            session_id=session_id, data=session
+        result = await self.api_engine.engine_backend.set_engine_module(
+            ai_api_engine_module=ai_api_engine_module,
+            script_db_engine_module=script_db_engine_module,
         )
         return result
 
     # == Engine Settings ==
-    @session_fetch
     async def get_engine_settings_route(
         self,
         session_id: Annotated[str, Header()],
-        engine_module_name: str,
-        session: Optional[Session] = Body(None, include_in_schema=False),
-    ) -> dict:
-        return await self.engine.engine_backend.get_engine_settings(
-            session=session, engine_module_name=engine_module_name
-        )
+        current_user: Annotated[User, Depends(get_current_user)],
+    ) -> Dict[str, dict]:
+        return {
+            "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_settings(),
+            "script_db_engine": await self.api_engine.engine_backend.get_script_db_engine_settings(),
+        }
 
-    @session_fetch
     async def update_engine_settings_route(
         self,
         session_id: Annotated[str, Header()],
-        engine_module_name: str,
-        engine_settings: Annotated[dict, Body()],
-        session: Optional[Session] = Body(None, include_in_schema=False),
+        current_user: Annotated[User, Depends(get_admin_user)],
+        ai_api_engine_settings: Optional[Dict[str, Any]] = None,
+        script_db_engine_settings: Optional[Dict[str, Any]] = None,
     ) -> Union[str, int]:
-        LOGGER.debug(f"Updating engine settings: {engine_settings}")
-        result = (
-            await self.engine.engine_backend.update_engine_settings(
-                session=session,
-                engine_module_name=engine_module_name,
-                engine_settings=engine_settings,
-            )
+        LOGGER.debug(f"Updating engine settings.")
+        return await self.api_engine.engine_backend.update_engine_module_settings(
+            ai_api_engine_settings=ai_api_engine_settings,
+            script_db_engine_settings=script_db_engine_settings,
         )
-        await self.api_engine.session_backend.update(
-            session_id=session_id, data=session
-        )
-        return result
