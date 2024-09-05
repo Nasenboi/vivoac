@@ -36,15 +36,15 @@ class Session_Router(APIRouter):
             methods=["POST"],
         )
         self.add_api_route(
-            path="/get/{current_session_id}", endpoint=self.get_session_route, methods=["GET"]
+            path="/get/{path_session_id}", endpoint=self.get_session_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/update/{current_session_id}",
+            path="/update/{path_session_id}",
             endpoint=self.update_session_route,
             methods=["PUT"],
         )
         self.add_api_route(
-            path="/close/{current_session_id}",
+            path="/close/{path_session_id}",
             endpoint=self.close_session_route,
             methods=["DELETE"],
         )
@@ -56,10 +56,10 @@ class Session_Router(APIRouter):
 
     async def get_session_route(
         self,
-        current_session_id: str,
+        path_session_id: str,
         session_id: Annotated[str, Header()],
     ) -> Session:
-        if session_id != current_session_id:
+        if session_id != path_session_id:
             raise HTTPException(
                 status_code=403, detail="You are not allowed to access this session!"
             )
@@ -68,11 +68,11 @@ class Session_Router(APIRouter):
 
     async def update_session_route(
         self,
-        current_session_id: str,
+        path_session_id: str,
         session_id: Annotated[str, Header()],
         new_session: Session,
     ) -> Session:
-        if session_id != current_session_id:
+        if session_id != path_session_id:
             raise HTTPException(
                 status_code=403, detail="You are not allowed to edit this session!"
             )
@@ -85,9 +85,9 @@ class Session_Router(APIRouter):
         )
 
     async def close_session_route(
-        self, current_session_id: str, session_id: Annotated[str, Header()]
+        self, path_session_id: str, session_id: Annotated[str, Header()]
     ) -> Union[str, int]:
-        if session_id != current_session_id:
+        if session_id != path_session_id:
             raise HTTPException(
                 status_code=403, detail="You are not allowed to close this session!"
             )
