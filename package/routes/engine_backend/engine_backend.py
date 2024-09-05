@@ -4,69 +4,69 @@ Description:
 Imports:
 """
 
-from typing import Any, Dict, List, Optional, Union
-
-from ...globals import LOGGER
-from ..session.models import Session
 from .models import *
+
+from ...modules import *
 
 """
 ########################################################################################"""
 
 
 class Engine_Backend:
-    async def add_session_engines(
+    engine_modules: Engine_Modules = Engine_Modules()
+
+    def __init__(
         self,
-        session: Session,
-        engine_modules: Optional[
-            Engine_Modules
-        ] = Engine_Modules().fill_default_values(),
+        ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = "Piper_TTS_Engine",
+        script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = "Excel_Script_DB_Engine",
     ):
-        session.api_engine_modules = API_Sub_Engines(
-            ai_api_engine=ai_api_engine_modules[engine_modules.ai_api_engine_module](),
-            script_db_engine=script_db_engine_modules[
-                engine_modules.script_db_engine_module
-            ](),
+        self.engine_modules.ai_api_engine = ai_api_engine_modules.get(
+            ai_api_engine_module, Piper_TTS_Engine
+        )
+        self.engine_modules.script_db_engine = script_db_engine_modules.get(
+            script_db_engine_module, Excel_Script_DB_Engine
         )
 
-    async def update_session_engines(
-        self,
-        session: Session,
-        engine_modules: Engine_Modules,
-    ) -> Union[str, int]:
-        if engine_modules.is_empty():
-            return -1
-        if engine_modules.ai_api_engine_module is not None:
-            session.api_engine_modules.ai_api_engine = ai_api_engine_modules[
-                engine_modules.ai_api_engine_module
-            ]()
-        if engine_modules.script_db_engine_module is not None:
-            session.api_engine_modules.script_db_engine = script_db_engine_modules[
-                engine_modules.script_db_engine_module
-            ]()
-        return session.session_id
+    async def get_ai_api_engine_name(self):
+        return self.engine_modules.ai_api_engine.__class__.__name__
 
-    async def get_session_engine_names(self, session: Session) -> Engine_Modules:
-        return Engine_Modules(
-            ai_api_engine_module=session.api_engine_modules.ai_api_engine.__class__.__name__,
-            script_db_engine_module=session.api_engine_modules.script_db_engine.__class__.__name__,
+    async def get_script_db_engine_name(self):
+        return self.engine_modules.script_db_engine.__class__.__name__
+
+    async def get_ai_api_engine_settings(self):
+        return self.engine_modules.ai_api_engine.get_class_variables()
+
+    async def get_script_db_engine_settings(self):
+        return self.engine_modules.script_db_engine.get_class_variables()
+
+    async def set_engine_module(
+        self,
+        ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = None,
+        script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = None,
+    ):
+        self.engine_modules.ai_api_engine = (
+            ai_api_engine_modules.get(ai_api_engine_module, Piper_TTS_Engine)
+            if ai_api_engine_module
+            else self.engine_modules.ai_api_engine
+        )
+        self.engine_modules.script_db_engine = (
+            script_db_engine_modules.get(
+                script_db_engine_module, Excel_Script_DB_Engine
+            )
+            if script_db_engine_module
+            else self.engine_modules.script_db_engine
         )
 
-    # == Session Engine Settings ==
-    async def get_session_engine_settings(
-        self, session: Session, engine_module_name: str
-    ) -> dict:
-        return session.api_engine_modules.__getattribute__(
-            engine_module_name
-        ).get_class_variables()
-
-    async def update_session_engine_settings(
+    async def update_engine_module_settings(
         self,
-        session: Session,
-        engine_module_name: str,
-        engine_settings: dict,
-    ) -> Union[str, int]:
-        session.api_engine_modules.__getattribute__(
-            engine_module_name
-        ).set_class_variables(**engine_settings)
-        return session.session_id
+        ai_api_engine_settings: dict = None,
+        script_db_engine_settings: dict = None,
+    ):
+        if ai_api_engine_settings:
+            self.engine_modules.ai_api_engine.set_class_variables(
+                ai_api_engine_settings
+            )
+        if script_db_engine_settings:
+            self.engine_modules.script_db_engine.set_class_variables(
+                script_db_engine_settings
+            )
