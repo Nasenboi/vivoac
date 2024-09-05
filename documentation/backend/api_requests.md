@@ -14,7 +14,7 @@ These methods are used to describe how the api endpoint interacts with the data 
 - **GET**: Used to request / fetch / search for data from the server.
 - **POST**: Used to create new data on the server. POST is also used to send other types of commands to the server!
 - **PUT**: Used to update existing data on the server.
-- **DELETE**: Used to delete data from the server.
+- **DELETE**: Used to delete data from the server. This also includes terminating sessions and logouts.
 
 ## Input Data
 

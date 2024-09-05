@@ -36,41 +36,31 @@ class Session_Router(APIRouter):
             methods=["POST"],
         )
         self.add_api_route(
-            path="/close", endpoint=self.close_session_route, methods=["POST"]
+            path="/get/{session_id}", endpoint=self.get_session_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/get", endpoint=self.get_session_route, methods=["GET"]
+            path="/update/{session_id}",
+            endpoint=self.update_session_route,
+            methods=["PUT"],
         )
         self.add_api_route(
-            path="/update", endpoint=self.update_session_route, methods=["PUT"]
+            path="/close/{session_id}",
+            endpoint=self.close_session_route,
+            methods=["DELETE"],
         )
 
-    async def create_session_route(
-        self, session: Session = Session()
-    ) -> Session:
+    async def create_session_route(self, session: Optional[Session] = None) -> Session:
         return await create_session(
             self=self, api_engine=self.api_engine, session=session
         )
 
-    async def close_session_route(
-        self,
-        session_id: Annotated[str, Header()],
-    ) -> Union[str, int]:
-        return await close_session(
-            self=self, api_engine=self.api_engine, session_id=session_id
-        )
-
-    async def get_session_route(
-        self,
-        session_id: Annotated[str, Header()],
-        session: Session = Depends(Session.query_extractor),
-    ) -> Session:
+    async def get_session_route(self, session_id: str) -> Session:
         session = await fetch_session(self.api_engine, session_id)
         return session
 
     async def update_session_route(
         self,
-        session_id: Annotated[str, Header()],
+        session_id: str,
         new_session: Session,
     ) -> Session:
         session = await fetch_session(self.api_engine, session_id)
@@ -79,4 +69,9 @@ class Session_Router(APIRouter):
             session_id=session_id,
             new_session=new_session,
             session=session,
+        )
+
+    async def close_session_route(self, session_id: str) -> Union[str, int]:
+        return await close_session(
+            self=self, api_engine=self.api_engine, session_id=session_id
         )
