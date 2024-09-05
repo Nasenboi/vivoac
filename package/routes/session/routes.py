@@ -34,16 +34,6 @@ class Session_Router(APIRouter):
             path="/create",
             endpoint=self.create_session_route,
             methods=["POST"],
-            description="""
-                        Create a new session for this api.
-                        You can pass known session settings as input and let the api fill out the rest.
-
-                        **Inputs**:
-                            - Body: **session**: the optional session settings, inkl. session_id, engines and settings.\f
-
-                        **Returns**:
-                            - **session**: the created session settings, inkl. session_id, engines and settings.
-                    """,
         )
         self.add_api_route(
             path="/close", endpoint=self.close_session_route, methods=["POST"]
