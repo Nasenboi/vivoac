@@ -42,11 +42,11 @@ class Session_Router(APIRouter):
             path="/get", endpoint=self.get_session_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/update", endpoint=self.update_session_route, methods=["POST"]
+            path="/update", endpoint=self.update_session_route, methods=["PUT"]
         )
 
     async def create_session_route(
-        self, session: Session = Depends(Session.query_extractor)
+        self, session: Session = Session()
     ) -> Session:
         return await create_session(
             self=self, api_engine=self.api_engine, session=session
@@ -63,6 +63,7 @@ class Session_Router(APIRouter):
     async def get_session_route(
         self,
         session_id: Annotated[str, Header()],
+        session: Session = Depends(Session.query_extractor),
     ) -> Session:
         session = await fetch_session(self.api_engine, session_id)
         return session
