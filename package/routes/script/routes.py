@@ -11,6 +11,8 @@ from fastapi import APIRouter, Depends, Header
 from ...globals import LOGGER, SETTINGS_GLOBAL
 from .functions import *
 from .models import *
+from ..user.models import User
+from ..user.dependencies import get_current_user
 
 """
 ########################################################################################"""
@@ -38,6 +40,7 @@ class Script_Router(APIRouter):
     async def get_script_lines_route(
         self,
         session_id: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
         script_line: Script_Line = Depends(),
     ) -> List[Script_Line]:
         LOGGER.debug(f"Getting script lines for {script_line}")
