@@ -12,13 +12,15 @@ from ...globals import LOGGER
 from ...utils.decorators import session_fetch
 from ..session.models import Session
 from .models import *
+from ..user.models import User
+from ..user.dependencies import get_admin_user
 
 """
 ########################################################################################"""
 
 
 class Engine_Router(APIRouter):
-    session_engine = None
+    engine = None
     route_parameters: dict = {
         "prefix": "/engine",
         "tags": ["engine"],
@@ -31,10 +33,10 @@ class Engine_Router(APIRouter):
         self.api_engine = api_engine
 
         self.add_api_route(
-            path="/get", endpoint=self.get_session_engines_route, methods=["GET"]
+            path="/get", endpoint=self.get_engines_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/update", endpoint=self.update_session_engines_route, methods=["PUT"]
+            path="/update", endpoint=self.update_engines_route, methods=["PUT"]
         )
         self.add_api_route(
             path="/settings/get",
@@ -48,24 +50,24 @@ class Engine_Router(APIRouter):
         )
 
     @session_fetch
-    async def get_session_engines_route(
+    async def get_engines_route(
         self,
         session_id: Annotated[str, Header()],
         session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Engine_Modules:
-        return await self.session_engine.engine_backend.get_session_engine_names(
+        return await self.engine.engine_backend.get_engine_names(
             session=session
         )
 
     @session_fetch
-    async def update_session_engines_route(
+    async def update_engines_route(
         self,
         session_id: Annotated[str, Header()],
         engine_modules: Engine_Modules,
         session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> Union[str, int]:
         LOGGER.debug(f"Updating session engines: {engine_modules}")
-        result = await self.session_engine.engine_backend.update_session_engines(
+        result = await self.engine.engine_backend.update_engines(
             session=session, engine_modules=engine_modules
         )
         await self.api_engine.session_backend.update(
@@ -81,7 +83,7 @@ class Engine_Router(APIRouter):
         engine_module_name: str,
         session: Optional[Session] = Body(None, include_in_schema=False),
     ) -> dict:
-        return await self.session_engine.engine_backend.get_session_engine_settings(
+        return await self.engine.engine_backend.get_engine_settings(
             session=session, engine_module_name=engine_module_name
         )
 
@@ -95,7 +97,7 @@ class Engine_Router(APIRouter):
     ) -> Union[str, int]:
         LOGGER.debug(f"Updating engine settings: {engine_settings}")
         result = (
-            await self.session_engine.engine_backend.update_session_engine_settings(
+            await self.engine.engine_backend.update_engine_settings(
                 session=session,
                 engine_module_name=engine_module_name,
                 engine_settings=engine_settings,
