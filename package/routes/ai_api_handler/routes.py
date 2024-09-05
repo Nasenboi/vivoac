@@ -11,6 +11,8 @@ from fastapi import APIRouter, Header, Response, Query
 from ...utils.functions import fetch_session
 from ..session.models import *
 from .models import *
+from ..user.models import User
+from ..user.dependencies import get_current_user
 
 """
 ########################################################################################"""
@@ -77,6 +79,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
     ) -> dict:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_user_data(api_key=api_key)
@@ -85,6 +88,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
     ) -> dict:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_models(api_key=api_key)
@@ -93,6 +97,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
     ) -> List[str]:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_voices(api_key=api_key)
@@ -101,6 +106,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
         voice_id: str = Query(),
         name: str = Query(),
     ) -> Voice_Settings:
@@ -116,6 +122,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
         voice_settings: Voice_Settings,
     ) -> str:
         session = await fetch_session(self.api_engine, session_id)
@@ -130,6 +137,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
         voice_settings: Voice_Settings,
     ) -> None:
         session = await fetch_session(self.api_engine, session_id)
@@ -143,6 +151,7 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
         data: Text_To_Speech,
     ) -> Response:
         session = await fetch_session(self.api_engine, session_id)
@@ -172,6 +181,7 @@ class AI_API_Handler_Router(APIRouter):
         voice_id: str,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
+        current_user: Annotated[User, Depends(get_current_user)],
     ) -> None:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.delete_voice(
