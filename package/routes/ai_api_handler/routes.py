@@ -6,7 +6,7 @@ Imports:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Header, Response
+from fastapi import APIRouter, Header, Response, Query
 
 from ...utils.functions import fetch_session
 from ..session.models import *
@@ -101,8 +101,8 @@ class AI_API_Handler_Router(APIRouter):
         self,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
-        voice_id: str = Depends(),
-        name: str = Depends(),
+        voice_id: str = Query(),
+        name: str = Query(),
     ) -> Voice_Settings:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.get_voice_settings(
@@ -169,9 +169,9 @@ class AI_API_Handler_Router(APIRouter):
     # delete functions:
     async def delete_voice_route(
         self,
+        voice_id: str,
         session_id: Annotated[str, Header()],
         api_key: Annotated[str, Header()],
-        voice_id: str,
     ) -> None:
         session = await fetch_session(self.api_engine, session_id)
         return session.api_engine_modules.ai_api_engine.delete_voice(
