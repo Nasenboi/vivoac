@@ -22,5 +22,5 @@ A HTTP reuest has multiple regions to send data from the user to the server. Eac
 
 - **Path**: Path parameters are variable strings that are inside of the URL of the HTTP request. The path is the part of the URL that comes after the domain. It is used to specify the resource that should be interacted with. In this particular project path parameters are rarely used.
 - **Query**: Query paramters follow the URL and are used to send additional query information. So these parameters should only be used to filter the data that is being requested.
-- **Header**: Header parameters are mostly hidden metadata. In this project header parameters are used to send the JWT authentication token.
+- **Header**: Header parameters are mostly hidden metadata. In this project header parameters are used to send the JWT authentication token and the current session id if required.
 - **Body**: Body parameters are used to send the actual data that should be created or updated. The body is used to send the data that is being manipulated.
