@@ -62,6 +62,7 @@ def init(self) -> None:
             Script_Router(api_engine=self),
             Engine_Router(api_engine=self),
             User_Router(api_engine=self),
+            Voice_Talent_Router(api_engine=self),
         ]
         for route in self.routes:
             self.app.include_router(
