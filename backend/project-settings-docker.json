@@ -3,7 +3,7 @@
         "settings-theme": "docker"
     },
     "directories": {
-        "piper-voice": "/piper-voice",
+        "piper_voices": "/piper_voices",
         "temp": "/tmp/vivoac"
     },
     "database": {

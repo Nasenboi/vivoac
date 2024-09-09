@@ -34,7 +34,7 @@ dt.text_2_audio_file("text", "file_name", "output_directory", format="wav")
 
 class Piper_TTS_Engine(AI_API_Engine):
     # class variables:
-    piper_voice_directory = SETTINGS_GLOBAL.get("directories").get("piper-voice", "")
+    piper_voice_directory = SETTINGS_GLOBAL.get("directories").get("piper_voices", "")
     voice_names: List[str] = []
 
     def __init__(self, api_key: str = None, base_url: str = None, model: str = None):

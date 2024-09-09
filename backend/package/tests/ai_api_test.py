@@ -45,7 +45,7 @@ class AI_API_Tests(Test_Class):
         try:
             if response.status_code == 200:
                 # Save the file locally
-                file_name = "./piper-voice/output.wav"
+                file_name = "./piper_voices/output.wav"
                 with open(file_name, "wb") as file:
                     file.write(response.content)
                 message = f"File saved successfully as {file_name}."

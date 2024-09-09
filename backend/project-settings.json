@@ -15,7 +15,7 @@
         "port": 8080
     },
     "directories": {
-        "piper-voice": "./data/piper-voice",
+        "piper_voices": "./data/piper_voices",
         "temp": "./data/temp"
     },
     "database": {

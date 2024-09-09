@@ -3,14 +3,6 @@
 
 # Project / vivoac
 project-settings-test.json
-documentation/
-README.md
-frontends/
-data/piper-voice/
-data/temp/
-data/logs/
-rebuild_and_run_docker.sh
-.env/
 
 # Git
 .git

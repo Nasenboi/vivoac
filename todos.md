@@ -6,11 +6,12 @@
 
 ## ToDo
 
-- Add voice talent route functions
 - make standart for http replys
 
 ## Doing
 
-- Create backend folder
+- Add voice talent route functionality
 
 ## Done
+
+- Create backend folder
