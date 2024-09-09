@@ -2,8 +2,8 @@
 
 # Project / vivoac
 logs
-front_ends/plugin/vivoac/Builds/
-front_ends/plugin/vivoac/JuceLibraryCode/
+frontends/plugin/vivoac/Builds/
+frontends/plugin/vivoac/JuceLibraryCode/
 piper-voice/
 data/external/
 data/excel_scripts/
