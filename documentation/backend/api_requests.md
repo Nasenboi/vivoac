@@ -24,3 +24,12 @@ A HTTP reuest has multiple regions to send data from the user to the server. Eac
 - **Query**: Query paramters follow the URL and are used to send additional query information. So these parameters should only be used to filter the data that is being requested.
 - **Header**: Header parameters are mostly hidden metadata. In this project header parameters are used to send the JWT authentication token and the current session id if required.
 - **Body**: Body parameters are used to send the actual data that should be created or updated. The body is used to send the data that is being manipulated.
+
+## API Endponts
+
+Usually each route of this api does consist of the same, or similar endpoints. The most commun ones are described below:
+- **GET route/{id}**: Get a single data record by its id.
+- **GET route?<query>**: Searches for one or more data records that match the query.
+- **POST route**: Creates a new data record.
+- **PUT route/{id}**: Updates an existing data record by its id.
+- **DELETE route/{id}**: Deletes an existing data record by its id.

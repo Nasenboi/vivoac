@@ -6,18 +6,21 @@ Imports:
 
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, EmailStr, model_validator
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
-from ...utils.models import Address, CreatedUpdatedAt
+from ...utils.models import Address, CreatedUpdatedAt, PydanticObjectId
 
 """
 ########################################################################################"""
 
 
 class User(BaseModel, CreatedUpdatedAt):
+    model_config = ConfigDict(populate_by_name=True)
+    id: Optional[PydanticObjectId] = Field(alias="_id")
     username: Optional[str] = None
-    full_name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     role: Optional[Literal["admin", "user"]] = None
     address: Optional[Address] = None
