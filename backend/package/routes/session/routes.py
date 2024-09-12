@@ -36,7 +36,6 @@ class Session_Router(APIRouter):
             path="/create",
             endpoint=self.create_session_route,
             methods=["POST"],
-            response_model=VivoacBaseResponse[Session],
         )
         self.add_api_route(
             path="/get/{path_session_id}",
@@ -54,10 +53,13 @@ class Session_Router(APIRouter):
             methods=["DELETE"],
         )
 
-    async def create_session_route(self, session: Optional[Session] = None) -> Session:
-        return await create_session(
+    async def create_session_route(
+        self, session: Optional[Session] = None
+    ) -> VivoacBaseResponse[Session]:
+        session = await create_session(
             self=self, api_engine=self.api_engine, session=session
         )
+        return VivoacBaseResponse[Session](session_id=session.session_id, data=session)
 
     async def get_session_route(
         self,
