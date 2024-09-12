@@ -12,6 +12,8 @@ from ...utils.functions import fetch_session
 from .functions import *
 from .models import *
 
+from ...http_models import VivoacBaseHeader, VivoacBaseResponse, get_vivoac_base_header_dependency
+
 """
 ########################################################################################"""
 
@@ -34,6 +36,7 @@ class Session_Router(APIRouter):
             path="/create",
             endpoint=self.create_session_route,
             methods=["POST"],
+            response_model=VivoacBaseResponse[Session],
         )
         self.add_api_route(
             path="/get/{path_session_id}", endpoint=self.get_session_route, methods=["GET"]

@@ -5,7 +5,7 @@ Imports:
 """
 
 from fastapi import Header, Depends, HTTPException, status
-from typing import Optional, Annotated
+from typing import Optional, Annotated, Callable
 from packaging.version import Version
 
 from pydantic import BaseModel
@@ -29,7 +29,7 @@ async def check_api_version(api_version: Annotated[str, Header()]) -> str:
 
 def get_vivoac_base_header_dependency(
     get_user=True, get_api_key=False, check_admin=False
-) -> function:
+) -> Callable:
     params = {
         "session_id": Annotated[str, Header()],
         "api_version": Annotated[str, check_api_version()],
