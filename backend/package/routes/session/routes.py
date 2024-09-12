@@ -12,7 +12,12 @@ from ...utils.functions import fetch_session
 from .functions import *
 from .models import *
 
-from ...http_models import VivoacBaseHeader, VivoacBaseResponse, get_vivoac_base_header_dependency
+from ...http_models import (
+    VivoacBaseHeader,
+    VivoacBaseResponse,
+    get_vivoac_base_header_dependency,
+)
+from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -24,7 +29,7 @@ class Session_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "/session",
         "tags": ["session"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):
@@ -39,7 +44,9 @@ class Session_Router(APIRouter):
             response_model=VivoacBaseResponse[Session],
         )
         self.add_api_route(
-            path="/get/{path_session_id}", endpoint=self.get_session_route, methods=["GET"]
+            path="/get/{path_session_id}",
+            endpoint=self.get_session_route,
+            methods=["GET"],
         )
         self.add_api_route(
             path="/update/{path_session_id}",

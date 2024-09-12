@@ -25,5 +25,5 @@ T = TypeVar("T")
 
 class VivoacBaseResponse(BaseModel, Generic[T]):
     api_version: str
-    session_id: str
+    session_id: Optional[str] = None
     data: Optional[T] = None
