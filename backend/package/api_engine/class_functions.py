@@ -47,11 +47,7 @@ def init(self) -> None:
     LOGGER.debug("api engine - init")
     try:
         self.app = FastAPI()
-        self.config = Config(
-            self.app,
-            **SETTINGS_GLOBAL.get("uvicorn-settings"),
-            responses={404: {"model": Response_404}},
-        )
+        self.config = Config(self.app, **SETTINGS_GLOBAL.get("uvicorn-settings"))
         self.uvicorn_server = Server(self.config)
         self.uvicorn_thread = UvicornThread(
             target=self.uvicorn_server.run,
