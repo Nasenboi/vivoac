@@ -5,6 +5,7 @@ Imports:
 """
 
 from fastapi import APIRouter
+from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -15,7 +16,7 @@ class Audio_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "/audio",
         "tags": ["audio"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):

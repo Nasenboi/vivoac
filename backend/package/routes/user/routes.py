@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends
 from .functions import *
 from .models import *
 from .dependencies import *
+from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -22,7 +23,7 @@ class User_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "/user",
         "tags": ["user"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):
@@ -39,18 +40,32 @@ class User_Router(APIRouter):
             path="/delete", endpoint=self.delete_user_route, methods=["DELETE"]
         )
 
-    async def add_user_route(self, current_user: Annotated[User, Depends(get_admin_user)], user: UserForEdit) -> User:
+    async def add_user_route(
+        self, current_user: Annotated[User, Depends(get_admin_user)], user: UserForEdit
+    ) -> User:
         return await add_user(user)
 
-    async def get_user_route(self, current_user: Annotated[User, Depends(get_admin_user)], user: User = Depends(User)) -> Union[User, List[User]]:
+    async def get_user_route(
+        self,
+        current_user: Annotated[User, Depends(get_admin_user)],
+        user: User = Depends(User),
+    ) -> Union[User, List[User]]:
         return await get_user(user)
-    
-    async def self_route(self, current_user: Annotated[User, Depends(get_current_user)]) -> Union[User, List[User]]:
+
+    async def self_route(
+        self, current_user: Annotated[User, Depends(get_current_user)]
+    ) -> Union[User, List[User]]:
         return current_user
 
-    async def update_user_route(self, current_user: Annotated[User, Depends(get_admin_user)], user_id: str, user: UserForEdit) -> User:
+    async def update_user_route(
+        self,
+        current_user: Annotated[User, Depends(get_admin_user)],
+        user_id: str,
+        user: UserForEdit,
+    ) -> User:
         return await update_user(user_id, user)
 
-    async def delete_user_route(self, current_user: Annotated[User, Depends(get_admin_user)], user_id: str) -> User:
+    async def delete_user_route(
+        self, current_user: Annotated[User, Depends(get_admin_user)], user_id: str
+    ) -> User:
         return await delete_user(user_id)
-

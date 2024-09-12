@@ -70,6 +70,10 @@ def init(self) -> None:
                 route
             )  # more verbose, dependencies=[Depends(log_request_info)]
 
+        # Exception Handlers
+        self.app.add_exception_handler(404, exception_handler_404)
+
+
         self.uvicorn_thread.setDaemon(True)
 
         self.session_backend = InMemoryBackend()
@@ -117,3 +121,8 @@ def stop(self) -> None:
     self.uvicorn_thread.join()
     self.uvicorn_thread = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
+
+# -- Exception Handlers --
+async def exception_handler_404() -> Response_404:
+    return Response_404() 
+

@@ -13,6 +13,8 @@ from ..auth import authenticate_user, create_access_token
 
 from ..routes.user.models import Token, TokenData
 
+from ..http_models.base_responses import Response_404
+
 """
 ########################################################################################"""
 
@@ -22,7 +24,7 @@ class API_Engine_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "",
         "tags": ["api_engine"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):
@@ -30,11 +32,12 @@ class API_Engine_Router(APIRouter):
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
 
-        self.add_api_route(
-            path="/token", endpoint=self.token_route, methods=["POST"]
-        )
+        self.add_api_route(path="/token", endpoint=self.token_route, methods=["POST"])
 
-    async def token_route(self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],) -> Token:
+    async def token_route(
+        self,
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    ) -> Token:
         user = authenticate_user(form_data.username, form_data.password)
         if not user:
             raise HTTPException(

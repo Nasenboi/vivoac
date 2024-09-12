@@ -14,6 +14,8 @@ from .models import *
 from ..user.models import User
 from ..user.dependencies import get_current_user
 
+from ...http_models.base_responses import Response_404
+
 """
 ########################################################################################"""
 
@@ -23,7 +25,7 @@ class AI_API_Handler_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "/ai_api_handler",
         "tags": ["ai_api_handler"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):

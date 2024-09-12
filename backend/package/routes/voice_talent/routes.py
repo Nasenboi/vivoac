@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends
 
 from .functions import *
 from .models import *
+from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -21,7 +22,7 @@ class Voice_Talent_Router(APIRouter):
     route_parameters: dict = {
         "prefix": "/voice_talent",
         "tags": ["voice_talent"],
-        "responses": {404: {"description": "Not found"}},
+        "responses": {404: {"model": Response_404}},
     }
 
     def __init__(self, api_engine, **kwargs):
