@@ -9,7 +9,9 @@ from fastapi import Depends
 from typing import Optional
 from uuid import uuid4
 
-from pydantic import BaseModel
+from datetime import datetime
+
+from pydantic import BaseModel, Field
 
 from ..audio.models import Audio_Format
 
@@ -32,10 +34,12 @@ class Session_Settings(BaseModel):
 class Session(BaseModel):
     session_settings: Optional[Session_Settings] = None
     session_id: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now().isoformat())
 
     @staticmethod
     def query_extractor(
-        session_id: Optional[str] = None, session_settings: Session_Settings = Depends(Session_Settings.query_extractor)
+        session_id: Optional[str] = None,
+        session_settings: Session_Settings = Depends(Session_Settings.query_extractor),
     ):
         return Session(session_id=session_id, session_settings=session_settings)
 
