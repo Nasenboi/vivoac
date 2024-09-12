@@ -6,17 +6,23 @@ Imports:
 
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, model_validator
+from pydantic_extra_types.phone_numbers import PhoneNumber
+
+from ...utils.models import Address, CreatedUpdatedAt
 
 """
 ########################################################################################"""
 
 
-class User(BaseModel):
+class User(BaseModel, CreatedUpdatedAt):
     username: Optional[str] = None
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
     role: Optional[Literal["admin", "user"]] = None
+    address: Optional[Address] = None
+    phone_number_home: Optional[PhoneNumber] = None
+    phone_number_mobile: Optional[PhoneNumber] = None
     disabled: Optional[bool] = None
 
 

@@ -71,3 +71,5 @@ Only with their help, it was possible for me to write my first own software solu
 - [DomPizzie](https://github.com/DomPizzie) aka Dominique Pizzie for [A simple README.md template](https://gist.github.com/DomPizzie/7a5ff55ffa9081f2de27c315f5018afc)
 
 - [KernelA](https://github.com/KernelA) aka Alexander Kryuchkov for [.dockerignore example for Python projects](https://gist.github.com/KernelA/04b4d7691f28e264f72e76cfd724d448)
+
+- [martintrapp](https://stackoverflow.com/users/1195439/martintrapp) for the answer to  [Pydantic created at and updated at fields](https://stackoverflow.com/questions/73128975/pydantic-created-at-and-updated-at-fields)
