@@ -8,14 +8,14 @@
             "name": "Python Debugger: main.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/main.py",
+            "program": "${workspaceFolder}/backend/main.py",
             "console": "integratedTerminal"
         },
         {
             "name": "Python Debugger: test_main.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/test_main.py",
+            "program": "${workspaceFolder}/backend/test_main.py",
             "console": "integratedTerminal"
         }
     ]
