@@ -5,7 +5,6 @@ Imports:
 """
 
 from fastapi import APIRouter
-from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -13,11 +12,7 @@ from ...http_models.base_responses import Response_404
 
 class Audio_Router(APIRouter):
     api_engine = None
-    route_parameters: dict = {
-        "prefix": "/audio",
-        "tags": ["audio"],
-        "responses": {404: {"model": Response_404}},
-    }
+    route_parameters: dict = {"prefix": "/audio", "tags": ["audio"]}
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)

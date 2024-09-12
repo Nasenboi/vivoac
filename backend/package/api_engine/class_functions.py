@@ -7,8 +7,9 @@ Imports:
 from threading import Thread
 from time import sleep
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from uvicorn import Config, Server
 
@@ -16,7 +17,11 @@ from ..globals import *
 from ..routes import *
 from ..routes.engine_backend.engine_backend import Engine_Backend
 from .routes import API_Engine_Router
-from ..http_models.base_responses import Response_404
+from ..http_models.base_responses import (
+    Response_404,
+    Response_422,
+    Response_HTTPException,
+)
 
 """
 ########################################################################################"""
@@ -46,7 +51,9 @@ class UvicornThread(Thread):
 def init(self) -> None:
     LOGGER.debug("api engine - init")
     try:
-        self.app = FastAPI()
+        self.app = FastAPI(
+            responses={404: {"model": Response_404}, 422: {"model": Response_422}}
+        )
         self.config = Config(self.app, **SETTINGS_GLOBAL.get("uvicorn-settings"))
         self.uvicorn_server = Server(self.config)
         self.uvicorn_thread = UvicornThread(
@@ -72,7 +79,8 @@ def init(self) -> None:
 
         # Exception Handlers
         self.app.add_exception_handler(404, exception_handler_404)
-
+        self.app.add_exception_handler(422, exception_handler_422)
+        self.app.add_exception_handler(HTTPException, exception_handler)
 
         self.uvicorn_thread.setDaemon(True)
 
@@ -122,7 +130,28 @@ def stop(self) -> None:
     self.uvicorn_thread = None
     LOGGER.debug("api engine - uvicorn thread stopped successfully")
 
-# -- Exception Handlers --
-async def exception_handler_404() -> Response_404:
-    return Response_404() 
 
+# -- Exception Handlers --
+async def exception_handler_404(request: Request, exc: HTTPException) -> JSONResponse:
+    return JSONResponse(
+        status_code=404,
+        content=Response_404().model_dump(),
+    )
+
+
+async def exception_handler_422(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content=Response_422(exc).model_dump(),
+    )
+
+
+async def exception_handler(
+    request: Request, exc: HTTPException
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content=Response_HTTPException(exc).model_dump(),
+    )

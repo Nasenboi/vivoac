@@ -11,7 +11,6 @@ from fastapi import APIRouter, Depends
 from .functions import *
 from .models import *
 from .dependencies import *
-from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -20,11 +19,7 @@ from ...http_models.base_responses import Response_404
 # create a new router
 class User_Router(APIRouter):
     api_engine = None
-    route_parameters: dict = {
-        "prefix": "/user",
-        "tags": ["user"],
-        "responses": {404: {"model": Response_404}},
-    }
+    route_parameters: dict = {"prefix": "/user", "tags": ["user"]}
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)

@@ -17,7 +17,6 @@ from ...http_models import (
     VivoacBaseResponse,
     get_vivoac_base_header_dependency,
 )
-from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -26,11 +25,7 @@ from ...http_models.base_responses import Response_404
 class Session_Router(APIRouter):
     api_engine = None
     engine_backend = None
-    route_parameters: dict = {
-        "prefix": "/session",
-        "tags": ["session"],
-        "responses": {404: {"model": Response_404}},
-    }
+    route_parameters: dict = {"prefix": "/session", "tags": ["session"]}
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)
@@ -74,6 +69,8 @@ class Session_Router(APIRouter):
                 status_code=403, detail="You are not allowed to access this session!"
             )
         session = await fetch_session(self.api_engine, session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found!")
         return session
 
     async def update_session_route(

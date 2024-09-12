@@ -50,7 +50,7 @@ async def fetch_session(api_engine: object, session_id: str):
         return session
     except Exception as e:
         raise HTTPException(
-            status_code=404, detail=f"Session with id {session_id} not found: {e}"
+            status_code=500, detail=f"Failed to fetch session with id {session_id}"
         )
 
 

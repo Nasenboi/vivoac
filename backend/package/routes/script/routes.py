@@ -6,14 +6,13 @@ Imports:
 
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, HTTPException
 
 from ...globals import LOGGER, SETTINGS_GLOBAL
 from .functions import *
 from .models import *
 from ..user.models import User
 from ..user.dependencies import get_current_user
-from ...http_models.base_responses import Response_404
 
 """
 ########################################################################################"""
@@ -22,11 +21,7 @@ from ...http_models.base_responses import Response_404
 # create a new router
 class Script_Router(APIRouter):
     api_engine = None
-    route_parameters: dict = {
-        "prefix": "/script",
-        "tags": ["script"],
-        "responses": {404: {"model": Response_404}},
-    }
+    route_parameters: dict = {"prefix": "/script", "tags": ["script"]}
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)

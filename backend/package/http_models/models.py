@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from ..routes.user.models import User
 
 from typing import Generic, TypeVar, Optional
+from ..globals import SETTINGS_GLOBAL
 
 """
 ########################################################################################"""
@@ -24,6 +25,6 @@ T = TypeVar("T")
 
 
 class VivoacBaseResponse(BaseModel, Generic[T]):
-    api_version: str
+    api_version: str = SETTINGS_GLOBAL.get("metadata", {}).get("api_version", "0.0.0")
     session_id: Optional[str] = None
     data: Optional[T] = None

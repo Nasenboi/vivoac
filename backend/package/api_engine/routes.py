@@ -13,8 +13,6 @@ from ..auth import authenticate_user, create_access_token
 
 from ..routes.user.models import Token, TokenData
 
-from ..http_models.base_responses import Response_404
-
 """
 ########################################################################################"""
 
@@ -23,8 +21,7 @@ class API_Engine_Router(APIRouter):
     api_engine = None
     route_parameters: dict = {
         "prefix": "",
-        "tags": ["api_engine"],
-        "responses": {404: {"model": Response_404}},
+        "tags": ["api_engine"]
     }
 
     def __init__(self, api_engine, **kwargs):
