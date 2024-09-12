@@ -31,6 +31,7 @@ openpyxl==3.1.4
 orjson==3.10.4
 pandas==2.2.2
 passlib==1.7.4
+phonenumber=8.13.45
 pi==0.1.2
 pyasn1==0.6.0
 pycparser==2.22
