@@ -15,6 +15,7 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 
 from .globals import LOGGER, SETTINGS_GLOBAL
+from .routes.user.models import User
 
 """
 ########################################################################################"""
@@ -52,13 +53,12 @@ OAUTH_2_SCHEME = OAuth2PasswordBearer(tokenUrl="token")
 
 # Create the admin user for the db if it does not exist
 if not DB_COLLECTIONS["users"].find_one({"username": ADMIN_USER}):
-    DB_COLLECTIONS["users"].insert_one(
-        {
-            "username": ADMIN_USER,
-            "full_name": "admin",
-            "hashed_password": PASSWORD_CONTEXT.hash(ADMIN_PASSWORD),
-            "role": "admin",
-            "disabled": False,
-        }
-    )
+    admin_user: dict = User(
+        username=ADMIN_USER,
+        full_name="admin",
+        role="admin",
+        disabled=False,
+    ).model_dump()
+    admin_user["hashed_password"] = PASSWORD_CONTEXT.hash(ADMIN_PASSWORD)
+    DB_COLLECTIONS["users"].insert_one(admin_user)
     LOGGER.info("Created the admin user in the database.")
