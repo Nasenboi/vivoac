@@ -79,10 +79,11 @@ class AI_API_Handler_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
-    ) -> dict:
-        return self.api_engine.ai_api_engine.get_user_data(
+    ) -> VivoacBaseResponse[dict]:
+        data = self.api_engine.ai_api_engine.get_user_data(
             api_key=vivoac_base_header.api_key
         )
+        return VivoacBaseResponse(data=data)
 
     async def get_models_route(
         self,
@@ -90,10 +91,11 @@ class AI_API_Handler_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
-    ) -> dict:
-        return self.api_engine.ai_api_engine.get_models(
+    ) -> VivoacBaseResponse[dict]:
+        data = self.api_engine.ai_api_engine.get_models(
             api_key=vivoac_base_header.api_key
         )
+        return VivoacBaseResponse(data=data)
 
     async def get_voices_route(
         self,
@@ -101,10 +103,11 @@ class AI_API_Handler_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
-    ) -> List[str]:
-        return self.api_engine.ai_api_engine.get_voices(
+    ) -> VivoacBaseResponse[List[str]]:
+        data = self.api_engine.ai_api_engine.get_voices(
             api_key=vivoac_base_header.api_key
         )
+        return VivoacBaseResponse(data=data)
 
     async def get_voice_settings_route(
         self,
@@ -114,10 +117,11 @@ class AI_API_Handler_Router(APIRouter):
         ],
         voice_id: str = Query(),
         name: str = Query(),
-    ) -> Voice_Settings:
-        return self.api_engine.ai_api_engine.get_voice_settings(
+    ) -> VivoacBaseResponse[Voice_Settings]:
+        data = self.api_engine.ai_api_engine.get_voice_settings(
             api_key=vivoac_base_header.api_key, voice_id=voice_id, name=name
         )
+        return VivoacBaseResponse(data=data)
 
     ############################################################
     # put functions:
@@ -129,11 +133,12 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
         voice_settings: Voice_Settings,
-    ) -> str:
-        return self.api_engine.ai_api_engine.create_voice(
+    ) -> VivoacBaseResponse[str]:
+        data = self.api_engine.ai_api_engine.create_voice(
             api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
+        return VivoacBaseResponse(data=data)
 
     ############################################################
 
@@ -144,11 +149,12 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
         voice_settings: Voice_Settings,
-    ) -> None:
-        return self.api_engine.ai_api_engine.edit_voice_settings(
+    ) -> VivoacBaseResponse[None]:
+        self.api_engine.ai_api_engine.edit_voice_settings(
             api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
+        return VivoacBaseResponse()
 
     # post functions:
     async def text_to_speech(
@@ -187,7 +193,8 @@ class AI_API_Handler_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
-    ) -> None:
-        return self.api_engine.ai_api_engine.delete_voice(
+    ) -> VivoacBaseResponse[None]:
+        self.api_engine.ai_api_engine.delete_voice(
             api_key=vivoac_base_header.api_key, voice_id=voice_id, name=None
         )
+        return VivoacBaseResponse()

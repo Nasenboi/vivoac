@@ -52,11 +52,12 @@ class Engine_Router(APIRouter):
         vivoac_base_header: Annotated[
             VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
         ],
-    ) -> Dict[str, str]:
-        return {
+    ) -> VivoacBaseResponse[Dict[str, str]]:
+        data = {
             "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_name(),
             "script_db_engine": await self.api_engine.engine_backend.get_script_db_engine_name(),
         }
+        return VivoacBaseResponse(data=data)
 
     async def set_engines_route(
         self,
@@ -66,15 +67,15 @@ class Engine_Router(APIRouter):
         ],
         ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = Body(),
         script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = Body(),
-    ) -> Union[str, int]:
+    ) -> VivoacBaseResponse[Union[str, int]]:
         LOGGER.debug(
             f"Updating engines: {ai_api_engine_module}, {script_db_engine_module}"
         )
-        result = await self.api_engine.engine_backend.set_engine_module(
+        data = await self.api_engine.engine_backend.set_engine_module(
             ai_api_engine_module=ai_api_engine_module,
             script_db_engine_module=script_db_engine_module,
         )
-        return result
+        return VivoacBaseResponse(data=data)
 
     # == Engine Settings ==
     async def get_engine_settings_route(
@@ -83,11 +84,12 @@ class Engine_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency()),
         ],
-    ) -> Dict[str, dict]:
-        return {
+    ) -> VivoacBaseResponse[Dict[str, dict]]:
+        data = {
             "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_settings(),
             "script_db_engine": await self.api_engine.engine_backend.get_script_db_engine_settings(),
         }
+        return VivoacBaseResponse(data=data)
 
     async def update_engine_settings_route(
         self,
@@ -97,9 +99,10 @@ class Engine_Router(APIRouter):
         ],
         ai_api_engine_settings: Optional[Dict[str, Any]] = None,
         script_db_engine_settings: Optional[Dict[str, Any]] = None,
-    ) -> Union[str, int]:
+    ) -> VivoacBaseResponse[Dict[str, Dict[str, Any]]]:
         LOGGER.debug(f"Updating engine settings.")
-        return await self.api_engine.engine_backend.update_engine_module_settings(
+        data = await self.api_engine.engine_backend.update_engine_module_settings(
             ai_api_engine_settings=ai_api_engine_settings,
             script_db_engine_settings=script_db_engine_settings,
         )
+        return VivoacBaseResponse(data=data)
