@@ -8,7 +8,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Response
 
-from ...http_models.models import (
+from ...http_models import (
     VivoacBaseHeader,
     VivoacBaseResponse,
     get_vivoac_base_header_dependency,

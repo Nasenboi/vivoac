@@ -8,7 +8,7 @@ Imports:
 
 import os
 from io import BytesIO
-from typing import List
+from typing import List, Union
 
 from pydub import AudioSegment
 

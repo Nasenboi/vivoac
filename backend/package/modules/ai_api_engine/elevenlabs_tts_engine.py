@@ -8,7 +8,7 @@ Imports:
 import json
 import os
 from datetime import datetime
-from typing import List
+from typing import List, Union
 
 import requests
 
