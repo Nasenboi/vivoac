@@ -47,7 +47,7 @@ for collection in DB_COLLECTIONS.keys():
 SECRET_KEY = os.getenv("SECRET_KEY", os.urandom(32))
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = SETTINGS_GLOBAL.get("authentication", {}).get("access_token_expire_minutes", 30),
 PASSWORD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
 OAUTH_2_SCHEME = OAuth2PasswordBearer(tokenUrl="token")
 

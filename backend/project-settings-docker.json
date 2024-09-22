@@ -2,6 +2,9 @@
     "metadata": {
         "settings-theme": "docker"
     },
+    "authentication": {
+        "access_token_expire_minutes": 30
+    },
     "directories": {
         "piper_voices": "/piper_voices",
         "temp": "/tmp/vivoac"
