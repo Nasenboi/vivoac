@@ -18,10 +18,14 @@ from ..http_models.base_responses import (
     Response_422,
     Response_HTTPException,
 )
-from ..routes import *
+from ..routes import get_api_routes
+
+# Call the function to get the routes
+api_routes = get_api_routes()
 from ..routes.engine_backend.engine_backend import Engine_Backend
 from .routes import API_Engine_Router
 
+api_routes.append(API_Engine_Router)
 """
 ########################################################################################"""
 
@@ -61,15 +65,7 @@ def init(self) -> None:
             uvicorn_server=self.uvicorn_server,
         )
         # add routes
-        self.routes = [
-            API_Engine_Router(api_engine=self),
-            Audio_Router(api_engine=self),
-            AI_API_Handler_Router(api_engine=self),
-            Script_Router(api_engine=self),
-            Engine_Router(api_engine=self),
-            User_Router(api_engine=self),
-            Voice_Talent_Router(api_engine=self),
-        ]
+        self.routes = [route(api_engine=self) for route in api_routes]
         for route in self.routes:
             self.app.include_router(
                 route
