@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Union
 
 from ...base_classes.script_db_engine import Script_DB_Engine
 from ...globals import LOGGER, SETTINGS_GLOBAL
-from ..session.models import Session
 from .models import *
 
 """

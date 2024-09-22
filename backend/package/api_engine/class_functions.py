@@ -8,20 +8,19 @@ from threading import Thread
 from time import sleep
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException, RequestValidationError
-from fastapi_sessions.backends.implementations import InMemoryBackend
+from fastapi.responses import JSONResponse
 from uvicorn import Config, Server
 
 from ..globals import *
-from ..routes import *
-from ..routes.engine_backend.engine_backend import Engine_Backend
-from .routes import API_Engine_Router
 from ..http_models.base_responses import (
     Response_404,
     Response_422,
     Response_HTTPException,
 )
+from ..routes import *
+from ..routes.engine_backend.engine_backend import Engine_Backend
+from .routes import API_Engine_Router
 
 """
 ########################################################################################"""
@@ -64,7 +63,6 @@ def init(self) -> None:
         # add routes
         self.routes = [
             API_Engine_Router(api_engine=self),
-            Session_Router(api_engine=self),
             Audio_Router(api_engine=self),
             AI_API_Handler_Router(api_engine=self),
             Script_Router(api_engine=self),
@@ -84,7 +82,6 @@ def init(self) -> None:
 
         self.uvicorn_thread.setDaemon(True)
 
-        self.session_backend = InMemoryBackend()
         self.engine_backend = Engine_Backend()
     except KeyboardInterrupt:
         # Ignore the KeyboardInterrupt for this
@@ -148,9 +145,7 @@ async def exception_handler_422(
     )
 
 
-async def exception_handler(
-    request: Request, exc: HTTPException
-) -> JSONResponse:
+async def exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     return JSONResponse(
         status_code=422,
         content=Response_HTTPException(exc).model_dump(),

@@ -57,7 +57,7 @@ async def update_user(user_id: Union[int, str], user: UserForEdit) -> User:
         )
 
     user_to_edit = DB_COLLECTIONS["users"].find_one({"_id": ObjectId(user_id)})
-    user_to_edit.update(User(user.model_dump()))
+    user_to_edit.update(User(user.model_dump(exclude_unset=True)))
     if user.get("password"):
         user_to_edit["hashed_password"] = bcrypt.hashpw(
             user.password.encode("utf-8"), bcrypt.gensalt()

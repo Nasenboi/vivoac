@@ -50,7 +50,6 @@ if __name__ == "__main__":
 
         # start the tests
         test_classes = [
-            tests.Session_Tests(client=client),
             tests.Engine_Tests(client=client),
             tests.Script_Tests(client=client),
             tests.AI_API_Tests(client=client),

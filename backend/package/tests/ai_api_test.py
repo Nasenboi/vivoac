@@ -16,7 +16,6 @@ from .test_class import Test_Class, test_function_return
 class AI_API_Tests(Test_Class):
     # class variables
     route: str = "ai_api_handler"
-    session_id: str = "test_session_id"
 
     def text_to_speech(self) -> test_function_return:
         LOGGER.debug(f"Starting the AI API Test: text_to_speech")
@@ -30,7 +29,7 @@ class AI_API_Tests(Test_Class):
 
         response = self.client.post(
             url=f"/ai_api_handler/text_to_speech/",
-            headers={"session-id": self.session_id, "api-key": "none"},
+            headers={"api-key": "none"},
             json={
                 "data": {
                     "text": "Brautkleid bleibt Brautkleid und Blaukraut bleibt Blaukraut. Bierbrauer Bauer braut braunes Bier, braunes Bier braut Bierbrauer Bauer.",

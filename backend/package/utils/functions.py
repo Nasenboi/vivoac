@@ -37,23 +37,6 @@ def json_update(json_obj: dict, new_json_obj: dict) -> dict:
     return json_obj
 
 
-async def fetch_session(api_engine: object, session_id: str):
-    """
-    This function will fetch a session object with the given session_id from the api_engine.
-    :param api_engine: The api_engine
-    :param session_id: The session id
-    :return session: The session object
-    """
-    session = None
-    try:
-        session = await api_engine.session_backend.read(session_id=session_id)
-        return session
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch session with id {session_id}"
-        )
-
-
 async def log_request_info(request: Request):
     try:
         request_body = await request.json()

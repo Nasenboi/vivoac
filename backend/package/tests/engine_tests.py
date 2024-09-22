@@ -14,7 +14,6 @@ from .test_class import Test_Class, test_function_return
 class Engine_Tests(Test_Class):
     # class variables
     route: str = "engine"
-    session_id: str = "test_session_id"
 
     def get_engines(self) -> test_function_return:
         LOGGER.debug(f"Starting the Engine Test: get_engines")

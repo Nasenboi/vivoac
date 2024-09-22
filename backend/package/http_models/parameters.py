@@ -4,22 +4,24 @@ Description: In here are some dependency functions that will be used for http re
 Imports:
 """
 
-from fastapi import Header, Depends, HTTPException, status
-from typing import Optional, Annotated, Callable
-from packaging.version import Version
+from typing import Annotated, Callable, Optional
 
+from fastapi import Depends, Header, HTTPException, status
+from packaging.version import Version
 from pydantic import BaseModel
-from ..routes.user.models import User
-from ..routes.user.dependencies import get_admin_user, get_current_user
 
 from ..globals import SETTINGS_GLOBAL
+from ..routes.user.dependencies import get_admin_user, get_current_user
+from ..routes.user.models import User
 from .models import VivoacBaseHeader
 
 """
 ########################################################################################"""
 
+
 def empty_dependency():
     return None
+
 
 async def check_api_version(api_version: str = Header()) -> str:
     min_version = SETTINGS_GLOBAL.get("metadata", {}).get("api_min_version", "0.0.0")
@@ -29,6 +31,7 @@ async def check_api_version(api_version: str = Header()) -> str:
             detail=f"API version {api_version} is not supported. Minimum version is {min_version}",
         )
     return api_version
+
 
 def get_vivoac_base_header_dependency(
     get_user=True, get_api_key=False, check_admin=False
@@ -44,13 +47,10 @@ def get_vivoac_base_header_dependency(
     api_key = Header() if get_api_key else Depends(empty_dependency)
 
     async def dependency(
-        session_id: str = Header(),
         api_version: str = Depends(check_api_version),
         user: Optional[User] = user,
         api_key: Optional[str] = api_key,
     ) -> VivoacBaseHeader:
-        return VivoacBaseHeader(
-            session_id=session_id, api_version=api_version, user=user, api_key=api_key
-        )
+        return VivoacBaseHeader(api_version=api_version, user=user, api_key=api_key)
 
     return dependency

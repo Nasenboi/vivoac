@@ -27,21 +27,4 @@ def virtual(func):
     return wrapper
 
 
-def session_fetch(func):
-    """
-    Depricated! use package/routes/ai_api_handler/routes.py fetch_session function instead!
-    This decorator is used to fetch a session object from the session_id parameter.
-    The session object is then passed to the decorated function as a keyword argument.
-    """
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        session_id = kwargs.get("session_id", "")
-        session = await args[0].api_engine.session_backend.read(session_id=session_id)
-        kwargs["session"] = session
-        return await func(*args, **kwargs)
-
-    return wrapper
-
-
 # TODO maybe add a decorator as an endpoint wrapper to handle exceptions and return a proper error response

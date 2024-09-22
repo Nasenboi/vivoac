@@ -6,13 +6,14 @@ Imports:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Header, Response, Query
+from fastapi import APIRouter, Depends, Header, Query, Response
 
-from ...utils.functions import fetch_session
-from ..session.models import *
+from ...http_models.models import (
+    VivoacBaseHeader,
+    VivoacBaseResponse,
+    get_vivoac_base_header_dependency,
+)
 from .models import *
-from ..user.models import User
-from ..user.dependencies import get_current_user
 
 """
 ########################################################################################"""
@@ -73,42 +74,48 @@ class AI_API_Handler_Router(APIRouter):
 
     async def get_user_data_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
     ) -> dict:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.get_user_data(api_key=api_key)
+        return self.api_engine.engine_backend.engine_modules.get_user_data(
+            api_key=vivoac_base_header.api_key
+        )
 
     async def get_models_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
     ) -> dict:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.get_models(api_key=api_key)
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_models(
+            api_key=vivoac_base_header.api_key
+        )
 
     async def get_voices_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
     ) -> List[str]:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.get_voices(api_key=api_key)
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_voices(
+            api_key=vivoac_base_header.api_key
+        )
 
     async def get_voice_settings_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
         voice_id: str = Query(),
         name: str = Query(),
     ) -> Voice_Settings:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.get_voice_settings(
-            api_key=api_key, voice_id=voice_id, name=name
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_voice_settings(
+            api_key=vivoac_base_header.api_key, voice_id=voice_id, name=name
         )
 
     ############################################################
@@ -116,14 +123,14 @@ class AI_API_Handler_Router(APIRouter):
 
     async def create_voice_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
         voice_settings: Voice_Settings,
     ) -> str:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.create_voice(
-            api_key=api_key,
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.create_voice(
+            api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
 
@@ -131,40 +138,40 @@ class AI_API_Handler_Router(APIRouter):
 
     async def edit_voice_settings_route(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
         voice_settings: Voice_Settings,
     ) -> None:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.edit_voice_settings(
-            api_key=api_key,
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.edit_voice_settings(
+            api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
 
     # post functions:
     async def text_to_speech(
         self,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
         data: Text_To_Speech,
     ) -> Response:
-        session = await fetch_session(self.api_engine, session_id)
         try:
             file_in_bytes: bytes = (
-                session.api_engine_modules.ai_api_engine.text_to_speech(
-                    api_key=api_key,
+                self.api_engine.engine_backend.engine_modules.ai_api_engine.text_to_speech(
+                    api_key=vivoac_base_header.api_key,
                     text=data.text,
                     voice=data.voice,
                     voice_settings=data.voice_settings,
                     model=data.model,
                     seed=data.seed,
-                    audio_format=session.session_settings.audio_format,
+                    audio_format=vivoac_base_header.user.config.audio_format,
                 )
             )
-
-            media_type = f"audio/{session.session_settings.audio_format}"
+            # TODO: MIME Type mapper
+            media_type = f"audio/{vivoac_base_header.user.config.audio_format.codec}"
 
             return Response(content=file_in_bytes, media_type=media_type)
         except Exception as e:
@@ -175,11 +182,11 @@ class AI_API_Handler_Router(APIRouter):
     async def delete_voice_route(
         self,
         voice_id: str,
-        session_id: Annotated[str, Header()],
-        api_key: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(get_api_key=True)),
+        ],
     ) -> None:
-        session = await fetch_session(self.api_engine, session_id)
-        return session.api_engine_modules.ai_api_engine.delete_voice(
-            api_key=api_key, voice_id=voice_id, name=None
+        return self.api_engine.engine_backend.engine_modules.ai_api_engine.delete_voice(
+            api_key=vivoac_base_header.api_key, voice_id=voice_id, name=None
         )

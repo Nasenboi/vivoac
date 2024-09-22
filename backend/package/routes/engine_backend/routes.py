@@ -6,12 +6,17 @@ Imports:
 
 from typing import Annotated, Any, Dict, Union
 
-from fastapi import APIRouter, Depends, Header, Body
+from fastapi import APIRouter, Body, Depends, Header
 
 from ...globals import LOGGER
-from .models import *
-from ..user.models import User
+from ...http_models import (
+    VivoacBaseHeader,
+    VivoacBaseResponse,
+    get_vivoac_base_header_dependency,
+)
 from ..user.dependencies import get_admin_user, get_current_user
+from ..user.models import User
+from .models import *
 
 """
 ########################################################################################"""
@@ -45,8 +50,9 @@ class Engine_Router(APIRouter):
 
     async def get_engines_route(
         self,
-        session_id: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
+        ],
     ) -> Dict[str, str]:
         return {
             "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_name(),
@@ -55,13 +61,15 @@ class Engine_Router(APIRouter):
 
     async def set_engines_route(
         self,
-        session_id: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_admin_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
         ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = Body(),
         script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = Body(),
     ) -> Union[str, int]:
         LOGGER.debug(
-            f"Updating session engines: {ai_api_engine_module}, {script_db_engine_module}"
+            f"Updating engines: {ai_api_engine_module}, {script_db_engine_module}"
         )
         result = await self.api_engine.engine_backend.set_engine_module(
             ai_api_engine_module=ai_api_engine_module,
@@ -72,8 +80,10 @@ class Engine_Router(APIRouter):
     # == Engine Settings ==
     async def get_engine_settings_route(
         self,
-        session_id: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_current_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency()),
+        ],
     ) -> Dict[str, dict]:
         return {
             "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_settings(),
@@ -82,8 +92,10 @@ class Engine_Router(APIRouter):
 
     async def update_engine_settings_route(
         self,
-        session_id: Annotated[str, Header()],
-        current_user: Annotated[User, Depends(get_admin_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
         ai_api_engine_settings: Optional[Dict[str, Any]] = None,
         script_db_engine_settings: Optional[Dict[str, Any]] = None,
     ) -> Union[str, int]:

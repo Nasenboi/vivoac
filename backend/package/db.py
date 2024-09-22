@@ -35,7 +35,6 @@ VIVOAC_DB = DB_CLIENT[db_name]
 
 # Initialize and create the collections if they dont exist:
 DB_COLLECTIONS: Dict[str, Collection] = {
-    "sessions": None,
     "users": None,
     "voices": None,
     "voice_talents": None,
