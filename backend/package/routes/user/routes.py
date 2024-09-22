@@ -4,13 +4,18 @@ Description:
 Imports:
 """
 
-from typing import List, Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 
+from ...http_models import (
+    VivoacBaseHeader,
+    VivoacBaseResponse,
+    get_vivoac_base_header_dependency,
+)
+from .dependencies import *
 from .functions import *
 from .models import *
-from .dependencies import *
 
 """
 ########################################################################################"""
@@ -36,31 +41,51 @@ class User_Router(APIRouter):
         )
 
     async def add_user_route(
-        self, current_user: Annotated[User, Depends(get_admin_user)], user: UserForEdit
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
+        user_to_add: UserForEdit,
     ) -> User:
-        return await add_user(user)
+        return await add_user(user_to_add)
 
     async def get_user_route(
         self,
-        current_user: Annotated[User, Depends(get_admin_user)],
-        user: User = Depends(User),
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
+        user_to_get: Annotated[User_Query, Depends()],
     ) -> Union[User, List[User]]:
-        return await get_user(user)
+        return await get_user(user_to_get)
 
     async def self_route(
-        self, current_user: Annotated[User, Depends(get_current_user)]
-    ) -> Union[User, List[User]]:
-        return current_user
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency()),
+        ],
+    ) -> User:
+        return vivoac_base_header.user
 
     async def update_user_route(
         self,
-        current_user: Annotated[User, Depends(get_admin_user)],
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
         user_id: str,
-        user: UserForEdit,
+        user_to_edit: UserForEdit,
     ) -> User:
-        return await update_user(user_id, user)
+        return await update_user(user_id, user_to_edit)
 
     async def delete_user_route(
-        self, current_user: Annotated[User, Depends(get_admin_user)], user_id: str
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
+        user_id: str,
     ) -> User:
         return await delete_user(user_id)
