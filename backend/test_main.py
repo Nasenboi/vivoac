@@ -12,7 +12,9 @@ import json
 from logging.handlers import TimedRotatingFileHandler
 
 import package as p
-import package.tests as tests
+from package.tests import get_test_classes
+
+test_classes = get_test_classes()
 from package.db import ADMIN_PASSWORD, ADMIN_USER
 from package.utils.classes.test_client import CustomTestClient
 
@@ -24,7 +26,7 @@ from package.utils.classes.test_client import CustomTestClient
 # The process is similar to the one in the main.py file
 
 if __name__ == "__main__":
-    # securely grab the app name and the logger streamhandler
+    # securely grab some important information
     name = p.SETTINGS_GLOBAL.get("metadata", {}).get("name", "app")
     streamhandler = p.LOGGER.parent.handlers[
         [
@@ -40,8 +42,9 @@ if __name__ == "__main__":
         "test_result_file", ""
     )
 
-    # create test_user dict
     test_user = {"username": ADMIN_USER, "password": ADMIN_PASSWORD}
+
+    api_version = p.SETTINGS_GLOBAL.get("metadata", {}).get("api_version", "0.0.0")
 
     # start the application loop
     p.LOGGER.info(f"Starting the Tests!")
@@ -57,15 +60,16 @@ if __name__ == "__main__":
         response = client.post("/token", data=test_user)
         token = response.json().get("access_token")
 
-        # start the tests
-        test_classes = [
-            tests.Engine_Tests(client=client, test_user=test_user, token=token),
-            tests.Script_Tests(client=client, test_user=test_user, token=token),
-            tests.AI_API_Tests(client=client, test_user=test_user, token=token),
-        ]
+        test_kwargs = {
+            "client": client,
+            "test_user": test_user,
+            "token": token,
+            "api_version": api_version,
+        }
 
+        # start the tests
         for test_class in test_classes:
-            result = test_class.test_script()
+            result = test_class(**test_kwargs).test_script()
             test_results.append(result)
 
         # store the tesults in a file:

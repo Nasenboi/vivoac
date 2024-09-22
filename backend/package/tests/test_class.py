@@ -31,13 +31,21 @@ class Test_Class:
     client = None
     test_user: dict = None
     token: str = None
-    test_functions: List = []
+    test_functions: List[callable[[], [test_function_return]]] = []
     results: List[test_function_return] = []
+    api_version: str = None
+    base_header: dict = None
 
-    def __init__(self, client, test_user, token):
+    def __init__(self, client, test_user, token, api_version):
         self.client = client
         self.test_user = test_user
         self.token = token
+        self.api_version = api_version
+
+        base_header = {
+            "Authorization": f"Bearer {self.token}",
+            "api-version": self.api_version,
+        }
 
     def test_script(self) -> list[test_function_return]:
         LOGGER.info(f"Starting the Script Tests for route: {self.route}")
