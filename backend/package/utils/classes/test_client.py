@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 
 
 class CustomTestClient(TestClient):
+    # TODO: end support for these two methods
     def get_with_payload(self, **kwargs):
         return self.request(method="GET", **kwargs)
 

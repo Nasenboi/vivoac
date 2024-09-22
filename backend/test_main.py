@@ -15,7 +15,7 @@ import package as p
 from package.tests import get_test_classes
 
 test_classes = get_test_classes()
-from package.db import ADMIN_PASSWORD, ADMIN_USER
+from package.db import ADMIN_PASSWORD, ADMIN_USER, DB_COLLECTIONS
 from package.utils.classes.test_client import CustomTestClient
 
 """
@@ -46,6 +46,13 @@ if __name__ == "__main__":
 
     api_version = p.SETTINGS_GLOBAL.get("metadata", {}).get("api_version", "0.0.0")
 
+    # clearing the database
+    p.LOGGER.info(f"Clearing the Database!")
+    for collection in DB_COLLECTIONS.keys():
+        if collection != "users":
+            p.LOGGER.info(f"Clearing the {collection} Collection!")
+            DB_COLLECTIONS[collection].delete_many({})
+
     # start the application loop
     p.LOGGER.info(f"Starting the Tests!")
     try:
@@ -70,18 +77,14 @@ if __name__ == "__main__":
         # start the tests
         for test_class in test_classes:
             result = test_class(**test_kwargs).test_script()
-            test_results.append(result)
+            test_results.extend(result)
 
         # store the tesults in a file:
         if test_result_file != "":
             p.LOGGER.info(f"Storing the test results in {test_result_file}")
-            test_results_as_dict = []
-            for result in test_results:
-                for test in result:
-                    test_results_as_dict.append(test.dict())
 
             with open(test_result_file, "w") as file:
-                json.dump(test_results_as_dict, file, indent=4)
+                json.dump(test_results, file, indent=4)
 
     except KeyboardInterrupt:
         p.LOGGER.warning(f"Recieved KeyboardInterrupt, stopping gracefully...")

@@ -5,8 +5,9 @@ Imports:
 """
 
 from time import time
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Type
 
+from package.utils.classes.test_client import CustomTestClient
 from pydantic import BaseModel
 
 from ..globals import LOGGER
@@ -22,17 +23,17 @@ class test_function_return(BaseModel):
     http_code: Optional[int] = None
     message: Optional[str] = "This is an empty function return message"
     error_message: Optional[str] = None
-    time: Optional[float] = None
+    time: Optional[str] = None
 
 
 class Test_Class:
     # class variables
     route: str = None
-    client = None
+    client: Type[CustomTestClient] = None
     test_user: dict = None
     token: str = None
-    test_functions: List[callable[[], [test_function_return]]] = []
-    results: List[test_function_return] = []
+    test_functions: List[callable] = []
+    results: List[dict] = []
     api_version: str = None
     base_header: dict = None
 
@@ -42,21 +43,21 @@ class Test_Class:
         self.token = token
         self.api_version = api_version
 
-        base_header = {
+        self.base_header = {
             "Authorization": f"Bearer {self.token}",
             "api-version": self.api_version,
         }
 
-    def test_script(self) -> list[test_function_return]:
+    def test_script(self) -> list[dict]:
         LOGGER.info(f"Starting the Script Tests for route: {self.route}")
 
         for function in self.test_functions:
             start_time = time()
             result = function(self)
-            result.time = time() - start_time
+            result.time = str(time() - start_time)
             result.function = function.__name__
             result.test_class = self.__class__.__name__
-            self.results.append(result)
+            self.results.append(result.model_dump())
 
         LOGGER.info(f"Finished the Script Tests for route: {self.route}")
         return self.results
