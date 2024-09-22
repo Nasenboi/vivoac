@@ -169,8 +169,10 @@ class AI_API_Handler_Router(APIRouter):
                 seed=data.seed,
                 audio_format=vivoac_base_header.user.config.audio_format,
             )
-            # TODO: MIME Type mapper
-            media_type = f"audio/{vivoac_base_header.user.config.audio_format.codec}"
+
+            media_type = (
+                f"audio/{vivoac_base_header.user.config.audio_format.map_mime_type()}"
+            )
 
             return Response(content=file_in_bytes, media_type=media_type)
         except Exception as e:

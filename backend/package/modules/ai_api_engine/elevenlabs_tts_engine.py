@@ -12,10 +12,10 @@ from typing import List, Union
 
 import requests
 
+from ...api_engine.models import Audio_Format
 from ...base_classes.ai_api_engine import AI_API_Engine
 from ...globals import SETTINGS_GLOBAL
 from ...routes.ai_api_handler.models import *
-from ...routes.audio.models import *
 
 """
 ########################################################################################"""

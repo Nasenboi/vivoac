@@ -9,8 +9,8 @@ from typing import Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
+from ...api_engine.models import Audio_Format
 from ...utils.models import Address, CreatedUpdatedAt, PydanticObjectId
-from ..audio.models import Audio_Format
 
 """
 ########################################################################################"""
