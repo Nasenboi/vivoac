@@ -71,7 +71,7 @@ class Voice_Talent_Router(APIRouter):
         vivoac_base_header: Annotated[
             VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
         ],
-        voice_talent_query: Voice_Talent = Depends()
+        voice_talent_query: Annotated[Voice_Talent_Query, Depends()],
     ) -> VivoacBaseResponse[List[Voice_Talent]]:
         return VivoacBaseResponse[List[Voice_Talent]](
             data=await find_voice_talents(

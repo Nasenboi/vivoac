@@ -6,13 +6,11 @@ Imports:
 
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from bson import ObjectId
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
-from bson import ObjectId
-
 from ...utils.models import Address, CreatedUpdatedAt, PydanticObjectId
-
 from .functions import *
 
 """
@@ -34,4 +32,9 @@ class Voice_Talent(BaseModel, CreatedUpdatedAt):
     phone_number_home: Optional[PhoneNumber] = None
     phone_number_mobile: Optional[PhoneNumber] = None
 
-    
+
+# -- Query Model --
+# Ignore all fields that do not fit into a query
+class Voice_Talent_Query(Voice_Talent):
+    voices: None = None
+    address: None = None
