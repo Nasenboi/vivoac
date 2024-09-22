@@ -11,7 +11,7 @@ from typing import Annotated, Dict, List, Union
 
 import pandas as pd
 
-from ...base_classes import Script_DB_Engine
+from ...base_classes.script_db_engine import Script_DB_Engine
 from ...globals import LOGGER
 from ...routes.script.models import Character_Info, Script_Line
 

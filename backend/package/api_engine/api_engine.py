@@ -9,6 +9,8 @@ from typing import List
 
 from fastapi import APIRouter
 
+from ..base_classes.ai_api_engine import AI_API_Engine
+from ..base_classes.script_db_engine import Script_DB_Engine
 from ..globals import *
 from .class_functions import *
 
@@ -34,3 +36,12 @@ class API_Engine:
 
     def stop(self, *args, **kwargs):
         stop(self, *args, **kwargs)
+
+    # quick access to the module engines
+    @property
+    def ai_api_engine(self) -> AI_API_Engine:
+        return self.engine_backend.engine_modules.ai_api_engine
+
+    @property
+    def script_db_engine(self) -> Script_DB_Engine:
+        return self.engine_backend.engine_modules.script_db_engine

@@ -8,7 +8,8 @@ from typing import Dict, Literal, Optional, Type
 
 from pydantic import BaseModel, field_serializer
 
-from ...base_classes import *
+from ...base_classes.ai_api_engine import AI_API_Engine
+from ...base_classes.script_db_engine import Script_DB_Engine
 from ...modules import *
 
 """
@@ -33,11 +34,11 @@ class Engine_Modules(BaseModel):
     script_db_engine: Optional[Type[Script_DB_Engine]] = None
 
     def fill_default_values(self):
-        #TODO: maybe its better to throw an error if the engine is not found!
+        # TODO: maybe its better to throw an error if the engine is not found!
         self.ai_api_engine = Piper_TTS_Engine
         self.script_db_engine = Excel_Script_DB_Engine
         return self
-    
+
     @field_serializer("ai_api_engine")
     def serialize_ai_api_engine(self, engine: AI_API_Engine, _info):
         return engine.get_class_variables()

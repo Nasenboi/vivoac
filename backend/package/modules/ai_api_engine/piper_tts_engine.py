@@ -16,7 +16,7 @@ from typing import List
 if sys.platform == "linux":
     from dimits import Dimits
 
-from ...base_classes import AI_API_Engine
+from ...base_classes.ai_api_engine import AI_API_Engine
 from ...globals import LOGGER, SETTINGS_GLOBAL
 from ...routes.ai_api_handler.models import *
 from ...routes.audio.models import *
