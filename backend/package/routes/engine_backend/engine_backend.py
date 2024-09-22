@@ -4,11 +4,12 @@ Description:
 Imports:
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
+from ...modules import get_engine_modules
 from .models import *
 
-from ...modules import *
+engine_modules = get_engine_modules()
 
 """
 ########################################################################################"""
@@ -23,10 +24,11 @@ class Engine_Backend:
         script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = "Excel_Script_DB_Engine",
     ):
         self.engine_modules.ai_api_engine = ai_api_engine_modules.get(
-            ai_api_engine_module, Piper_TTS_Engine
+            ai_api_engine_module, engine_modules["ai_api_engine"]["Piper_TTS_Engine"]
         )
         self.engine_modules.script_db_engine = script_db_engine_modules.get(
-            script_db_engine_module, Excel_Script_DB_Engine
+            script_db_engine_module,
+            engine_modules["script_db_engine"]["Excel_Script_DB_Engine"],
         )
 
     async def get_ai_api_engine_name(self) -> str:
@@ -47,13 +49,17 @@ class Engine_Backend:
         script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = None,
     ) -> Dict[str, str]:
         self.engine_modules.ai_api_engine = (
-            ai_api_engine_modules.get(ai_api_engine_module, Piper_TTS_Engine)
+            ai_api_engine_modules.get(
+                ai_api_engine_module,
+                engine_modules["ai_api_engine"]["Piper_TTS_Engine"],
+            )
             if ai_api_engine_module
             else self.engine_modules.ai_api_engine
         )
         self.engine_modules.script_db_engine = (
             script_db_engine_modules.get(
-                script_db_engine_module, Excel_Script_DB_Engine
+                script_db_engine_module,
+                engine_modules["script_db_engine"]["Excel_Script_DB_Engine"],
             )
             if script_db_engine_module
             else self.engine_modules.script_db_engine
