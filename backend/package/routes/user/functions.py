@@ -6,10 +6,11 @@ Imports:
 
 from typing import List, Union
 
+import bcrypt
 from bson import ObjectId
 from fastapi import HTTPException
 
-from ...db import DB_COLLECTIONS, PASSWORD_CONTEXT
+from ...db import DB_COLLECTIONS
 from ...globals import LOGGER
 from .models import *
 
@@ -19,7 +20,9 @@ from .models import *
 
 async def add_user(user: UserForEdit) -> User:
     user_for_db = UserInDB(**user.model_dump())
-    user_for_db.hashed_password = PASSWORD_CONTEXT.hash(user.password)
+    user_for_db.hashed_password = bcrypt.hashpw(
+        user.password.encode("utf-8"), bcrypt.gensalt()
+    )
 
     # check if user with this exact full_name already exists
     if DB_COLLECTIONS["users"].find_one({"username": user_for_db.username}):
@@ -56,7 +59,9 @@ async def update_user(user_id: Union[int, str], user: UserForEdit) -> User:
     user_to_edit = DB_COLLECTIONS["users"].find_one({"_id": ObjectId(user_id)})
     user_to_edit.update(User(user.model_dump()))
     if user.get("password"):
-        user_to_edit["hashed_password"] = PASSWORD_CONTEXT.hash(user.password)
+        user_to_edit["hashed_password"] = bcrypt.hashpw(
+            user.password.encode("utf-8"), bcrypt.gensalt()
+        )
 
     DB_COLLECTIONS["users"].update_one({"_id": user.get("_id", "")}, user_to_edit)
     return User(**user_to_edit)

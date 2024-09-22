@@ -9,8 +9,8 @@ import json
 import os
 from typing import Dict
 
+import bcrypt
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
@@ -47,8 +47,9 @@ for collection in DB_COLLECTIONS.keys():
 SECRET_KEY = os.getenv("SECRET_KEY", os.urandom(32))
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = SETTINGS_GLOBAL.get("authentication", {}).get("access_token_expire_minutes", 30),
-PASSWORD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
+ACCESS_TOKEN_EXPIRE_MINUTES = SETTINGS_GLOBAL.get("authentication", {}).get(
+    "access_token_expire_minutes", 30
+)
 OAUTH_2_SCHEME = OAuth2PasswordBearer(tokenUrl="token")
 
 # Create the admin user for the db if it does not exist
@@ -59,6 +60,8 @@ if not DB_COLLECTIONS["users"].find_one({"username": ADMIN_USER}):
         role="admin",
         disabled=False,
     ).model_dump()
-    admin_user["hashed_password"] = PASSWORD_CONTEXT.hash(ADMIN_PASSWORD)
+    admin_user["hashed_password"] = bcrypt.hashpw(
+        ADMIN_PASSWORD.encode("utf-8"), salt=bcrypt.gensalt()
+    )
     DB_COLLECTIONS["users"].insert_one(admin_user)
     LOGGER.info("Created the admin user in the database.")

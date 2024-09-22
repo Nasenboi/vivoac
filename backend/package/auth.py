@@ -4,21 +4,20 @@ Description: This script contains a handful of useful authentication functions
 Imports:
 """
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
+import bcrypt
+from fastapi import HTTPException
 from jose import jwt
 
-from fastapi import HTTPException
-
+from .db import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, DB_COLLECTIONS, SECRET_KEY
 from .globals import LOGGER
-from .db import DB_COLLECTIONS, PASSWORD_CONTEXT, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-
 from .routes.user.models import *
 
 """
 ########################################################################################"""
 
-'''
+"""
 No need for these two functions (inside is jsut a single function)
 
 def verify_password(plain_password, hashed_password):
@@ -26,7 +25,7 @@ def verify_password(plain_password, hashed_password):
 
 def get_password_hash(password):
     return PASSWORD_CONTEXT.hash(password)
-'''
+"""
 
 
 def create_access_token(data: TokenData) -> str:
@@ -35,6 +34,7 @@ def create_access_token(data: TokenData) -> str:
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 def get_user_from_token(token: str) -> UserInDB:
     try:
@@ -46,15 +46,15 @@ def get_user_from_token(token: str) -> UserInDB:
         return user
     except Exception as e:
         LOGGER.error(f"Error decoding token: {e}")
-        raise HTTPException(
-            status_code=400, detail="Could not validate credentials"
-        )
+        raise HTTPException(status_code=400, detail="Could not validate credentials")
+
 
 def authenticate_user(username: str, password: str) -> UserInDB:
     user = UserInDB(**DB_COLLECTIONS["users"].find_one({"username": username}))
     if not user:
         return False
-    if not PASSWORD_CONTEXT.verify(password, user.hashed_password):
+    if not bcrypt.checkpw(
+        password.encode("utf-8"), user.hashed_password.encode("utf-8")
+    ):
         return False
     return user
-
