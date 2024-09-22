@@ -10,7 +10,6 @@ import os
 from typing import Annotated, Dict, List, Union
 
 import pandas as pd
-from pydantic import parse_obj_as
 
 from ...base_classes import Script_DB_Engine
 from ...globals import LOGGER

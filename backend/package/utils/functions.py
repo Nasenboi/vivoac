@@ -4,7 +4,7 @@ Description: This file contains useful functions that are used throughout the pr
 Imports:
 """
 
-from fastapi import HTTPException, Request
+from fastapi import Request
 
 from .. import globals
 
