@@ -4,15 +4,14 @@ Description:
 Imports:
 """
 
-from fastapi import HTTPException
-from ...globals import LOGGER
-
-from bson import ObjectId
-
 from typing import List
 
-from .models import *
+from bson import ObjectId
+from fastapi import HTTPException
+
 from ...db import DB_COLLECTIONS
+from ...globals import LOGGER
+from .models import *
 
 """
 ########################################################################################"""
@@ -36,7 +35,11 @@ async def get_voice_talent(voice_talent_id: PydanticObjectId = None) -> Voice_Ta
 
 async def find_voice_talents(voice_talent_query: dict = {}) -> List[Voice_Talent]:
     try:
-        query = {k: v for k, v in voice_talent_query.items() if v is not None and k not in ["_id", "created_at", "updated_at"]}
+        query = {
+            k: v
+            for k, v in voice_talent_query.items()
+            if v is not None and k not in ["_id", "created_at", "updated_at"]
+        }
         voice_talents = list(DB_COLLECTIONS["voice_talents"].find(query))
     except Exception as e:
         LOGGER.error(f"Error finding voice talents: {e}")

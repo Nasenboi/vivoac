@@ -4,18 +4,16 @@ Description:
 Imports:
 """
 
-from typing import Annotated, Any, Dict, List, Optional, Union
+from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends
 
-from ...globals import LOGGER, SETTINGS_GLOBAL
+from ...globals import LOGGER
 from ...http_models import (
     VivoacBaseHeader,
     VivoacBaseResponse,
     get_vivoac_base_header_dependency,
 )
-from ..user.dependencies import get_current_user
-from ..user.models import User
 from .functions import *
 from .models import *
 

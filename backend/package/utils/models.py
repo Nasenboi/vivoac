@@ -4,15 +4,12 @@ Description: This file contains useful functions that are used throughout the pr
 Imports:
 """
 
-from typing import Optional, Any, Callable, Annotated
-
-from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
-from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import core_schema
-from bson import ObjectId
-
-
 from datetime import datetime
+from typing import Annotated, Any, Callable, Optional
+
+from bson import ObjectId
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic_core import core_schema
 
 """
 ########################################################################################"""

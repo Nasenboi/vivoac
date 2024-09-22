@@ -4,10 +4,9 @@ Description: In here are some dependency functions that will be used for http re
 Imports:
 """
 
-from fastapi.exceptions import HTTPException, RequestValidationError
-from typing import Dict, Any, Optional
-from ..globals import SETTINGS_GLOBAL
+from typing import Any, Dict, Optional
 
+from fastapi.exceptions import HTTPException, RequestValidationError
 from pydantic import BaseModel
 
 from .models import VivoacBaseResponse

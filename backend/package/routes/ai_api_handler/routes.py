@@ -6,7 +6,7 @@ Imports:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, Query, Response
+from fastapi import APIRouter, Depends, Query, Response
 
 from ...http_models.models import (
     VivoacBaseHeader,

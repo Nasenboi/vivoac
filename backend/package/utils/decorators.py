@@ -6,8 +6,6 @@ Imports:
 
 from functools import wraps
 
-from ..globals import LOGGER
-
 """
 ########################################################################################"""
 

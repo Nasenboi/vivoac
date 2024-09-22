@@ -14,8 +14,6 @@ from ...http_models import (
     VivoacBaseResponse,
     get_vivoac_base_header_dependency,
 )
-from ..user.dependencies import get_admin_user, get_current_user
-from ..user.models import User
 from .models import *
 
 """

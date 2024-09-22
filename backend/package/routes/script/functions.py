@@ -4,10 +4,10 @@ Description:
 Imports:
 """
 
-from typing import Any, Dict, List, Union
+from typing import List
 
 from ...base_classes.script_db_engine import Script_DB_Engine
-from ...globals import LOGGER, SETTINGS_GLOBAL
+from ...globals import LOGGER
 from .models import *
 
 """

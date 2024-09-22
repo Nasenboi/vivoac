@@ -8,11 +8,9 @@ Imports:
 import json
 import os
 from datetime import datetime
-from io import BytesIO
 from typing import List
 
 import requests
-from pydub import AudioSegment
 
 from ...base_classes.ai_api_engine import AI_API_Engine
 from ...globals import SETTINGS_GLOBAL

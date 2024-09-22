@@ -6,7 +6,6 @@ Imports:
 
 from typing import Literal, Optional, Union
 
-from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from pydantic_extra_types.phone_numbers import PhoneNumber
 

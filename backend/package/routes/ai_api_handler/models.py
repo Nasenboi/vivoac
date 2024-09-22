@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Annotated, List, Optional, Union
+from typing import List, Optional
 
 from pydantic import BaseModel
 

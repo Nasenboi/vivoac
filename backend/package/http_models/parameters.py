@@ -4,11 +4,10 @@ Description: In here are some dependency functions that will be used for http re
 Imports:
 """
 
-from typing import Annotated, Callable, Optional
+from typing import Optional
 
 from fastapi import Depends, Header, HTTPException, status
 from packaging.version import Version
-from pydantic import BaseModel
 
 from ..globals import SETTINGS_GLOBAL
 from ..routes.user.dependencies import get_admin_user, get_current_user

@@ -5,7 +5,6 @@ if it does not exist.
 Imports:
 """
 
-import json
 import os
 from typing import Dict
 
