@@ -47,8 +47,9 @@ class User_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
         user_to_add: UserForEdit,
-    ) -> User:
-        return await add_user(user_to_add)
+    ) -> VivoacBaseResponse[User]:
+        data = await add_user(user_to_add)
+        return VivoacBaseResponse(data=data)
 
     async def get_user_route(
         self,
@@ -57,8 +58,9 @@ class User_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
         user_to_get: Annotated[User_Query, Depends()],
-    ) -> Union[User, List[User]]:
-        return await get_user(user_to_get)
+    ) -> VivoacBaseResponse[Union[User, List[User]]]:
+        data = await get_user(user_to_get)
+        return VivoacBaseResponse(data=data)
 
     async def self_route(
         self,
@@ -66,8 +68,8 @@ class User_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency()),
         ],
-    ) -> User:
-        return vivoac_base_header.user
+    ) -> VivoacBaseResponse[User]:
+        return VivoacBaseResponse(data=vivoac_base_header.user)
 
     async def update_user_route(
         self,
@@ -77,8 +79,9 @@ class User_Router(APIRouter):
         ],
         user_id: str,
         user_to_edit: UserForEdit,
-    ) -> User:
-        return await update_user(user_id, user_to_edit)
+    ) -> VivoacBaseResponse[User]:
+        data = await update_user(user_id, user_to_edit)
+        return VivoacBaseResponse(data=data)
 
     async def delete_user_route(
         self,
@@ -87,5 +90,6 @@ class User_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
         user_id: str,
-    ) -> User:
-        return await delete_user(user_id)
+    ) -> VivoacBaseResponse[User]:
+        data = await delete_user(user_id)
+        return VivoacBaseResponse(data=data)

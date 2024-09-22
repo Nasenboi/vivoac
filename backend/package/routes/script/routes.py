@@ -43,12 +43,9 @@ class Script_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency()),
         ],
         script_line: Annotated[Script_Line, Depends()],
-    ) -> List[Script_Line]:
+    ) -> VivoacBaseResponse[List[Script_Line]]:
         LOGGER.debug(f"Getting script lines for {script_line}")
-        script_db_engine = (
-            self.api_engine.engine_backend.engine_modules.script_db_engine
+        data = await self.api_engine.engine_backend.engine_modules.script_db_engine.get_script_lines(
+            script_line
         )
-        script_lines = await get_script_lines(
-            script_line=script_line, script_db_engine=script_db_engine
-        )
-        return script_lines
+        VivoacBaseResponse(data=data)
