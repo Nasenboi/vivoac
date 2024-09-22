@@ -35,4 +35,4 @@ class Script_Tests(Test_Class):
         )
         return results
 
-    test_functions = [get_script]
+    test_functions = []

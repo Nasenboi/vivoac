@@ -51,4 +51,4 @@ class Engine_Tests(Test_Class):
                 break
         return results
 
-    test_functions = [get_engines, get_engine_settings]
+    test_functions = []

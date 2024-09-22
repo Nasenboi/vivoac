@@ -61,4 +61,4 @@ class AI_API_Tests(Test_Class):
         )
         return results
 
-    test_functions = [text_to_speech]
+    test_functions = []

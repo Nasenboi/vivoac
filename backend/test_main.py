@@ -13,6 +13,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 import package as p
 import package.tests as tests
+from package.db import ADMIN_PASSWORD, ADMIN_USER
 from package.utils.classes.test_client import CustomTestClient
 
 """
@@ -39,6 +40,9 @@ if __name__ == "__main__":
         "test_result_file", ""
     )
 
+    # create test_user dict
+    test_user = {"username": ADMIN_USER, "password": ADMIN_PASSWORD}
+
     # start the application loop
     p.LOGGER.info(f"Starting the Tests!")
     try:
@@ -48,11 +52,16 @@ if __name__ == "__main__":
         p.LOGGER.info(f"Starting the Test Client!")
         client = CustomTestClient(api_engine.app, base_url="http://localhost:8000")
 
+        # authenticate to get a token
+        p.LOGGER.info(f"Authenticating the Test User!")
+        response = client.post("/token", data=test_user)
+        token = response.json().get("access_token")
+
         # start the tests
         test_classes = [
-            tests.Engine_Tests(client=client),
-            tests.Script_Tests(client=client),
-            tests.AI_API_Tests(client=client),
+            tests.Engine_Tests(client=client, test_user=test_user, token=token),
+            tests.Script_Tests(client=client, test_user=test_user, token=token),
+            tests.AI_API_Tests(client=client, test_user=test_user, token=token),
         ]
 
         for test_class in test_classes:

@@ -29,11 +29,15 @@ class Test_Class:
     # class variables
     route: str = None
     client = None
+    test_user: dict = None
+    token: str = None
     test_functions: List = []
     results: List[test_function_return] = []
 
-    def __init__(self, client):
+    def __init__(self, client, test_user, token):
         self.client = client
+        self.test_user = test_user
+        self.token = token
 
     def test_script(self) -> list[test_function_return]:
         LOGGER.info(f"Starting the Script Tests for route: {self.route}")

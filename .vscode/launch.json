@@ -16,7 +16,7 @@
             "name": "Python Debugger: test_main.py",
             "type": "debugpy",
             "request": "launch",
-            "program": ".test_main.py",
+            "program": "test_main.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/backend"
         }
