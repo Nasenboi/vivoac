@@ -8,6 +8,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 
+from ...api_engine.api_engine_base import API_Engine_Base
 from ...globals import LOGGER
 from ...http_models import (
     VivoacBaseHeader,
@@ -23,7 +24,7 @@ from .models import *
 
 # create a new router
 class Script_Router(APIRouter):
-    api_engine = None
+    api_engine: API_Engine_Base = None
     route_parameters: dict = {"prefix": "/script", "tags": ["script"]}
 
     def __init__(self, api_engine, **kwargs):
@@ -45,7 +46,5 @@ class Script_Router(APIRouter):
         script_line: Annotated[Script_Line, Depends()],
     ) -> VivoacBaseResponse[List[Script_Line]]:
         LOGGER.debug(f"Getting script lines for {script_line}")
-        data = await self.api_engine.engine_backend.engine_modules.script_db_engine.get_script_lines(
-            script_line
-        )
+        data = await self.api_engine.script_db_engine.get_script_lines(script_line)
         VivoacBaseResponse(data=data)

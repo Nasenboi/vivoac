@@ -6,8 +6,9 @@ Imports:
 
 from typing import Annotated, Any, Dict, Union
 
-from fastapi import APIRouter, Body, Depends, Header
+from fastapi import APIRouter, Body, Depends
 
+from ...api_engine.api_engine_base import API_Engine_Base
 from ...globals import LOGGER
 from ...http_models import (
     VivoacBaseHeader,
@@ -21,7 +22,7 @@ from .models import *
 
 
 class Engine_Router(APIRouter):
-    api_engine = None
+    api_engine: API_Engine_Base = None
     route_parameters: dict = {"prefix": "/engine", "tags": ["engine"]}
 
     def __init__(self, api_engine, **kwargs):

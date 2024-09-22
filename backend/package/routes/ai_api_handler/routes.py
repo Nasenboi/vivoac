@@ -8,6 +8,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Response
 
+from ...api_engine.api_engine_base import API_Engine_Base
 from ...http_models import (
     VivoacBaseHeader,
     VivoacBaseResponse,
@@ -20,7 +21,7 @@ from .models import *
 
 
 class AI_API_Handler_Router(APIRouter):
-    api_engine = None
+    api_engine: API_Engine_Base = None
     route_parameters: dict = {"prefix": "/ai_api_handler", "tags": ["ai_api_handler"]}
 
     def __init__(self, api_engine, **kwargs):
@@ -79,7 +80,7 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
     ) -> dict:
-        return self.api_engine.engine_backend.engine_modules.get_user_data(
+        return self.api_engine.ai_api_engine.get_user_data(
             api_key=vivoac_base_header.api_key
         )
 
@@ -90,7 +91,7 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
     ) -> dict:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_models(
+        return self.api_engine.ai_api_engine.get_models(
             api_key=vivoac_base_header.api_key
         )
 
@@ -101,7 +102,7 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
     ) -> List[str]:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_voices(
+        return self.api_engine.ai_api_engine.get_voices(
             api_key=vivoac_base_header.api_key
         )
 
@@ -114,7 +115,7 @@ class AI_API_Handler_Router(APIRouter):
         voice_id: str = Query(),
         name: str = Query(),
     ) -> Voice_Settings:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.get_voice_settings(
+        return self.api_engine.ai_api_engine.get_voice_settings(
             api_key=vivoac_base_header.api_key, voice_id=voice_id, name=name
         )
 
@@ -129,7 +130,7 @@ class AI_API_Handler_Router(APIRouter):
         ],
         voice_settings: Voice_Settings,
     ) -> str:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.create_voice(
+        return self.api_engine.ai_api_engine.create_voice(
             api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
@@ -144,7 +145,7 @@ class AI_API_Handler_Router(APIRouter):
         ],
         voice_settings: Voice_Settings,
     ) -> None:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.edit_voice_settings(
+        return self.api_engine.ai_api_engine.edit_voice_settings(
             api_key=vivoac_base_header.api_key,
             voice_settings=voice_settings,
         )
@@ -159,16 +160,14 @@ class AI_API_Handler_Router(APIRouter):
         data: Text_To_Speech,
     ) -> Response:
         try:
-            file_in_bytes: bytes = (
-                self.api_engine.engine_backend.engine_modules.ai_api_engine.text_to_speech(
-                    api_key=vivoac_base_header.api_key,
-                    text=data.text,
-                    voice=data.voice,
-                    voice_settings=data.voice_settings,
-                    model=data.model,
-                    seed=data.seed,
-                    audio_format=vivoac_base_header.user.config.audio_format,
-                )
+            file_in_bytes: bytes = self.api_engine.ai_api_engine.text_to_speech(
+                api_key=vivoac_base_header.api_key,
+                text=data.text,
+                voice=data.voice,
+                voice_settings=data.voice_settings,
+                model=data.model,
+                seed=data.seed,
+                audio_format=vivoac_base_header.user.config.audio_format,
             )
             # TODO: MIME Type mapper
             media_type = f"audio/{vivoac_base_header.user.config.audio_format.codec}"
@@ -187,6 +186,6 @@ class AI_API_Handler_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency(get_api_key=True)),
         ],
     ) -> None:
-        return self.api_engine.engine_backend.engine_modules.ai_api_engine.delete_voice(
+        return self.api_engine.ai_api_engine.delete_voice(
             api_key=vivoac_base_header.api_key, voice_id=voice_id, name=None
         )

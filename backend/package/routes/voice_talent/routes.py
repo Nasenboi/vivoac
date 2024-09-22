@@ -8,6 +8,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 
+from ...api_engine.api_engine_base import API_Engine_Base
 from ...http_models import (
     VivoacBaseHeader,
     VivoacBaseResponse,
@@ -22,7 +23,7 @@ from .models import *
 
 # create a new router
 class Voice_Talent_Router(APIRouter):
-    api_engine = None
+    api_engine: API_Engine_Base = None
     route_parameters: dict = {"prefix": "/voice_talent", "tags": ["voice_talent"]}
 
     def __init__(self, api_engine, **kwargs):
