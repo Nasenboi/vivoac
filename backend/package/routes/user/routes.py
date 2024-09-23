@@ -14,6 +14,7 @@ from ...http_models import (
     VivoacBaseResponse,
     get_vivoac_base_header_dependency,
 )
+from ...utils.models import PydanticObjectId
 from .dependencies import *
 from .functions import *
 from .models import *
@@ -31,14 +32,19 @@ class User_Router(APIRouter):
         self.route_parameters.update(kwargs)
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
-        self.add_api_route(path="/add", endpoint=self.add_user_route, methods=["POST"])
-        self.add_api_route(path="/get", endpoint=self.get_user_route, methods=["GET"])
+        self.add_api_route(path="/", endpoint=self.add_user_route, methods=["POST"])
+        self.add_api_route(
+            methods=["GET"],
+            path="/{user_id}",
+            endpoint=self.get_user_route,
+        )
+        self.add_api_route(methods=["GET"], path="/", endpoint=self.find_users_route)
         self.add_api_route(path="/self", endpoint=self.self_route, methods=["GET"])
         self.add_api_route(
-            path="/update", endpoint=self.update_user_route, methods=["PUT"]
+            path="/{user_id}", endpoint=self.update_user_route, methods=["PUT"]
         )
         self.add_api_route(
-            path="/delete", endpoint=self.delete_user_route, methods=["DELETE"]
+            path="/{user_id}", endpoint=self.delete_user_route, methods=["DELETE"]
         )
 
     async def add_user_route(
@@ -49,8 +55,7 @@ class User_Router(APIRouter):
         ],
         user_to_add: UserForEdit,
     ) -> VivoacBaseResponse[User]:
-        data = await add_user(user_to_add)
-        return VivoacBaseResponse(data=data)
+        return VivoacBaseResponse(data=await create_user(user_to_add))
 
     async def get_user_route(
         self,
@@ -58,10 +63,23 @@ class User_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
-        user_to_get: Annotated[User_Query, Depends()],
-    ) -> VivoacBaseResponse[Union[User, List[User]]]:
-        data = await get_user(user_to_get)
-        return VivoacBaseResponse(data=data)
+        user_id: PydanticObjectId,
+    ) -> VivoacBaseResponse[User]:
+        return VivoacBaseResponse(data=await get_user(user_id=user_id))
+
+    async def find_users_route(
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
+        user_query: Annotated[User_Query, Depends()],
+    ) -> VivoacBaseResponse[List[User]]:
+        return VivoacBaseResponse(
+            data=await find_users(
+                user_query=user_query.model_dump(exclude_unset=True),
+            )
+        )
 
     async def self_route(
         self,
@@ -78,11 +96,10 @@ class User_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
-        user_id: str,
+        user_id: PydanticObjectId,
         user_to_edit: UserForEdit,
     ) -> VivoacBaseResponse[User]:
-        data = await update_user(user_id, user_to_edit)
-        return VivoacBaseResponse(data=data)
+        return VivoacBaseResponse(data=await update_user(user_id, user_to_edit))
 
     async def delete_user_route(
         self,
@@ -90,7 +107,6 @@ class User_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
-        user_id: str,
+        user_id: PydanticObjectId,
     ) -> VivoacBaseResponse[User]:
-        data = await delete_user(user_id)
-        return VivoacBaseResponse(data=data)
+        return VivoacBaseResponse(data=await delete_user(user_id))

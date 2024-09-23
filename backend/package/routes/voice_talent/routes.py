@@ -63,7 +63,7 @@ class Voice_Talent_Router(APIRouter):
         ],
         voice_talent_id: PydanticObjectId,
     ) -> VivoacBaseResponse[Voice_Talent]:
-        return VivoacBaseResponse[Voice_Talent](
+        return VivoacBaseResponse(
             data=await get_voice_talent(voice_talent_id=voice_talent_id)
         )
 
@@ -74,9 +74,9 @@ class Voice_Talent_Router(APIRouter):
         ],
         voice_talent_query: Annotated[Voice_Talent_Query, Depends()],
     ) -> VivoacBaseResponse[List[Voice_Talent]]:
-        return VivoacBaseResponse[List[Voice_Talent]](
+        return VivoacBaseResponse(
             data=await find_voice_talents(
-                voice_talent_query=voice_talent_query.model_dump(),
+                voice_talent_query=voice_talent_query.model_dump(exclude_unset=True),
             )
         )
 
@@ -88,7 +88,7 @@ class Voice_Talent_Router(APIRouter):
         ],
         voice_talent: Voice_Talent,
     ) -> VivoacBaseResponse[Voice_Talent]:
-        return VivoacBaseResponse[Voice_Talent](
+        return VivoacBaseResponse(
             data=await create_voice_talent(voice_talent=voice_talent)
         )
 
@@ -101,7 +101,7 @@ class Voice_Talent_Router(APIRouter):
         voice_talent_id: PydanticObjectId,
         voice_talent: Voice_Talent,
     ) -> VivoacBaseResponse[Voice_Talent]:
-        return VivoacBaseResponse[Voice_Talent](
+        return VivoacBaseResponse(
             data=await update_voice_talent(
                 voice_talent_id=voice_talent_id, voice_talent=voice_talent
             )
@@ -115,6 +115,6 @@ class Voice_Talent_Router(APIRouter):
         ],
         voice_talent_id: PydanticObjectId,
     ) -> VivoacBaseResponse[Voice_Talent]:
-        return VivoacBaseResponse[Voice_Talent](
+        return VivoacBaseResponse(
             data=await delete_voice_talent(voice_talent_id=voice_talent_id)
         )

@@ -18,56 +18,82 @@ from .models import *
 ########################################################################################"""
 
 
-async def add_user(user: UserForEdit) -> User:
-    user_for_db = UserInDB(**user.model_dump())
-    user_for_db.hashed_password = bcrypt.hashpw(
-        user.password.encode("utf-8"), bcrypt.gensalt()
-    )
-
-    # check if user with this exact full_name already exists
-    if DB_COLLECTIONS["users"].find_one({"username": user_for_db.username}):
-        LOGGER.error("User with this username already exists.")
-        return HTTPException(
-            status_code=400, detail="User with this username already exists."
-        )
-
-    DB_COLLECTIONS["users"].insert_one(user_for_db.model_dump())
-    return User(**user.model_dump())
-
-
-async def get_user(user: User) -> Union[User, List[User]]:
-    query = {k: v for k, v in user.model_dump().items() if v is not None}
-
+async def get_user(user_id: PydanticObjectId = None) -> User:
     try:
-        users = list(DB_COLLECTIONS["users"].find(query))
+        user = DB_COLLECTIONS["users"].find_one({"_id": user_id})
 
-        if len(users) == 1:
-            return User(**users[0])
-        else:
-            return [User(**user) for user in users]
+        if not user:
+            raise Exception("User not found")
+
+        user = User.model_validate(user)
     except Exception as e:
-        raise HTTPException(status_code=404, detail="User not found.")
+        LOGGER.error(f"Error getting user: {e}")
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
-async def update_user(user_id: Union[int, str], user: UserForEdit) -> User:
-    if ObjectId(user_id) != user.get("_id", ""):
-        LOGGER.error("User ID does not match the ID in the user object.")
-        return HTTPException(
-            status_code=400, detail="User ID does not match the ID in the user object"
+async def find_users(user_query: dict = {}) -> List[User]:
+    try:
+        query = {
+            k: v
+            for k, v in user_query.items()
+            if v is not None and k not in ["_id", "created_at", "updated_at"]
+        }
+        users = list(DB_COLLECTIONS["users"].find(query))
+    except Exception as e:
+        LOGGER.error(f"Error finding users: {e}")
+        raise HTTPException(status_code=404, detail="Users not found")
+    return [User.model_validate(user) for user in users]
+
+
+async def create_user(user: User) -> User:
+    try:
+        # check if there are any Users with the same name:
+        users = await find_users(
+            user_query={
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+            }
         )
+        if len(users) > 0:
+            raise HTTPException(
+                status_code=400,
+                detail="A User this name does with already exists",
+            )
 
-    user_to_edit = DB_COLLECTIONS["users"].find_one({"_id": ObjectId(user_id)})
-    user_to_edit.update(User(user.model_dump(exclude_unset=True)))
-    if user.get("password"):
-        user_to_edit["hashed_password"] = bcrypt.hashpw(
-            user.password.encode("utf-8"), bcrypt.gensalt()
-        )
-
-    DB_COLLECTIONS["users"].update_one({"_id": user.get("_id", "")}, user_to_edit)
-    return User(**user_to_edit)
+        # insert User
+        user_id = DB_COLLECTIONS["users"].insert_one(user.model_dump()).inserted_id
+        user = await get_user(user_id)
+    except Exception as e:
+        LOGGER.error(f"Error creating User: {e}")
+        raise HTTPException(status_code=500, detail="Error creating User")
+    return user
 
 
-async def delete_user(user_id: int) -> User:
-    user = DB_COLLECTIONS["users"].find_one({"_id": user_id})
-    DB_COLLECTIONS["users"].delete_one({"_id": user_id})
-    return User(**user)
+async def update_user(user_id: str, user: User) -> User:
+    try:
+        user_update = {
+            k: v
+            for k, v in user.model_dump().items()
+            if v and k not in ["_id", "created_at"]
+        }
+
+        # update User
+        DB_COLLECTIONS["users"].update_one({"_id": user_id}, {"$set": user_update})
+        user = await get_user(user_id=user_id)
+    except Exception as e:
+        LOGGER.error(f"Error updating User: {e}")
+        raise HTTPException(status_code=500, detail="Error updating User")
+    return user
+
+
+async def delete_user(user_id: PydanticObjectId) -> User:
+    try:
+        # check if User exists and fetch it
+        user = await get_user(user_id=user_id)
+        # delete User
+        DB_COLLECTIONS["users"].delete_one({"_id": user_id})
+    except Exception as e:
+        LOGGER.error(f"Error deleting User: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting User")
+    return user
