@@ -25,6 +25,7 @@ class test_function_return(BaseModel):
     message: Optional[str] = None
     error_message: Optional[str] = None
     time: Optional[str] = None
+    should_fail: Optional[bool] = False
 
 
 class Test_Class:
@@ -78,5 +79,6 @@ class Test_Class:
         return test_function_return(
             result="success" if response.status_code else "failed",
             http_code=response.status_code,
+            should_fail=should_fail,
             **message_type,
         )
