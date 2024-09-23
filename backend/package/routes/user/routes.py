@@ -39,7 +39,7 @@ class User_Router(APIRouter):
             endpoint=self.get_user_route,
         )
         self.add_api_route(methods=["GET"], path="/", endpoint=self.find_users_route)
-        self.add_api_route(path="/self", endpoint=self.self_route, methods=["GET"])
+        self.add_api_route(path="/whoami", endpoint=self.self_route, methods=["GET"])
         self.add_api_route(
             path="/{user_id}", endpoint=self.update_user_route, methods=["PUT"]
         )

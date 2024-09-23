@@ -46,7 +46,7 @@ async def find_users(user_query: dict = {}) -> List[User]:
     return [User.model_validate(user) for user in users]
 
 
-async def create_user(user: User) -> User:
+async def create_user(user: UserForEdit) -> UserForEdit:
     try:
         # check if there are any Users with the same name:
         users = await find_users(
@@ -61,8 +61,17 @@ async def create_user(user: User) -> User:
                 detail="A User this name does with already exists",
             )
 
+        user_for_db = UserInDB(
+            **user.model_dump(exclude_unset=True, exclude={"password"})
+        )
+        user_for_db.hashed_password = bcrypt.hashpw(
+            user.password.encode("utf-8"), bcrypt.gensalt()
+        )
+
         # insert User
-        user_id = DB_COLLECTIONS["users"].insert_one(user.model_dump()).inserted_id
+        user_id = (
+            DB_COLLECTIONS["users"].insert_one(user_for_db.model_dump()).inserted_id
+        )
         user = await get_user(user_id)
     except Exception as e:
         LOGGER.error(f"Error creating User: {e}")

@@ -77,7 +77,7 @@ class Test_Class:
         else:
             message_type["error_message"] = message_content
         return test_function_return(
-            result="success" if response.status_code else "failed",
+            result="success" if test_sucessful else "failed",
             http_code=response.status_code,
             should_fail=should_fail,
             **message_type,
