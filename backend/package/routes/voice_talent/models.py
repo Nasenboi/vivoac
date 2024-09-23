@@ -10,7 +10,7 @@ from typing import Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
-from ...utils.models import Address, CreatedUpdatedAt, PydanticObjectId
+from ...utils.models import Address, CreatedUpdatedAt, CustomDateTime, PydanticObjectId
 from .functions import *
 
 """
@@ -24,7 +24,7 @@ class Voice_Talent(BaseModel, CreatedUpdatedAt):
     last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     voices: Optional[list[str]] = None
-    birth_date: Optional[str] = None
+    birth_date: Optional[CustomDateTime] = None
     gender: Optional[
         Union[Literal["male", "female", "transgender", "non-binary"], str]
     ] = None

@@ -145,7 +145,7 @@ class ElevenLabs_TTS_Engine(AI_API_Engine):
         # type file response
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
-        temp_file_name = "voice" + "_" + datetime.now().strftime("%-y%m%d_%H%M%S")
+        temp_file_name = "voice" + "_" + datetime.now().strftime("%y-%m-%d_%H%M%S")
         temp_file = os.path.join(
             SETTINGS_GLOBAL.get("directories").get("temp"), temp_file_name + ".wav"
         )

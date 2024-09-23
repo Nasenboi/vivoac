@@ -4,7 +4,7 @@ Description: This voice_talent tester class with test all functions inside the v
 Imports:
 """
 
-from datetime import date
+from datetime import datetime
 
 from fastapi.responses import Response
 from package.globals import LOGGER
@@ -24,7 +24,7 @@ class Voice_Talent_Tests(Test_Class):
         first_name="Max",
         last_name="Mustermann",
         email="max.mustermann@vivoac.de",
-        birth_date=date.today().isoformat(),
+        birth_date=datetime.today(),
         gender="male",
     )
 

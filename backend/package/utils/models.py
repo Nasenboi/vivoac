@@ -8,11 +8,27 @@ from datetime import datetime
 from typing import Annotated, Any, Callable, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PlainSerializer,
+    PlainValidator,
+    model_validator,
+)
 from pydantic_core import core_schema
 
 """
 ########################################################################################"""
+
+# Pydantics model_dump has issues when dumping datetime objects but functions expecting strings.
+CustomDateTime = Annotated[
+    datetime,
+    PlainSerializer(lambda x: x.strftime("%y-%m-%d_%H:%M:%S"), return_type=str),
+    PlainValidator(
+        lambda x: datetime.strptime(x, "%y-%m-%d_%H:%M:%S") if type(x) == str else x
+    ),
+]
 
 
 class _ObjectIdPydanticAnnotation:
@@ -53,8 +69,8 @@ class CreatedUpdatedAt:
     Thanks to: martintrapp [https://stackoverflow.com/questions/73128975/pydantic-created-at-and-updated-at-fields]
     """
 
-    created_at: Optional[datetime] = Field(default_factory=datetime.now)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    created_at: Optional[CustomDateTime] = Field(default_factory=datetime.now)
+    updated_at: Optional[CustomDateTime] = Field(default_factory=datetime.now)
 
     model_config = ConfigDict(
         validate_assignment=True,
