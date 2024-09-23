@@ -7,6 +7,7 @@ Imports:
 from time import time
 from typing import List, Literal, Optional, Type
 
+from fastapi.responses import Response
 from package.utils.classes.test_client import CustomTestClient
 from pydantic import BaseModel
 
@@ -19,9 +20,9 @@ from ..globals import LOGGER
 class test_function_return(BaseModel):
     function: Optional[str] = ""
     test_class: Optional[str] = ""
-    result: Literal["success", "assert"] = "success"
+    result: Literal["success", "failed"] = "success"
     http_code: Optional[int] = None
-    message: Optional[str] = "This is an empty function return message"
+    message: Optional[str] = None
     error_message: Optional[str] = None
     time: Optional[str] = None
 
@@ -61,3 +62,21 @@ class Test_Class:
 
         LOGGER.info(f"Finished the Script Tests for route: {self.route}")
         return self.results
+
+    def generate_test_result(
+        self, response: Response, should_fail=False
+    ) -> test_function_return:
+        test_sucessful: bool = (
+            response.status_code != 200 if should_fail else response.status_code == 200
+        )
+        message_type = {}
+        message_content = str(response.json().get("data"))
+        if test_sucessful:
+            message_type["message"] = message_content
+        else:
+            message_type["error_message"] = message_content
+        return test_function_return(
+            result="success" if response.status_code else "failed",
+            http_code=response.status_code,
+            **message_type,
+        )

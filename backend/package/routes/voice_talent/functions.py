@@ -6,12 +6,12 @@ Imports:
 
 from typing import List
 
-from bson import ObjectId
 from fastapi import HTTPException
 
 from ...db import DB_COLLECTIONS
 from ...globals import LOGGER
-from .models import *
+from ...utils.models import PydanticObjectId
+from .models import Voice_Talent
 
 """
 ########################################################################################"""

@@ -4,8 +4,11 @@ Description: This voice_talent tester class with test all functions inside the v
 Imports:
 """
 
-from ..globals import LOGGER
-from ..routes.script.models import Script_Line
+from datetime import date
+
+from fastapi.responses import Response
+from package.globals import LOGGER
+
 from ..routes.voice_talent.models import Voice_Talent
 from .test_class import Test_Class, test_function_return
 
@@ -21,7 +24,7 @@ class Voice_Talent_Tests(Test_Class):
         first_name="Max",
         last_name="Mustermann",
         email="max.mustermann@vivoac.de",
-        birth_date="today",
+        birth_date=date.today().isoformat(),
         gender="male",
     )
 
@@ -30,22 +33,17 @@ class Voice_Talent_Tests(Test_Class):
             url=f"/voice_talent/",
             headers={**self.base_header},
             json=self.test_voice_talent.model_dump(
-                exclude_unset=True, exclude={"id", "created_at", "updated_at"}
+                exclude_unset=True,
+                exclude={"id", "created_at", "updated_at"},
             ),
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code == 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
         self.test_voice_talent.id = response.json().get("data").get("_id")
-        return results
+        if not self.test_voice_talent.id:
+            LOGGER.warning(
+                "No ID returned from the response, something is seriously wrong!"
+            )
+            response = Response(status_code=404, content={"data": {"No ID returned"}})
+        return self.generate_test_result(response)
 
     def dont_create_duplicate(self) -> test_function_return:
         response = self.client.post(
@@ -55,36 +53,14 @@ class Voice_Talent_Tests(Test_Class):
                 exclude_unset=True, exclude={"id", "created_at", "updated_at"}
             ),
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code != 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code != 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response, should_fail=True)
 
     def get_voice_talent_by_id(self) -> test_function_return:
         response = self.client.get(
             url=f"/voice_talent/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code == 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response)
 
     def get_voice_talent_by_query(self) -> test_function_return:
         response = self.client.get(
@@ -96,18 +72,7 @@ class Voice_Talent_Tests(Test_Class):
                 "email": self.test_voice_talent.email,
             },
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code == 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response)
 
     def update_voice_talent(self) -> test_function_return:
         response = self.client.put(
@@ -117,54 +82,21 @@ class Voice_Talent_Tests(Test_Class):
                 "first_name": "Moritz",
             },
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code == 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code != 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response)
 
     def delete_voice_talent(self) -> test_function_return:
         response = self.client.delete(
             url=f"/voice_talent/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code == 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response)
 
     def voice_talent_should_not_exist(self) -> test_function_return:
         response = self.client.get(
             url=f"/voice_talent/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
-        message_type = {}
-        message_content = str(response.json().get("data"))
-        if response.status_code != 200:
-            message_type["message"] = message_content
-        else:
-            message_type["error_message"] = message_content
-        results = test_function_return(
-            result="success" if response.status_code != 200 else "assert",
-            http_code=response.status_code,
-            **message_type,
-        )
-        return results
+        return self.generate_test_result(response, should_fail=True)
 
     test_functions = [
         create_voice_talent,

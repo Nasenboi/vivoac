@@ -4,6 +4,7 @@ Description:
 Imports:
 """
 
+from datetime import date
 from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
