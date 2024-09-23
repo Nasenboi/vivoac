@@ -30,7 +30,7 @@ class Voice_Talent_Tests(Test_Class):
 
     def create_voice_talent(self) -> test_function_return:
         response = self.client.post(
-            url=f"/voice_talent/",
+            url=f"/voice_talent/crud",
             headers={**self.base_header},
             json=self.test_voice_talent.model_dump(
                 exclude_unset=True,
@@ -47,7 +47,7 @@ class Voice_Talent_Tests(Test_Class):
 
     def dont_create_duplicate(self) -> test_function_return:
         response = self.client.post(
-            url=f"/voice_talent/",
+            url=f"/voice_talent/crud",
             headers={**self.base_header},
             json=self.test_voice_talent.model_dump(
                 exclude_unset=True, exclude={"id", "created_at", "updated_at"}
@@ -57,14 +57,14 @@ class Voice_Talent_Tests(Test_Class):
 
     def get_voice_talent_by_id(self) -> test_function_return:
         response = self.client.get(
-            url=f"/voice_talent/{self.test_voice_talent.id}",
+            url=f"/voice_talent/crud{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response)
 
     def get_voice_talent_by_query(self) -> test_function_return:
         response = self.client.get(
-            url=f"/voice_talent/",
+            url=f"/voice_talent/find",
             headers={**self.base_header},
             params={
                 "first_name": self.test_voice_talent.first_name,
@@ -76,7 +76,7 @@ class Voice_Talent_Tests(Test_Class):
 
     def update_voice_talent(self) -> test_function_return:
         response = self.client.put(
-            url=f"/voice_talent/{self.test_voice_talent.id}",
+            url=f"/voice_talent/crud/{self.test_voice_talent.id}",
             headers={**self.base_header},
             json={
                 "first_name": "Moritz",
@@ -86,14 +86,14 @@ class Voice_Talent_Tests(Test_Class):
 
     def delete_voice_talent(self) -> test_function_return:
         response = self.client.delete(
-            url=f"/voice_talent/{self.test_voice_talent.id}",
+            url=f"/voice_talent/crud/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response)
 
     def voice_talent_should_not_exist(self) -> test_function_return:
         response = self.client.get(
-            url=f"/voice_talent/{self.test_voice_talent.id}",
+            url=f"/voice_talent/crud/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response, should_fail=True)

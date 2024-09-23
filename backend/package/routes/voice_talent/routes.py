@@ -33,25 +33,25 @@ class Voice_Talent_Router(APIRouter):
 
         self.add_api_route(
             methods=["GET"],
-            path="/{voice_talent_id}",
+            path="/crud/{voice_talent_id}",
             endpoint=self.get_voice_talent_route,
         )
         self.add_api_route(
-            methods=["GET"], path="/", endpoint=self.find_voice_talents_route
+            methods=["GET"], path="/find", endpoint=self.find_voice_talents_route
         )
         self.add_api_route(
             methods=["POST"],
-            path="/",
+            path="/crud",
             endpoint=self.create_voice_talent_route,
         )
         self.add_api_route(
             methods=["PUT"],
-            path="/{voice_talent_id}",
+            path="/crud/{voice_talent_id}",
             endpoint=self.update_voice_talent_route,
         )
         self.add_api_route(
             methods=["DELETE"],
-            path="/{voice_talent_id}",
+            path="/crud/{voice_talent_id}",
             endpoint=self.delete_voice_talent_route,
         )
 

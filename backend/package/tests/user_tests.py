@@ -34,7 +34,7 @@ class User_Tests(Test_Class):
 
     def create_user(self) -> test_function_return:
         response = self.client.post(
-            url=f"/user/",
+            url=f"/user/crud/",
             headers={**self.base_header},
             json=self.user_dummy.model_dump(
                 exclude_unset=True,
@@ -49,14 +49,14 @@ class User_Tests(Test_Class):
 
     def get_user_by_id(self) -> test_function_return:
         response = self.client.get(
-            url=f"/user/{self.user_dummy.id}",
+            url=f"/user/crud/{self.user_dummy.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response)
 
     def get_user_by_query(self) -> test_function_return:
         response = self.client.get(
-            url=f"/user/",
+            url=f"/user/find",
             headers={**self.base_header},
             params={
                 "first_name": self.user_dummy.first_name,
@@ -68,7 +68,7 @@ class User_Tests(Test_Class):
 
     def update_user(self) -> test_function_return:
         response = self.client.put(
-            url=f"/user/{self.user_dummy.id}",
+            url=f"/user/crud/{self.user_dummy.id}",
             headers={**self.base_header},
             json={
                 "first_name": "Moritz",
@@ -87,7 +87,7 @@ class User_Tests(Test_Class):
 
     def check_if_token_works(self) -> test_function_return:
         response = self.client.get(
-            "/user/whoami/",
+            "/user/self/",
             headers={
                 "Authorization": f"Bearer {self.user_dummy_token}",
                 "api-version": self.api_version,
@@ -97,7 +97,7 @@ class User_Tests(Test_Class):
 
     def invalid_tokens_should_fail(self) -> test_function_return:
         response = self.client.get(
-            "/user/whoami/",
+            "/user/self/",
             headers={
                 "Authorization": f"Bearer invalid_dummy_token",
                 "api_version": self.api_version,
@@ -107,14 +107,14 @@ class User_Tests(Test_Class):
 
     def delete_user(self) -> test_function_return:
         response = self.client.delete(
-            url=f"/user/{self.user_dummy.id}",
+            url=f"/user/crud/{self.user_dummy.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response)
 
     def user_should_not_exist(self) -> test_function_return:
         response = self.client.get(
-            url=f"/user/{self.user_dummy.id}",
+            url=f"/user/crud/{self.user_dummy.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response, should_fail=True)

@@ -32,19 +32,21 @@ class User_Router(APIRouter):
         self.route_parameters.update(kwargs)
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
-        self.add_api_route(path="/", endpoint=self.add_user_route, methods=["POST"])
+        self.add_api_route(path="/crud", endpoint=self.add_user_route, methods=["POST"])
         self.add_api_route(
             methods=["GET"],
-            path="/{user_id}",
+            path="/crud/{user_id}",
             endpoint=self.get_user_route,
         )
-        self.add_api_route(methods=["GET"], path="/", endpoint=self.find_users_route)
-        self.add_api_route(path="/whoami", endpoint=self.self_route, methods=["GET"])
         self.add_api_route(
-            path="/{user_id}", endpoint=self.update_user_route, methods=["PUT"]
+            methods=["GET"], path="/find", endpoint=self.find_users_route
+        )
+        self.add_api_route(path="/self", endpoint=self.self_route, methods=["GET"])
+        self.add_api_route(
+            path="/crud/{user_id}", endpoint=self.update_user_route, methods=["PUT"]
         )
         self.add_api_route(
-            path="/{user_id}", endpoint=self.delete_user_route, methods=["DELETE"]
+            path="/crud/{user_id}", endpoint=self.delete_user_route, methods=["DELETE"]
         )
 
     async def add_user_route(
