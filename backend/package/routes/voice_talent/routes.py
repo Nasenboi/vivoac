@@ -98,7 +98,7 @@ class Voice_Talent_Router(APIRouter):
         vivoac_base_header: Annotated[
             VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
         ],
-        voice_talent_id: str,
+        voice_talent_id: PydanticObjectId,
         voice_talent: Voice_Talent,
     ) -> VivoacBaseResponse[Voice_Talent]:
         return VivoacBaseResponse[Voice_Talent](
