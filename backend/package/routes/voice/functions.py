@@ -53,8 +53,7 @@ async def create_voice(voice: Voice) -> Voice:
         # check if there are any voices with the same name:
         voices = await find_voices(
             voice_query={
-                "first_name": voice.first_name,
-                "last_name": voice.last_name,
+                "name": voice.name,
             }
         )
         if len(voices) > 0:

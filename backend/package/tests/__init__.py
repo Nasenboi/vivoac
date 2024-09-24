@@ -11,5 +11,13 @@ def get_test_classes() -> List[Type[Test_Class]]:
     from .script_tests import Script_Tests
     from .user_tests import User_Tests
     from .voice_talent_tests import Voice_Talent_Tests
+    from .voice_tests import Voice_Tests
 
-    return [Script_Tests, Engine_Tests, AI_API_Tests, Voice_Talent_Tests, User_Tests]
+    return [
+        Script_Tests,
+        Engine_Tests,
+        AI_API_Tests,
+        Voice_Talent_Tests,
+        Voice_Tests,
+        User_Tests,
+    ]
