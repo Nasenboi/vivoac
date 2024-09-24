@@ -79,11 +79,9 @@ async def update_voice_talent(
     voice_talent_id: str, voice_talent: Voice_Talent
 ) -> Voice_Talent:
     try:
-        voice_talent_update = {
-            k: v
-            for k, v in voice_talent.model_dump().items()
-            if v and k not in ["_id", "created_at"]
-        }
+        voice_talent_update = voice_talent.model_dump(
+            exclude_unset=True, exclude={"_id", "created_at", "updated_at"}
+        )
 
         # update voice talent
         DB_COLLECTIONS["voice_talents"].update_one(

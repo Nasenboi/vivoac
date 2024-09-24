@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -38,4 +38,4 @@ class Voice_Map(BaseModel):
 # -- Query Model --
 # Ignore all fields that do not fit into a query
 class Voice_Query(Voice):
-    pass
+    Labels: None = None

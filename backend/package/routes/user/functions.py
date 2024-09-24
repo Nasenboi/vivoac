@@ -81,11 +81,9 @@ async def create_user(user: UserForEdit) -> UserForEdit:
 
 async def update_user(user_id: str, user: User) -> User:
     try:
-        user_update = {
-            k: v
-            for k, v in user.model_dump().items()
-            if v and k not in ["_id", "created_at"]
-        }
+        user_update = user.model_dump(
+            exclude_unset=True, exclude={"_id", "created_at", "updated_at"}
+        )
 
         # update User
         DB_COLLECTIONS["users"].update_one({"_id": user_id}, {"$set": user_update})

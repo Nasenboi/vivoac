@@ -54,6 +54,16 @@ class Voice_Router(APIRouter):
         self.add_api_route(
             methods=["GET"], path="/find", endpoint=self.find_voices_route
         )
+        self.add_api_route(
+            methods=["GET"],
+            path="/validate_mapping/{voice_id}",
+            endpoint=self.validate_voice_mapping_route,
+        )
+        self.add_api_route(
+            methods=["PUT"],
+            path="/map",
+            endpoint=self.map_voice_route,
+        )
 
     # -- Get --
     async def get_voice_route(
@@ -99,6 +109,27 @@ class Voice_Router(APIRouter):
     ) -> VivoacBaseResponse[Voice]:
         return VivoacBaseResponse(
             data=await update_voice(voice_id=voice_id, voice=voice)
+        )
+
+    async def validate_voice_mapping_route(
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
+        ],
+        voice_id: PydanticObjectId,
+    ) -> VivoacBaseResponse[Voice]:
+        voice = await get_voice(voice_id=voice_id)
+        return VivoacBaseResponse(data=await validate_voice_mapping(voice=voice))
+
+    async def map_voice_route(
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
+        ],
+        voice_map: Voice_Map,
+    ) -> VivoacBaseResponse[Voice]:
+        return VivoacBaseResponse(
+            data=await map_voice(voice_map=voice_map, api_engine=self.api_engine)
         )
 
     # -- Delete --
