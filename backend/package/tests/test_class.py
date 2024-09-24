@@ -5,7 +5,7 @@ Imports:
 """
 
 from time import time
-from typing import List, Literal, Optional, Type
+from typing import Any, List, Literal, Optional, Type
 
 from fastapi.responses import Response
 from package.utils.classes.test_client import CustomTestClient
@@ -22,8 +22,8 @@ class test_function_return(BaseModel):
     test_class: Optional[str] = ""
     result: Literal["success", "failed"] = "success"
     http_code: Optional[int] = None
-    message: Optional[str] = None
-    error_message: Optional[str] = None
+    message: Optional[Any] = None
+    error_message: Optional[Any] = None
     time: Optional[str] = None
     should_fail: Optional[bool] = False
 
@@ -58,26 +58,29 @@ class Test_Class:
             result.time = str(time() - start_time)
             result.function = function.__name__
             result.test_class = self.__class__.__name__
-            results.append(result.model_dump())
+            results.append(result.model_dump(exclude_unset=True))
 
         LOGGER.info(f"Finished the Script Tests for route: {self.route}")
         return results
 
     def generate_test_result(
-        self, response: Response, should_fail=False
+        self, response: Response, should_fail=False, alt_message=None, alt_code=None
     ) -> test_function_return:
-        test_sucessful: bool = (
-            response.status_code != 200 if should_fail else response.status_code == 200
-        )
+        status_code = alt_code if alt_code else response.status_code
+        test_sucessful: bool = status_code != 200 if should_fail else status_code == 200
         message_type = {}
-        message_content = str(response.json().get("data"))
+        if alt_message:
+            message_content = alt_message
+        else:
+            message_content = response.json().get("data")
+
         if test_sucessful:
             message_type["message"] = message_content
         else:
             message_type["error_message"] = message_content
         return test_function_return(
             result="success" if test_sucessful else "failed",
-            http_code=response.status_code,
+            http_code=status_code,
             should_fail=should_fail,
             **message_type,
         )

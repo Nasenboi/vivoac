@@ -4,7 +4,11 @@ Description:
 Imports:
 """
 
-from ..globals import LOGGER
+from typing import get_args
+
+from fastapi.responses import Response
+
+from ..routes.engine_backend.models import ENGINE_TYPES
 from .test_class import Test_Class, test_function_return
 
 """
@@ -15,40 +19,45 @@ class Engine_Tests(Test_Class):
     # class variables
     route: str = "engine"
 
-    def get_engines(self) -> test_function_return:
-        LOGGER.debug(f"Starting the Engine Test: get_engines")
+    def get_engine_names(self) -> test_function_return:
         response = self.client.get(
-            url=f"/session/engine/get/",
-            headers={"session-id": self.session_id},
+            url=f"/engine/names",
+            headers={**self.base_header},
         )
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            message=str(response.json()),
-            error_message=None,
-        )
-        return results
+        return self.generate_test_result(response)
 
-    def get_engine_settings(self) -> test_function_return:
-        LOGGER.debug(f"Starting the Engine Test: get_engine_settings")
-        engines_to_test = ["ai_api_engine", "script_db_engine"]
-        results = test_function_return(
-            result="success",
-            http_code=200,
-            message="",
-            error_message=None,
+    def get_engine_modules(self, engine_type: ENGINE_TYPES) -> Response:
+        return self.client.get(
+            url=f"/engine/get_modules/" + engine_type,
+            headers={**self.base_header},
         )
-        for engine in engines_to_test:
-            response = self.client.get_with_payload(
-                url=f"/session/engine/settings/get",
-                headers={"session-id": self.session_id},
-                params={"engine_module_name": engine},
-            )
+
+    def get_both_module_lists(self) -> test_function_return:
+        modules = {}
+        for engine in get_args(ENGINE_TYPES):
+            response = self.get_engine_modules(engine)
             if response.status_code != 200:
-                results.result = "assert"
-                results.http_code = response.status_code
-                results.error_message = str(response.json())
-                break
-        return results
+                return self.generate_test_result(response)
+            else:
+                modules[engine] = response.json().get("data")
 
-    test_functions = []
+        return self.generate_test_result(response, alt_message=modules)
+
+    def get_engine_settings(self, engine_type: ENGINE_TYPES) -> Response:
+        return self.client.get(
+            url=f"/engine/settings/{engine_type}/get",
+            headers={**self.base_header},
+        )
+
+    def get_both_engine_settings(self) -> test_function_return:
+        settings = {}
+        for engine in get_args(ENGINE_TYPES):
+            response = self.get_engine_settings(engine)
+            if response.status_code != 200:
+                return self.generate_test_result(response)
+            else:
+                settings[engine] = response.json().get("data")
+
+        return self.generate_test_result(response, alt_message=settings)
+
+    test_functions = [get_engine_names, get_both_module_lists, get_both_engine_settings]

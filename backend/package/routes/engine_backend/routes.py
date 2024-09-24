@@ -102,7 +102,7 @@ class Engine_Router(APIRouter):
             Depends(get_vivoac_base_header_dependency()),
         ],
         engine_type: ENGINE_TYPES,
-    ) -> VivoacBaseResponse[Dict[str, dict]]:
+    ) -> VivoacBaseResponse[dict]:
         if engine_type == "ai_api_engine":
             data = await self.api_engine.engine_backend.get_ai_api_engine_settings()
         elif engine_type == "script_db_engine":

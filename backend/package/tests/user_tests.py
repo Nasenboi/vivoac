@@ -4,12 +4,9 @@ Description: This user tester class with test all functions inside the user rout
 Imports:
 """
 
-from datetime import datetime
-
-from fastapi.responses import Response
 from package.globals import LOGGER
 
-from ..routes.user.models import User, UserForEdit
+from ..routes.user.models import UserForEdit
 from .test_class import Test_Class, test_function_return
 
 """
@@ -44,7 +41,9 @@ class User_Tests(Test_Class):
         self.user_dummy.id = response.json().get("data").get("_id")
         if not self.user_dummy.id:
             LOGGER.warning("No ID returned from the response, something is wrong!")
-            response = Response(status_code=404, content={"data": {"No ID returned"}})
+            return self.generate_test_result(
+                alt_message={"No ID returned"}, alt_code=404
+            )
         return self.generate_test_result(response)
 
     def get_user_by_id(self) -> test_function_return:

@@ -40,7 +40,9 @@ class Voice_Tests(Test_Class):
             LOGGER.warning(
                 "No ID returned from the response, something is seriously wrong!"
             )
-            response = Response(status_code=404, content={"data": {"No ID returned"}})
+            return self.generate_test_result(
+                alt_code=404, alt_message={"No ID returned"}
+            )
         return self.generate_test_result(response)
 
     def dont_create_duplicate(self) -> test_function_return:

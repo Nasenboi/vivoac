@@ -6,7 +6,6 @@ Imports:
 
 from datetime import datetime
 
-from fastapi.responses import Response
 from package.globals import LOGGER
 
 from ..routes.voice_talent.models import Voice_Talent
@@ -42,7 +41,9 @@ class Voice_Talent_Tests(Test_Class):
             LOGGER.warning(
                 "No ID returned from the response, something is seriously wrong!"
             )
-            response = Response(status_code=404, content={"data": {"No ID returned"}})
+            return self.generate_test_result(
+                alt_code=404, alt_message={"No ID returned"}
+            )
         return self.generate_test_result(response)
 
     def dont_create_duplicate(self) -> test_function_return:
