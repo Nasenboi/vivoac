@@ -42,12 +42,12 @@ class Engine_Router(APIRouter):
             path="/set/{engine_type}", endpoint=self.set_engine_route, methods=["PUT"]
         )
         self.add_api_route(
-            path="/settings/get",
+            path="/settings/{engine_type}/get",
             endpoint=self.get_engine_settings_route,
             methods=["GET"],
         )
         self.add_api_route(
-            path="/settings/update",
+            path="/settings/{engine_type}/update",
             endpoint=self.update_engine_settings_route,
             methods=["PUT"],
         )
@@ -101,11 +101,12 @@ class Engine_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency()),
         ],
+        engine_type: ENGINE_TYPES,
     ) -> VivoacBaseResponse[Dict[str, dict]]:
-        data = {
-            "ai_api_engine": await self.api_engine.engine_backend.get_ai_api_engine_settings(),
-            "script_db_engine": await self.api_engine.engine_backend.get_script_db_engine_settings(),
-        }
+        if engine_type == "ai_api_engine":
+            data = await self.api_engine.engine_backend.get_ai_api_engine_settings()
+        elif engine_type == "script_db_engine":
+            data = await self.api_engine.engine_backend.get_script_db_engine_settings()
         return VivoacBaseResponse(data=data)
 
     async def update_engine_settings_route(
@@ -114,12 +115,11 @@ class Engine_Router(APIRouter):
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
-        ai_api_engine_settings: Optional[Dict[str, Any]] = None,
-        script_db_engine_settings: Optional[Dict[str, Any]] = None,
+        engine_type: ENGINE_TYPES,
+        settings: Optional[Dict[str, Any]] = None,
     ) -> VivoacBaseResponse[Dict[str, Dict[str, Any]]]:
         LOGGER.debug(f"Updating engine settings.")
         data = await self.api_engine.engine_backend.update_engine_module_settings(
-            ai_api_engine_settings=ai_api_engine_settings,
-            script_db_engine_settings=script_db_engine_settings,
+            engine_type=engine_type, settings=settings
         )
         return VivoacBaseResponse(data=data)

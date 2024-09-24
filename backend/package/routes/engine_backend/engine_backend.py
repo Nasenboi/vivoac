@@ -75,18 +75,16 @@ class Engine_Backend:
 
     async def update_engine_module_settings(
         self,
-        ai_api_engine_settings: dict = None,
-        script_db_engine_settings: dict = None,
-    ) -> Dict[str, Dict[str, Any]]:
-        if ai_api_engine_settings:
-            self.engine_modules.ai_api_engine.set_class_variables(
-                ai_api_engine_settings
-            )
-        if script_db_engine_settings:
-            self.engine_modules.script_db_engine.set_class_variables(
-                script_db_engine_settings
-            )
-        return {
-            "ai_api_engine": await self.get_ai_api_engine_settings(),
-            "script_db_engine": await self.get_script_db_engine_settings(),
-        }
+        engine_type: ENGINE_TYPES,
+        settings: dict = None,
+    ) -> Dict[str, Any]:
+        if engine_type == "ai_api_engine":
+            self.engine_modules.ai_api_engine.set_class_variables(settings)
+            return {
+                engine_type: await self.get_ai_api_engine_settings(),
+            }
+        elif engine_type == "script_db_engine":
+            self.engine_modules.script_db_engine.set_class_variables(settings)
+            return {
+                engine_type: await self.get_script_db_engine_settings(),
+            }
