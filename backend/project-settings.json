@@ -55,7 +55,8 @@
             "stdout": {
                 "class": "logging.StreamHandler",
                 "formatter": "colored",
-                "stream": "ext://sys.stdout"
+                "stream": "ext://sys.stdout",
+                "level": "INFO"
             }
         },
         "loggers": {
