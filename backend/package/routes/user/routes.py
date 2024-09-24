@@ -39,15 +39,15 @@ class User_Router(APIRouter):
             endpoint=self.get_user_route,
         )
         self.add_api_route(
-            methods=["GET"], path="/find", endpoint=self.find_users_route
-        )
-        self.add_api_route(path="/self", endpoint=self.self_route, methods=["GET"])
-        self.add_api_route(
             path="/crud/{user_id}", endpoint=self.update_user_route, methods=["PUT"]
         )
         self.add_api_route(
             path="/crud/{user_id}", endpoint=self.delete_user_route, methods=["DELETE"]
         )
+        self.add_api_route(
+            methods=["GET"], path="/find", endpoint=self.find_users_route
+        )
+        self.add_api_route(path="/self", endpoint=self.self_route, methods=["GET"])
 
     async def add_user_route(
         self,

@@ -29,7 +29,7 @@ class Script_DB_Engine(Base_Engine):
         pass
 
     @virtual
-    def get_script_lines(
+    def find_script_lines(
         self, script: Optional[Script_Line] = Script_Line()
     ) -> List[Script_Line]:
         pass

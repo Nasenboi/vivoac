@@ -32,17 +32,14 @@ class Voice_Router(APIRouter):
         self.api_engine = api_engine
 
         self.add_api_route(
-            methods=["GET"],
-            path="/crud/{voice_id}",
-            endpoint=self.get_voice_route,
-        )
-        self.add_api_route(
-            methods=["GET"], path="/find", endpoint=self.find_voices_route
-        )
-        self.add_api_route(
             methods=["POST"],
             path="/crud",
             endpoint=self.create_voice_route,
+        )
+        self.add_api_route(
+            methods=["GET"],
+            path="/crud/{voice_id}",
+            endpoint=self.get_voice_route,
         )
         self.add_api_route(
             methods=["PUT"],
@@ -53,6 +50,9 @@ class Voice_Router(APIRouter):
             methods=["DELETE"],
             path="/crud/{voice_id}",
             endpoint=self.delete_voice_route,
+        )
+        self.add_api_route(
+            methods=["GET"], path="/find", endpoint=self.find_voices_route
         )
 
     # -- Get --

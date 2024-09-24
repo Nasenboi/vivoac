@@ -71,7 +71,7 @@ class Excel_Script_DB_Engine(Script_DB_Engine):
             return []
         return scripts
 
-    def get_script_lines(
+    def find_script_lines(
         self, script: Script_Line = Script_Line()
     ) -> List[Script_Line]:
         # Checks before we search the database:

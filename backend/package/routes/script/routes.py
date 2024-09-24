@@ -32,12 +32,12 @@ class Script_Router(APIRouter):
         super().__init__(**self.route_parameters)
         self.api_engine = api_engine
         self.add_api_route(
-            path="/get",
-            endpoint=self.get_script_lines_route,
+            path="/find",
+            endpoint=self.find_script_lines_route,
             methods=["GET"],
         )
 
-    async def get_script_lines_route(
+    async def find_script_lines_route(
         self,
         vivoac_base_header: Annotated[
             VivoacBaseHeader,
@@ -46,5 +46,6 @@ class Script_Router(APIRouter):
         script_line: Annotated[Script_Line, Depends()],
     ) -> VivoacBaseResponse[List[Script_Line]]:
         LOGGER.debug(f"Getting script lines for {script_line}")
-        data = await self.api_engine.script_db_engine.get_script_lines(script_line)
-        VivoacBaseResponse(data=data)
+        VivoacBaseResponse(
+            data=await self.api_engine.script_db_engine.find_script_lines(script_line)
+        )
