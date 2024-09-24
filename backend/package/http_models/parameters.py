@@ -7,7 +7,7 @@ Imports:
 from typing import Optional
 
 from fastapi import Depends, Header, HTTPException, status
-from packaging.version import Version
+from packaging.version import InvalidVersion, Version
 
 from ..globals import SETTINGS_GLOBAL
 from ..routes.user.dependencies import get_admin_user, get_current_user
@@ -24,11 +24,19 @@ def empty_dependency():
 
 async def check_api_version(api_version: str = Header()) -> str:
     min_version = SETTINGS_GLOBAL.get("metadata", {}).get("api_min_version", "0.0.0")
-    if Version(api_version) < Version(min_version):
+    try:
+        client_version = Version(api_version)
+    except InvalidVersion:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"API version {api_version} is not valid.",
+        )
+    if client_version < Version(min_version):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"API version {api_version} is not supported. Minimum version is {min_version}",
         )
+
     return api_version
 
 
