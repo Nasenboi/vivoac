@@ -4,7 +4,9 @@ Description:
 Imports:
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
+
+from fastapi import HTTPException
 
 from ...modules import get_engine_modules
 from .models import *
@@ -25,11 +27,11 @@ class Engine_Backend:
     ):
         self.engine_modules.ai_api_engine = ai_api_engine_modules.get(
             ai_api_engine_module, engine_modules["ai_api_engine"]["Piper_TTS_Engine"]
-        )
+        )()
         self.engine_modules.script_db_engine = script_db_engine_modules.get(
             script_db_engine_module,
             engine_modules["script_db_engine"]["Excel_Script_DB_Engine"],
-        )
+        )()
 
     async def get_ai_api_engine_name(self) -> str:
         return self.engine_modules.ai_api_engine.__class__.__name__
@@ -45,28 +47,30 @@ class Engine_Backend:
 
     async def set_engine_module(
         self,
-        ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = None,
-        script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = None,
+        engine_type: ENGINE_TYPES,
+        module: Union[AI_API_ENGINE_MODULE_KEYS, SCRIPT_DB_ENGINE_MODULE_KEYS],
     ) -> Dict[str, str]:
-        self.engine_modules.ai_api_engine = (
-            ai_api_engine_modules.get(
-                ai_api_engine_module,
-                engine_modules["ai_api_engine"]["Piper_TTS_Engine"],
+        if (
+            engine_type == "ai_api_engine"
+            and module != self.engine_modules.ai_api_engine.__class__.__name__
+            and ai_api_engine_modules.get(module)
+        ):
+            self.engine_modules.ai_api_engine = ai_api_engine_modules.get(module)()
+        elif (
+            engine_type == "script_db_engine"
+            and module != self.engine_modules.script_db_engine.__class__.__name__
+            and script_db_engine_modules.get(module)
+        ):
+            self.engine_modules.script_db_engine = script_db_engine_modules.get(
+                module
+            )()
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid engine type or module: {engine_type}, {module}",
             )
-            if ai_api_engine_module
-            else self.engine_modules.ai_api_engine
-        )
-        self.engine_modules.script_db_engine = (
-            script_db_engine_modules.get(
-                script_db_engine_module,
-                engine_modules["script_db_engine"]["Excel_Script_DB_Engine"],
-            )
-            if script_db_engine_module
-            else self.engine_modules.script_db_engine
-        )
         return {
-            "ai_api_engine": await self.get_ai_api_engine_name(),
-            "script_db_engine": await self.get_script_db_engine_name(),
+            engine_type: module,
         }
 
     async def update_engine_module_settings(

@@ -4,7 +4,7 @@ Description:
 Imports:
 """
 
-from typing import Annotated, Any, Dict, Union
+from typing import Annotated, Any, Dict, List, Union
 
 from fastapi import APIRouter, Body, Depends
 
@@ -31,10 +31,15 @@ class Engine_Router(APIRouter):
         self.api_engine = api_engine
 
         self.add_api_route(
-            path="/get", endpoint=self.get_engines_route, methods=["GET"]
+            path="/names", endpoint=self.get_engine_names_route, methods=["GET"]
         )
         self.add_api_route(
-            path="/set", endpoint=self.set_engines_route, methods=["PUT"]
+            path="/get_modules/{engine_type}",
+            endpoint=self.get_modules_route,
+            methods=["GET"],
+        )
+        self.add_api_route(
+            path="/set/{engine_type}", endpoint=self.set_engine_route, methods=["PUT"]
         )
         self.add_api_route(
             path="/settings/get",
@@ -47,7 +52,7 @@ class Engine_Router(APIRouter):
             methods=["PUT"],
         )
 
-    async def get_engines_route(
+    async def get_engine_names_route(
         self,
         vivoac_base_header: Annotated[
             VivoacBaseHeader, Depends(get_vivoac_base_header_dependency())
@@ -59,23 +64,35 @@ class Engine_Router(APIRouter):
         }
         return VivoacBaseResponse(data=data)
 
-    async def set_engines_route(
+    async def get_modules_route(
         self,
         vivoac_base_header: Annotated[
             VivoacBaseHeader,
             Depends(get_vivoac_base_header_dependency(check_admin=True)),
         ],
-        ai_api_engine_module: AI_API_ENGINE_MODULE_KEYS = Body(),
-        script_db_engine_module: SCRIPT_DB_ENGINE_MODULE_KEYS = Body(),
-    ) -> VivoacBaseResponse[Union[str, int]]:
-        LOGGER.debug(
-            f"Updating engines: {ai_api_engine_module}, {script_db_engine_module}"
+        engine_type: ENGINE_TYPES,
+    ) -> VivoacBaseResponse[List[str]]:
+        if engine_type == "ai_api_engine":
+            modules = list(ai_api_engine_modules.keys())
+        elif engine_type == "script_db_engine":
+            modules = list(script_db_engine_modules.keys())
+        return VivoacBaseResponse(data=modules)
+
+    async def set_engine_route(
+        self,
+        vivoac_base_header: Annotated[
+            VivoacBaseHeader,
+            Depends(get_vivoac_base_header_dependency(check_admin=True)),
+        ],
+        engine_type: ENGINE_TYPES,
+        module: Union[AI_API_ENGINE_MODULE_KEYS, SCRIPT_DB_ENGINE_MODULE_KEYS] = Body(),
+    ) -> VivoacBaseResponse[Dict[str, str]]:
+        LOGGER.debug(f"Updating engine: {engine_type} with module: {module}.")
+        return VivoacBaseResponse(
+            data=await self.api_engine.engine_backend.set_engine_module(
+                engine_type=engine_type, module=module
+            )
         )
-        data = await self.api_engine.engine_backend.set_engine_module(
-            ai_api_engine_module=ai_api_engine_module,
-            script_db_engine_module=script_db_engine_module,
-        )
-        return VivoacBaseResponse(data=data)
 
     # == Engine Settings ==
     async def get_engine_settings_route(

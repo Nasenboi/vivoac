@@ -17,6 +17,7 @@ engine_modules = get_engine_modules()
 """
 ########################################################################################"""
 
+ENGINE_TYPES = Literal["ai_api_engine", "script_db_engine"]
 
 ai_api_engine_modules: Dict[str, Type[AI_API_Engine]] = {
     # "AI_API_Engine": AI_API_Engine,
