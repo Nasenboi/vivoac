@@ -6,7 +6,7 @@ Imports:
 
 from typing import Optional
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, Response, status
 from packaging.version import InvalidVersion, Version
 
 from ..globals import SETTINGS_GLOBAL
@@ -22,10 +22,28 @@ def empty_dependency():
     return None
 
 
-async def check_api_version(api_version: str = Header()) -> str:
+async def check_api_version(
+    response: Response,
+    api_version: Optional[str] = Header(default=None),
+    api_version_cookie: Optional[str] = Cookie(default=None),
+) -> str:
     min_version = SETTINGS_GLOBAL.get("metadata", {}).get("api_min_version", "0.0.0")
+
+    client_version = None
+
+    if api_version_cookie is not None:
+        client_version = api_version_cookie
+    elif api_version is not None:
+        client_version = api_version
+        response.set_cookie("api_version_cookie", client_version)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="API version is not set.",
+        )
+
     try:
-        client_version = Version(api_version)
+        client_version = Version(client_version)
     except InvalidVersion:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,7 +55,7 @@ async def check_api_version(api_version: str = Header()) -> str:
             detail=f"API version {api_version} is not supported. Minimum version is {min_version}",
         )
 
-    return api_version
+    return str(client_version)
 
 
 def get_vivoac_base_header_dependency(
