@@ -35,7 +35,6 @@ class Test_Class:
     test_user: dict = None
     token: str = None
     test_functions: List[callable] = []
-    results: List[dict] = []
     api_version: str = None
     base_header: dict = None
 
@@ -52,17 +51,17 @@ class Test_Class:
 
     def test_script(self) -> list[dict]:
         LOGGER.info(f"Starting the Script Tests for route: {self.route}")
-
+        results = []
         for function in self.test_functions:
             start_time = time()
             result = function(self)
             result.time = str(time() - start_time)
             result.function = function.__name__
             result.test_class = self.__class__.__name__
-            self.results.append(result.model_dump())
+            results.append(result.model_dump())
 
         LOGGER.info(f"Finished the Script Tests for route: {self.route}")
-        return self.results
+        return results
 
     def generate_test_result(
         self, response: Response, should_fail=False

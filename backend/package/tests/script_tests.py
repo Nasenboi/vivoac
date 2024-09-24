@@ -16,23 +16,11 @@ class Script_Tests(Test_Class):
     # class variables
     route: str = "script"
 
-    def get_script(self) -> test_function_return:
-        LOGGER.debug(f"Starting the Script Test: get_by_id")
-        response = self.client.get_with_payload(
-            url=f"/script/get/",
-            headers={"session-id": self.session_id},
-            json={
-                "script_line": Script_Line(
-                    character_name="test_character_name", id="0001"
-                ).__dict__
-            },
+    def get_all_script_lines(self) -> test_function_return:
+        response = self.client.get(
+            url=f"/script/find",
+            headers={**self.base_header},
         )
-        results = test_function_return(
-            result="success" if response.status_code == 200 else "assert",
-            http_code=response.status_code,
-            message=str(response.json()),
-            error_message=None,
-        )
-        return results
+        return self.generate_test_result(response)
 
-    test_functions = []
+    test_functions = [get_all_script_lines]

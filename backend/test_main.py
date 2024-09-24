@@ -77,6 +77,8 @@ if __name__ == "__main__":
         # start the tests
         for test_class in test_classes:
             result = test_class(**test_kwargs).test_script()
+            # alt formatting
+            # test_results.append({"test_class": test_class.__name__, "results": result})
             test_results.extend(result)
 
         # store the tesults in a file:
