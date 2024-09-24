@@ -11,11 +11,6 @@ from typing import Any, Dict
 
 
 class Base_Engine:
-    # class variables:
-    pass
-
-    def __init__(self):
-        pass
 
     ############################################################
     # getter functions:
