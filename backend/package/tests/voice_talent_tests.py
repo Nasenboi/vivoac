@@ -57,7 +57,7 @@ class Voice_Talent_Tests(Test_Class):
 
     def get_voice_talent_by_id(self) -> test_function_return:
         response = self.client.get(
-            url=f"/voice_talent/crud{self.test_voice_talent.id}",
+            url=f"/voice_talent/crud/{self.test_voice_talent.id}",
             headers={**self.base_header},
         )
         return self.generate_test_result(response)
