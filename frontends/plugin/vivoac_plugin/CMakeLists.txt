@@ -12,7 +12,7 @@ juce_add_plugin(
     NEEDS_MIDI_OUTPUT FALSE
     PLUGIN_MANUFACTURER_CODE rain
     PLUGIN_CODE AUPL
-    FORMATS AU VST3 Standalone
+    FORMATS AU VST3 Standalone AAX
     PRODUCT_NAME "ViVoAc_Plugin"
     NEEDS_WEBVIEW2 TRUE
 )
@@ -57,3 +57,7 @@ if (MSVC)
 endif()
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../libs/juce/modules/juce_gui_extra/native/javascript/" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/../../reactapp/vivoac-plugin/src/juce/")
+
+# set aax path JUCE_GLOBAL_AAX_SDK_PATH
+set(JUCE_GLOBAL_AAX_SDK_PATH "C:/Users/cboen/Documents/Programmierungen/ProToolsSDK/aax-sdk-2-7-0")
+# juce_set_aax_sdk_path("C:/Users/cboen/Documents/Programmierungen/ProToolsSDK/aax-sdk-2-7-0")
