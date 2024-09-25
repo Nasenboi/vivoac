@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.mm": "cpp",
+        "optional": "cpp",
+        "xhash": "cpp"
+    },
+    "git.ignoreLimitWarning": true
+}
