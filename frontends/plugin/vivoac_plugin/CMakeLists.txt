@@ -56,4 +56,4 @@ if (MSVC)
     )
 endif()
 
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../libs/juce/modules/juce_gui_extra/native/javascript/" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/ui/vivoac-plugin/src/juce/")
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../libs/juce/modules/juce_gui_extra/native/javascript/" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/../../reactapp/vivoac-plugin/src/juce/")
