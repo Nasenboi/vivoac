@@ -1,10 +1,10 @@
 # Store some nice variables:
 image_name="vivoac:local"
 container_name="vivoac"
-volume_mount_1="./data/piper_voices:/piper_voices"
-volume_mount_2="./data/excel_scripts:/excel_scripts"
+volume_mount_1="./backend/data/piper_voices:/piper_voices"
+volume_mount_2="./backend/data/excel_scripts:/excel_scripts"
 port=8080
-target="deploy"
+target="base"
 compose=1
 
 # Stop and remove the container if it exists

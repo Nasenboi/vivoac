@@ -6,8 +6,6 @@ WORKDIR /vivoac
 
 EXPOSE 8080
 
-COPY requirements.txt .
-
 # Install piper as local TTS engine:
 RUN apt-get update && \
     apt-get install -y \
@@ -22,6 +20,7 @@ RUN pip install -e /piper/src/python
 RUN mkdir -p /piper/src/python/piper_train/vits/monotonic_align/monotonic_align
 RUN cd /piper/src/python/piper_train/vits/monotonic_align && cythonize -i core.pyx && mv core*.so monotonic_align/
 
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 # The base image is done!
 
