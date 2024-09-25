@@ -1,4 +1,8 @@
+#plugin specific
 libs/
+vivoac_plugin/ui/vivoac-plugin/src/juce/
+
+
 # CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
 cmake/
 
