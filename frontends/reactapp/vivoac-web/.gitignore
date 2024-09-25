@@ -1,23 +1,13 @@
-#plugin specific
-libs/
-reactapp/vivoac-plugin/src/juce/
-
-
-# CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
-cmake/
-
-.vscode/
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules/
+/node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
 # testing
-coverage/
+/coverage
 
 # next.js
 /.next/
