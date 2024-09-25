@@ -2,6 +2,8 @@ libs/
 # CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
 cmake/
 
+.vscode/
+
 # react gitignore
 # dependencies
 node_modules/
