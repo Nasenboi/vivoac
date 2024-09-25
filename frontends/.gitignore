@@ -1,7 +1,7 @@
 #plugin specific
 libs/
-reactapp/vivoac-plugin/src/juce/
-
+reactapp/vivoac-web/juce/
+reactapp/vivoac-web/components/ui/*
 
 # CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
 cmake/
