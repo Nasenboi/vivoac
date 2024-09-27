@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(ViVoAc_Plugin)
+project(ViVoAc_Plugin
+  VERSION 1.2.0
+)
 
 set(CMAKE_CXX_STANDARD 23)
 

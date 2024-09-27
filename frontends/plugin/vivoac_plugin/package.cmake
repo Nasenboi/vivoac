@@ -1,0 +1,57 @@
+# package.cmake
+
+# Set the properties for CPack
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+set(CPACK_GENERATOR "productbuild") # Change or add generators as needed
+set(CPACK_NSIS_INSTALL_ROOT "${INSTALL_PREFIX}") # For NSIS installer
+
+set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_BINARY_DIR}/../../Installer/welcome.txt") 
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_BINARY_DIR}/../../Installer/readme.txt") 
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_BINARY_DIR}/../../Installer/license.txt")
+
+##
+
+set(CPACK_MONOLITHIC_INSTALL OFF)
+set(CPACK_COMPONENTS_ALL VST3 ASSETS)
+
+set(CPACK_COMPONENT_VST3_REQUIRED TRUE)
+set(CPACK_COMPONENT_ASSETS_REQUIRED TRUE)
+
+set(CPACK_PACKAGING_INSTALL_PREFIX "/")
+set(CPACK_PACKAGE_VENDOR "Christian Böndgen") 
+
+set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME}) 
+
+set(CPACK_COMPONENT_UNSPECIFIED_REQUIRED "FALSE") 
+
+# Include CPack module for packaging
+include(CPack)
+
+# Install the packages
+install(
+    DIRECTORY ${VST3_BUILD}
+    DESTINATION ${VST3_DIR}
+    USE_SOURCE_PERMISSIONS
+    COMPONENT VST3
+)
+
+install(
+    DIRECTORY ${STANDALONE_BUILD}
+    DESTINATION ${INSTALL_DIR}
+    USE_SOURCE_PERMISSIONS
+    COMPONENT STANDALONE
+)
+
+install(
+    DIRECTORY ${STATIC_WEBVIEW_PATH}
+    DESTINATION ${COMMUN_APPLICATION_DIR}
+    USE_SOURCE_PERMISSIONS
+    COMPONENT ASSETS
+)
+
+
+# Define the components
+cpack_add_component(VST3 DISPLAY_NAME "VST3 Plugin" DESCRIPTION "VST3 Plugin for ViVoAc")
+cpack_add_component(STANDALONE DISPLAY_NAME "Standalone Application" DESCRIPTION "Standalone Application for ViVoAc")
+cpack_add_component(ASSETS DISPLAY_NAME "Assets" DESCRIPTION "Assets for ViVoAc")
