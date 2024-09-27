@@ -73,7 +73,7 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   std::cout << "ResourceProvider called with " << url << std::endl;
 
   static const auto resourceFilesRoot =
-      juce::File{R"(C:\Users\cboen\Documents\Programmierungen\GitStuff\vivoac\frontends\reactapp\vivoac-plugin\build)"};
+      juce::File{this->pluginSettings.getProperty("resourceFilesRoot", "")};
 
 
   const auto resourceToRetrieve =
