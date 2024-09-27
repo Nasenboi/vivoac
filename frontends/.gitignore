@@ -3,6 +3,7 @@ libs/
 reactapp/vivoac-web/juce/
 reactapp/vivoac-web/components/ui/*
 plugin-settings.json
+out/
 
 # CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
 cmake/
