@@ -9,6 +9,7 @@ data/test/
 */data/test/
 data/docker_files/*
 .env/
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
