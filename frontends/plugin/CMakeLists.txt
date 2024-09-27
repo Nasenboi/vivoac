@@ -26,6 +26,9 @@ CPMAddPackage(
   SOURCE_DIR ${LIB_DIR}/juce
 )
 
+# add config
+include("${CMAKE_SOURCE_DIR}/config.cmake")
+
 # Add the plugin
 add_subdirectory(vivoac_plugin)
 

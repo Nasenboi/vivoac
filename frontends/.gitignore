@@ -5,6 +5,7 @@ reactapp/vivoac-web/components/ui/*
 
 # CPM.cmake, see https://github.com/cpm-cmake/CPM.cmake
 cmake/
+config.cmake
 
 .vscode/
 
