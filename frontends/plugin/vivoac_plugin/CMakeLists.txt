@@ -57,7 +57,3 @@ if (MSVC)
 endif()
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../libs/juce/modules/juce_gui_extra/native/javascript/" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/../../reactapp/vivoac-web/juce/")
-
-# set aax path JUCE_GLOBAL_AAX_SDK_PATH
-set(JUCE_GLOBAL_AAX_SDK_PATH "C:/Users/cboen/Documents/Programmierungen/ProToolsSDK/aax-sdk-2-7-0")
-# juce_set_aax_sdk_path("C:/Users/cboen/Documents/Programmierungen/ProToolsSDK/aax-sdk-2-7-0")
