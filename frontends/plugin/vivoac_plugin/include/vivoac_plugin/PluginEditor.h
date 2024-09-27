@@ -17,8 +17,6 @@ private:
     using Resource = juce::WebBrowserComponent::Resource;
     std::optional<Resource> getResource(const juce::String& url) const;
 
-    const juce::var pluginSettings{juce::JSON::parse(juce::File::getCurrentWorkingDirectory().getParentDirectory().getChildFile("plugin-settings.json").loadFileAsString())};
-
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     AudioPluginAudioProcessor& processorRef;

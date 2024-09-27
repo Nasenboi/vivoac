@@ -51,6 +51,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
             .withNativeIntegrationEnabled()
         }
 {
+    std::cout << "PluginEditor constructor" << std::endl;
     juce::ignoreUnused (processorRef);
    
     addAndMakeVisible(webView);
@@ -72,9 +73,11 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
     -> std::optional<Resource> {
   std::cout << "ResourceProvider called with " << url << std::endl;
 
-  static const auto resourceFilesRoot =
-      juce::File{this->pluginSettings.getProperty("resourceFilesRoot", "")};
+  static const auto resourceFilesRoot = juce::File::getSpecialLocation(juce::File::SpecialLocationType::commonApplicationDataDirectory)
+      .getChildFile("ViVoAc_Plugin")
+      .getChildFile("out");
 
+  std::cout << "ResourceProvider root: " << resourceFilesRoot.getFullPathName() << std::endl;
 
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
