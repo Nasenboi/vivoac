@@ -1,9 +1,9 @@
 "use client"
-
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,9 +17,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+import Image from 'next/image'
+
 import {LoginSchema} from "./models"
 import { PasswordInput } from "@/components/extra/password-input"
-import {login} from "./login"
 
 export default function Login() {
     const router = useRouter()
@@ -32,9 +33,12 @@ export default function Login() {
     })
 
     async function onSubmit(values: z.infer<typeof LoginSchema>) {
-        console.log(values);
         try {
-            await login(values);
+            await signIn("credentials", {
+                username: values.username,
+                password: values.password,
+                redirect: false,
+            });
             router.push("/home");
         } catch (error) {
             console.error("Login failed:", error);
@@ -42,7 +46,15 @@ export default function Login() {
     }
 
     return (
-        <div className="h-screen min-h-full w-full flex justify-evenly items-center">
+        <div className="h-screen min-h-full w-full flex flex-col justify-center items-center">
+            <div className="relative min-h-[100px] w-[300px]">
+                <Image src={"/ViVoAc_Logo_1.0.png"}
+                    alt="ViVoAc Logo"
+                    fill
+                    sizes="(min-height: 6rem)"
+                    className="object-contain"
+                />
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
