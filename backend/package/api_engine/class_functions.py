@@ -9,6 +9,7 @@ from time import sleep
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from uvicorn import Config, Server
 
@@ -75,6 +76,19 @@ def init(self) -> None:
         self.app.add_exception_handler(404, exception_handler_404)
         self.app.add_exception_handler(422, exception_handler_422)
         self.app.add_exception_handler(HTTPException, exception_handler)
+
+        # CORS
+        origins = [
+            "http://localhost",
+            "http://localhost:3000",
+        ]
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
         self.uvicorn_thread.setDaemon(True)
 
