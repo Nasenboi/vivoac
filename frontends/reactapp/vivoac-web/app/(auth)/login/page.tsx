@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 
 import {LoginSchema} from "./models"
 import { PasswordInput } from "@/components/extra/password-input"
+import {login} from "./login"
 
 export default function Login() {
     const router = useRouter()
@@ -30,9 +31,14 @@ export default function Login() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof LoginSchema>) {
-        router.push("/home")
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof LoginSchema>) {
+        console.log(values);
+        try {
+            await login(values);
+            router.push("/home");
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
     }
 
     return (
