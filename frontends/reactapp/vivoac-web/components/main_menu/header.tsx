@@ -47,7 +47,7 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
                             <Link href="/login">Login</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link href="/logout">Login</Link>
+                            <Link href="/logout">Logout</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Info</DropdownMenuItem>
                     </DropdownMenuContent>
