@@ -1,10 +1,18 @@
+"use client";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
+export default function Index() {
 
+  const router = useRouter();
 
-export default async function Home() {
-  return (
-    <main>
-      heyo
-    </main>
+  useEffect(() => {
+    // Redirect to /home when the component mounts
+    router.push('/home');
+  }, [router]);
+
+  return(
+    <>
+    </>
   );
 }
