@@ -3,7 +3,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -34,11 +33,7 @@ export default function Login() {
 
     async function onSubmit(values: z.infer<typeof LoginSchema>) {
         try {
-            await signIn("credentials", {
-                username: values.username,
-                password: values.password,
-                redirect: false,
-            });
+            // add token to cookies
             router.push("/home");
         } catch (error) {
             console.error("Login failed:", error);

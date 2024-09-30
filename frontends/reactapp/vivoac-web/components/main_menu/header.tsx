@@ -12,9 +12,7 @@ import {Menu, CircleUser} from "lucide-react"
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
-import { signOut } from "next-auth/react"
 
 interface HeaderProps {
     isFixed: boolean;         // Prop for fixed positioning
@@ -22,7 +20,6 @@ interface HeaderProps {
 }
 
 export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) {
-    const {data: session} = useSession();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {

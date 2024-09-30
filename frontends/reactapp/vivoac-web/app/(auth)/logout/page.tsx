@@ -1,6 +1,4 @@
 "use client"
-import { signOut } from 'next-auth/react';
-
 import { Button } from '@/components/ui/button';
 import { Power } from 'lucide-react';
 import Image from 'next/image'
@@ -10,7 +8,7 @@ export default function Logout() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        await signOut({ redirect: false });
+        // remove token from cookies
         router.push('/');
     }
 

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 import Header from "@/components/main_menu/header";
 import Sidebar from "@/components/main_menu/sidebar";
@@ -12,7 +11,6 @@ export default function Layout({children}: {children: React.ReactNode}) {
     const [isSidebarFixedLeft, setIsSidebarFixedLeft] = useState(true);
     const [showSideBar, setShowSideBar] = useState(false);
     const router = useRouter();
-    const {data: session} = useSession();
 
     // Update the state when the screen is resized
     useEffect(() => {
@@ -34,8 +32,9 @@ export default function Layout({children}: {children: React.ReactNode}) {
 
     useEffect(() => {
         // Redirect to /home when the component mounts
-        console.log(session);
-        if (session) {
+        
+
+        if () {
           router.push('/home');
         }
         else {
