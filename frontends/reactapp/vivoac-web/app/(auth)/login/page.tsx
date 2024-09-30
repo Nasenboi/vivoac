@@ -18,8 +18,48 @@ import { Input } from "@/components/ui/input"
 
 import Image from 'next/image'
 
+import { setCookie } from "cookies-next";
+
+
 import {LoginSchema} from "./models"
 import { PasswordInput } from "@/components/extra/password-input"
+
+export async function login(values): Promise<{access_token: string, token_type: string} | null> {
+    const authentication_creds = new URLSearchParams({
+        username: values.username,
+        password: values.password,
+    });
+  
+    try {
+        // env var BACKEND_SERVER_URL
+        const backend_url = "http://localhost:8080";
+        console.log("backend_url: ", `${backend_url}/token`);
+        const response = await fetch(`${backend_url}/token`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: authentication_creds.toString(),  // URL-encoded form data
+        });
+    
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        const data = await response.json();
+
+        setCookie("user_access_token", data.access_token);
+        setCookie("user_token_type", data.token_type);
+        setCookie("user_username", values.username);
+
+      return data;
+    } catch (error) {
+      // Handle errors gracefully
+      console.error('Error:', error);
+    }
+    return null;
+}
 
 export default function Login() {
     const router = useRouter()
@@ -34,6 +74,7 @@ export default function Login() {
     async function onSubmit(values: z.infer<typeof LoginSchema>) {
         try {
             // add token to cookies
+            const token = await login(values);
             router.push("/home");
         } catch (error) {
             console.error("Login failed:", error);

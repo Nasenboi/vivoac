@@ -4,11 +4,16 @@ import { Power } from 'lucide-react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 
+import { deleteCookie } from "cookies-next";
+
 export default function Logout() {
     const router = useRouter();
 
     const handleLogout = async () => {
         // remove token from cookies
+        deleteCookie("user_access_token");
+        deleteCookie("user_token_type");
+        deleteCookie("user_username");
         router.push('/');
     }
 

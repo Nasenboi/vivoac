@@ -12,6 +12,8 @@ import {Menu, CircleUser} from "lucide-react"
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { hasCookie, getCookie } from "cookies-next";
+
 import { useState, useEffect } from "react"
 
 interface HeaderProps {
@@ -21,10 +23,11 @@ interface HeaderProps {
 
 export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const cookie = hasCookie("user_access_token") ? getCookie("user_access_token") : null;
 
     useEffect(() => {
-        setIsLoggedIn(session ? true : false);
-    }, [session]);
+        setIsLoggedIn(cookie ? true : false);
+    }, []);
 
     return (
         <div className={`border-b-2 grid grid-cols-3 p-2 ${isFixed ? "fixed top-0 left-0 w-full z-10 bg-[hsl(var(--background))]" : ""}`}>
@@ -46,7 +49,14 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
             <div className="col-span-1 flex justify-end">
                 <DropdownMenu>
                     <DropdownMenuTrigger>
-                        <CircleUser className={`rounded-full h-full w-full ${isLoggedIn ? "bg-green-600" : "bg-red-600"}`}/>
+                        <div className={`rounded-full h-full w-full flex justify-evenly items-center ${isLoggedIn ? "bg-green-600" : "bg-red-600"}`} >
+                            {isLoggedIn && hasCookie("user_username") &&
+                                <h1 className="p-1">
+                                    {getCookie("user_username")}
+                                </h1>
+                            }
+                            <CircleUser className="h-full w-full p-1"/>
+                        </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>

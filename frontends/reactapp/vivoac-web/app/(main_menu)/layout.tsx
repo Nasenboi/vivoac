@@ -10,7 +10,6 @@ import Footer from "@/components/main_menu/footer";
 export default function Layout({children}: {children: React.ReactNode}) {
     const [isSidebarFixedLeft, setIsSidebarFixedLeft] = useState(true);
     const [showSideBar, setShowSideBar] = useState(false);
-    const router = useRouter();
 
     // Update the state when the screen is resized
     useEffect(() => {
@@ -29,18 +28,6 @@ export default function Layout({children}: {children: React.ReactNode}) {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
-    useEffect(() => {
-        // Redirect to /home when the component mounts
-        
-
-        if () {
-          router.push('/home');
-        }
-        else {
-          router.push('/login');
-        }
-    }, [session]);
 
     return (
         <section className="flex items-start justify-between w-full">
