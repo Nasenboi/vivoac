@@ -30,7 +30,7 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
     }, []);
 
     return (
-        <div className={`shadow-lg grid grid-cols-3 p-2 ${isFixed ? "fixed top-0 left-0 w-full z-10 bg-[hsl(var(--background))]" : ""}`}>
+        <div className={`shadow-lg dark:shadow-dark grid grid-cols-3 p-2 ${isFixed ? "fixed top-0 left-0 w-full z-10 bg-[hsl(var(--background))]" : ""}`}>
             <div className="col-span-1">
             {isFixed && 
                 <Button variant="outline" size="icon" onClick={toggleSideBar}>
@@ -39,19 +39,21 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
             }
             </div>
             <div className={`relative col-span-1 col-start-2 flex justify-evenly  ${isFixed ? "" : "h-9 min-w-full"}`}>
-                <Image src={"/ViVoAc_Logo_1.0.png"}
-                    alt="ViVoAc Logo"
-                    fill
-                    sizes="(min-height: 6rem)"
-                    className="object-contain"
-                />
+                <Link href="/home">
+                    <Image src={"/ViVoAc_Logo_1.0.png"}
+                        alt="ViVoAc Logo"
+                        fill
+                        sizes="(min-height: 6rem)"
+                        className="object-contain"
+                    />
+                </Link>
             </div>
             <div className="col-span-1 flex justify-end">
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <div className={`rounded-full h-full w-full flex justify-evenly items-center ${isLoggedIn ? "bg-green-600" : "bg-red-600"}`} >
                             {isLoggedIn && hasCookie("user_username") &&
-                                <h1 className="p-1">
+                                <h1 className="p-1 pl-2">
                                     {getCookie("user_username")}
                                 </h1>
                             }

@@ -8,15 +8,15 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator,
   } from "@/components/ui/command"
 
 import Footer from "./footer";
+import Link from "next/link";
 
 
 export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
     return (
-        <div className={`fixed flex flex-col min-w-[300px] p-4 min-h-full max-h-screen shadow-lg ${isFixed ? "" : "pt-16"}`}>
+        <div className={`fixed flex flex-col min-w-[300px] p-4 min-h-full max-h-screen shadow-lg dark:shadow-dark ${isFixed ? "" : "pt-16"}`}>
             <div className="w-full p-4 gap-4 flex">
                 <Map size={32} />
                 <h1 className="font-bold text-3xl">Navigation</h1>
@@ -54,10 +54,12 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                             <UserCog className="mr-2 h-4 w-4" />
                             <span>Users</span>
                         </CommandItem>
-                        <CommandItem>
-                            <Car className="mr-2 h-4 w-4" />
-                            <span>Engines</span>
-                        </CommandItem>
+                        <Link href="/settings">
+                            <CommandItem>
+                                    <Car className="mr-2 h-4 w-4" />
+                                    <span>Engines</span>
+                            </CommandItem>
+                        </Link>
                     </CommandGroup>
                 </CommandList>
             </Command>

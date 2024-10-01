@@ -3,6 +3,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
+import { useContext } from "react";
+import { SettingsContext } from "@/components/settings-context";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,16 +26,16 @@ import { setCookie } from "cookies-next";
 import {LoginSchema} from "./models"
 import { PasswordInput } from "@/components/extra/password-input"
 
-export async function login(values): Promise<{access_token: string, token_type: string} | null> {
+export async function login(values, url): Promise<{access_token: string, token_type: string} | null> {
     const authentication_creds = new URLSearchParams({
         username: values.username,
         password: values.password,
     });
+
   
     try {
         // env var BACKEND_SERVER_URL
-        const backend_url = "http://localhost:8080";
-        console.log("backend_url: ", `${backend_url}/token`);
+        const backend_url = url;
         const response = await fetch(`${backend_url}/token`, {
             method: 'POST',
             headers: {
@@ -63,6 +65,7 @@ export async function login(values): Promise<{access_token: string, token_type: 
 
 export default function Login() {
     const router = useRouter()
+    const {settings, updateSettings}= useContext(SettingsContext);
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -74,7 +77,7 @@ export default function Login() {
     async function onSubmit(values: z.infer<typeof LoginSchema>) {
         try {
             // add token to cookies
-            const token = await login(values);
+            const token = await login(values, settings.BACKEND_SERVER_URL);
             router.push("/home");
         } catch (error) {
             console.error("Login failed:", error);
@@ -114,14 +117,14 @@ export default function Login() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <PasswordInput placeholder="password" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Your password.
-                            </FormDescription>
-                            <FormMessage />
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <PasswordInput placeholder="password" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Your password.
+                                </FormDescription>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
