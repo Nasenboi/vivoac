@@ -46,20 +46,20 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                         </CommandItem>
                     </CommandGroup>
                     <CommandGroup heading="Settings">
-                        <CommandItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>General</span>
-                        </CommandItem>
+                        <Link href="/settings">
+                            <CommandItem>
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>General</span>
+                            </CommandItem>
+                        </Link>
                         <CommandItem>
                             <UserCog className="mr-2 h-4 w-4" />
                             <span>Users</span>
                         </CommandItem>
-                        <Link href="/settings">
-                            <CommandItem>
-                                    <Car className="mr-2 h-4 w-4" />
-                                    <span>Engines</span>
-                            </CommandItem>
-                        </Link>
+                        <CommandItem>
+                                <Car className="mr-2 h-4 w-4" />
+                                <span>Engines</span>
+                        </CommandItem>
                     </CommandGroup>
                 </CommandList>
             </Command>
