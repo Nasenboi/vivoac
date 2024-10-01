@@ -7,9 +7,9 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-import {Menu, CircleUser} from "lucide-react"
-import Image from 'next/image'
+} from "@/components/ui/dropdown-menu"
+import { Menu, CircleUser } from "lucide-react"
+import Image from "next/image"
 import Link from 'next/link'
 
 import { hasCookie, getCookie } from "cookies-next";
@@ -32,19 +32,20 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
     return (
         <div className={`shadow-lg dark:shadow-dark grid grid-cols-3 p-2 ${isFixed ? "fixed top-0 left-0 w-full z-10 bg-[hsl(var(--background))]" : ""}`}>
             <div className="col-span-1">
-            {isFixed && 
-                <Button variant="outline" size="icon" onClick={toggleSideBar}>
-                    <Menu />
-                </Button>
-            }
+                {isFixed &&
+                    <Button variant="outline" size="icon" onClick={toggleSideBar}>
+                        <Menu />
+                    </Button>
+                }
             </div>
             <div className={`relative col-span-1 col-start-2 flex justify-evenly  ${isFixed ? "" : "h-9 min-w-full"}`}>
                 <Link href="/home">
-                    <Image src={"/ViVoAc_Logo_1.0.png"}
+                    <Image src="/ViVoAc_Logo.png"
                         alt="ViVoAc Logo"
                         fill
                         sizes="(min-height: 6rem)"
                         className="object-contain"
+                        unoptimized
                     />
                 </Link>
             </div>
@@ -57,24 +58,22 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
                                     {getCookie("user_username")}
                                 </h1>
                             }
-                            <CircleUser className="h-full w-full p-1"/>
+                            <CircleUser className="h-full w-full p-1" />
                         </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {!isLoggedIn ? 
+                        <Link href={isLoggedIn ? "/logout" : "/login"}>
                             <DropdownMenuItem>
-                                <Link href="/login">Login</Link>
+                                {isLoggedIn ? "Logout" : "Login"}
                             </DropdownMenuItem>
-                            :
+                        </Link>
+                        <Link href="/user-info">
                             <DropdownMenuItem>
-                                <Link href="/logout">Logout</Link>
+                                Info
                             </DropdownMenuItem>
-                        }
-                        <DropdownMenuItem>            
-                            <Link href="/user-info">Info</Link>
-                        </DropdownMenuItem>
+                        </Link>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

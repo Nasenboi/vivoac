@@ -1,6 +1,6 @@
 import { Map } from "lucide-react";
 
-import {UserCog, UserPlus, Settings, Car, List, Speech} from "lucide-react"
+import { UserCog, UserPlus, Settings, Car, List, Speech } from "lucide-react"
 import {
     Command,
     CommandEmpty,
@@ -8,7 +8,7 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-  } from "@/components/ui/command"
+} from "@/components/ui/command"
 
 import Footer from "./footer";
 import Link from "next/link";
@@ -57,13 +57,13 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                             <span>Users</span>
                         </CommandItem>
                         <CommandItem>
-                                <Car className="mr-2 h-4 w-4" />
-                                <span>Engines</span>
+                            <Car className="mr-2 h-4 w-4" />
+                            <span>Engines</span>
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>
             </Command>
-            <Footer isFixed={false}/>
+            <Footer isFixed={false} />
         </div>
     );
 }

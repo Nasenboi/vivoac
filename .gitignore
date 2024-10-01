@@ -10,6 +10,7 @@ data/test/
 data/docker_files/*
 .env/
 .DS_Store
+.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
