@@ -32,7 +32,7 @@ export default function Layout({children}: {children: React.ReactNode}) {
     return (
         <section className="flex items-start justify-between w-full">
             {(isSidebarFixedLeft || !isSidebarFixedLeft && showSideBar) && (
-                <div className="min-w-[300px] border-r-2 min-h-screen">
+                <div className="min-w-[300px] min-h-screen">
                     <Sidebar isFixed={isSidebarFixedLeft}/>
                 </div>
             )}
