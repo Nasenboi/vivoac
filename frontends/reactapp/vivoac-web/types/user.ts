@@ -1,5 +1,5 @@
-import {z} from 'zod';
-import { nullOptString } from './nulloptstring';
+import { z } from 'zod';
+import { nullOptString, nullEmail } from './nullopts';
 import { Address } from './address';
 
 export const ViVoAc_User = z.object({
@@ -9,7 +9,7 @@ export const ViVoAc_User = z.object({
     username: nullOptString,
     first_name: nullOptString,
     last_name: nullOptString,
-    email: nullOptString,
+    email: nullEmail,
     role: nullOptString,
     address: Address.nullable().optional(),
     phone_number_home: nullOptString,

@@ -52,7 +52,7 @@ export default function Header({ isFixed = false, toggleSideBar }: HeaderProps) 
             <div className="col-span-1 flex justify-end">
                 <DropdownMenu>
                     <DropdownMenuTrigger>
-                        <div className={`rounded-full h-full w-full flex justify-evenly items-center ${isLoggedIn ? "bg-green-600" : "bg-red-600"}`} >
+                        <div className={`rounded-full h-full w-full flex justify-evenly items-center ${isLoggedIn ? "bg-green-400 dark:bg-green-600" : "bg-red-600"}`} >
                             {isLoggedIn && hasCookie("user_username") &&
                                 <h1 className="p-1 pl-2">
                                     {getCookie("user_username")}

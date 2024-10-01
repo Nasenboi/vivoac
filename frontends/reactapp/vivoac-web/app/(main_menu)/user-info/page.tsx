@@ -7,10 +7,11 @@ import { z } from "zod";
 import { ViVoAc_User } from "@/types/user";
 import { Backend_Response } from "@/types/backend-response";
 
-import UserForm from "@/components/forms/user-form";
-import { PasswordInput } from "@/components/extra/password-input";
+import UserForm, {UserFormSkeleton} from "@/components/forms/user-form";
 
 import { getCookie } from "cookies-next";
+
+import { ArrowRight } from "lucide-react";
 
 async function fetchUserInfo(url, api_version): Promise<z.infer<typeof ViVoAc_User> | null> {
     const route = "/user/self";
@@ -58,15 +59,19 @@ export default function UserInfo() {
             setUser(data);
             setLoading(false);
         });
-    }, [url, api_version, user_access_token]);
+    }, []);
 
-    if (loading) {
-        return <div>Loading...</div>; // You can customize this loading UI
-    }
+
     return (<> 
         {user &&
-            <div className="w-full h-full flex justify-center items-center">
-                <UserForm {...user} />
+            <div className="w-full h-full max-h-full overflow-y-auto">
+                <div className="w-full flex items-center justify-center gap-3">
+                    <h1 className="font-bold text-3xl hidden md:block">
+                        {"This is you"}
+                    </h1>
+                    <ArrowRight className="w-9 h-9 hidden md:block" />
+                    <UserForm {...user} />
+                </div>
             </div>
         }
         </>
