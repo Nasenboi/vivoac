@@ -49,11 +49,12 @@ def get_user_from_token(token: str) -> UserInDB:
 
 
 def authenticate_user(username: str, password: str) -> UserInDB:
-    user = UserInDB(**DB_COLLECTIONS["users"].find_one({"username": username}))
+    user = DB_COLLECTIONS["users"].find_one({"username": username})
     if not user:
-        return False
+        return None
+    user = UserInDB(**user)
     if not bcrypt.checkpw(
         password.encode("utf-8"), user.hashed_password.encode("utf-8")
     ):
-        return False
+        return None
     return user

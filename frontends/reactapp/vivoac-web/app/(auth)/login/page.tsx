@@ -1,9 +1,9 @@
 "use client"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, FieldErrors } from "react-hook-form"
 import { useRouter } from "next/navigation"
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { SettingsContext } from "@/components/settings-context";
 
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+import { AlertCircle } from "lucide-react"
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
+
 import Image from 'next/image'
 
 import { setCookie } from "cookies-next";
@@ -26,7 +33,7 @@ import { setCookie } from "cookies-next";
 import { LoginSchema } from "./models"
 import { PasswordInput } from "@/components/extra/password-input"
 
-async function login(values, url): Promise<{ access_token: string, token_type: string } | null> {
+async function login(values, url, setError): Promise<{ access_token: string, token_type: string } | null> {
     const authentication_creds = new URLSearchParams({
         username: values.username,
         password: values.password,
@@ -46,6 +53,13 @@ async function login(values, url): Promise<{ access_token: string, token_type: s
 
         // Check if the response is OK (status code 200-299)
         if (!response.ok) {
+            console.log(response);
+
+            if (response.status === 401) {
+                setError("Invalid username or password");
+                return null;
+            }
+
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -59,6 +73,7 @@ async function login(values, url): Promise<{ access_token: string, token_type: s
     } catch (error) {
         // Handle errors gracefully
         console.error('Error:', error);
+        setError(error.toString());
     }
     return null;
 }
@@ -66,6 +81,7 @@ async function login(values, url): Promise<{ access_token: string, token_type: s
 export default function Login() {
     const router = useRouter()
     const { settings, updateSettings } = useContext(SettingsContext);
+    const [error, setError] = useState<string | FieldErrors | null>(null);
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -77,10 +93,14 @@ export default function Login() {
     async function onSubmit(values: z.infer<typeof LoginSchema>) {
         try {
             // add token to cookies
-            const token = await login(values, settings.BACKEND_SERVER_URL);
-            router.push("/home");
+            const token = await login(values, settings.BACKEND_SERVER_URL, setError);
+            if(token) {
+                router.push("/home");
+                setError(null);
+            }
         } catch (error) {
             console.error("Login failed:", error);
+            setError(error);
         }
     }
 
@@ -94,6 +114,29 @@ export default function Login() {
                     className="object-contain"
                     unoptimized
                 />
+            </div>
+            <div className="gap-4 p-4">
+            {error &&
+                <Alert variant="destructive" className="bg-red-50 dark:bg-red-400">
+                    <AlertCircle />
+                    <AlertTitle className="font-bold text-2xl">
+                        Error
+                    </AlertTitle>
+                    <AlertDescription>
+                        {typeof error === "string" ? (
+                            error
+                        ) : (
+                            // Map over the FieldErrors object to display error messages for each field
+                            Object.entries(error).map(([fieldName, fieldError]) => (
+                                <div key={fieldName}>
+                                    <h1 className="font-bold">{fieldName}</h1>
+                                    <p>{JSON.stringify(fieldError?.message)}</p>
+                                </div>
+                            ))
+                        )}
+                    </AlertDescription>
+                </Alert>
+            }
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

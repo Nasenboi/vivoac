@@ -7,7 +7,7 @@ Imports:
 from threading import Thread
 from time import sleep
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -157,6 +157,6 @@ async def exception_handler_422(
 
 async def exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     return JSONResponse(
-        status_code=422,
+        status_code=exc.status_code or 500,
         content=Response_HTTPException(exc).model_dump(),
     )

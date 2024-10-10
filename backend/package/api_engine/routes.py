@@ -19,10 +19,7 @@ from ..routes.user.models import Token, TokenData
 
 class API_Engine_Router(APIRouter):
     api_engine = None
-    route_parameters: dict = {
-        "prefix": "",
-        "tags": ["api_engine"]
-    }
+    route_parameters: dict = {"prefix": "", "tags": ["api_engine"]}
 
     def __init__(self, api_engine, **kwargs):
         self.route_parameters.update(kwargs)
