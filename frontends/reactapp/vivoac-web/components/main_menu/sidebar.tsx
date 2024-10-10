@@ -30,22 +30,24 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                             <List className="mr-2 h-4 w-4" />
                             <span>Voice-Talent List</span>
                         </CommandItem>
-                        <CommandItem>
-                            <UserPlus className="mr-2 h-4 w-4" />
-                            <span>Add Voice-Talent</span>
-                        </CommandItem>
+                        <Link href="/voice-talents/add">
+                            <CommandItem>
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                <span>Add Voice-Talent</span>
+                            </CommandItem>
+                        </Link>
                     </CommandGroup>
                     <CommandGroup heading="Voices">
                         <CommandItem>
                             <List className="mr-2 h-4 w-4" />
                             <span>Voice List</span>
                         </CommandItem>
-                        <Link href="/voice-talents/add">
-                            <CommandItem>
-                                <Speech className="mr-2 h-4 w-4" />
-                                <span>Add Voice</span>
-                            </CommandItem>
-                        </Link>
+
+                        <CommandItem>
+                            <Speech className="mr-2 h-4 w-4" />
+                            <span>Add Voice</span>
+                        </CommandItem>
+
                     </CommandGroup>
                     <CommandGroup heading="Settings">
                         <Link href="/settings">
