@@ -40,6 +40,25 @@ export default function CustomPopover({ popoverOptions, field, placeholder, allo
                     <CommandInput placeholder="Search options..." />
                     <CommandList>
                         <CommandEmpty>No options found.</CommandEmpty>
+                        {allowCustomOption &&
+                            <CommandItem key={"custom"} className="border-b">
+                                <Check
+                                    className={cn(
+                                        "mr-2 h-4 w-4",
+                                        useCustomOption ? "opacity-100" : "opacity-0"
+                                    )}
+                                />
+                                <Input
+                                    className="border-0 p-2"
+                                    placeholder="Custom gender"
+                                    {...field}
+                                    onChange={(e) => {
+                                        field.onChange(e)
+                                        setUseCustomOption(true)
+                                    }}
+                                />
+                            </CommandItem>
+                        }
                         <CommandGroup>
                             {popoverOptions.map((o) => (
                                 <CommandItem
@@ -60,25 +79,6 @@ export default function CustomPopover({ popoverOptions, field, placeholder, allo
                                     {o.label}
                                 </CommandItem>
                             ))}
-                            {allowCustomOption &&
-                                <CommandItem key={"custom"}>
-                                    <Check
-                                        className={cn(
-                                            "mr-2 h-4 w-4",
-                                            useCustomOption ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                    <Input
-                                        className="border-0 p-2"
-                                        placeholder="Custom gender"
-                                        {...field}
-                                        onChange={(e) => {
-                                            field.onChange(e)
-                                            setUseCustomOption(true)
-                                        }}
-                                    />
-                                </CommandItem>
-                            }
                         </CommandGroup>
                     </CommandList>
                 </Command>
