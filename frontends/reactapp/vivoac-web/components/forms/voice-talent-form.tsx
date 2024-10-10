@@ -20,22 +20,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 
-import { Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "@/lib/utils"
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-
 import { AlertCircle } from "lucide-react"
 import {
     Alert,
@@ -48,6 +32,7 @@ import { Backend_Response } from "@/types/backend-response";
 
 import { SettingsContext } from "@/components/settings-context";
 
+import CustomDropdown from "@/components/extra/custom-dropdown";
 
 const ViVoAc_Voice_Talent_Schema = ViVoAc_Voice_Talent;
 
@@ -211,61 +196,12 @@ export default function VoiceTalentForm(voice_talent: z.infer<typeof ViVoAc_Voic
                         <FormItem>
                             <FormLabel>Gender</FormLabel>
                             <FormControl>
-                                <Popover open={genderBoxOpen} onOpenChange={setGenderBoxOpen}>
-                                    <PopoverTrigger asChild>
-                                        <Input
-                                            placeholder="Select"
-                                            readOnly
-                                            {...field}
-                                            value={ViVoAc_Voice_Talent_Gender_Options.find(o => o.value === field.value)?.label || field.value} />
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-[200px] p-0">
-                                        <Command>
-                                            <CommandInput placeholder="Search gender options..." />
-                                            <CommandList>
-                                                <CommandEmpty>No gender options found.</CommandEmpty>
-                                                <CommandGroup>
-                                                    {ViVoAc_Voice_Talent_Gender_Options.map((o) => (
-                                                        <CommandItem
-                                                            key={o.value}
-                                                            value={o.value}
-                                                            onSelect={(currentValue) => {
-                                                                field.onChange(currentValue)
-                                                                setGenderBoxOpen(false)
-                                                                setUseCustomGender(false)
-                                                            }}
-                                                        >
-                                                            <Check
-                                                                className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    field.value === o.value ? "opacity-100" : "opacity-0"
-                                                                )}
-                                                            />
-                                                            {o.label}
-                                                        </CommandItem>
-                                                    ))}
-                                                    <CommandItem key={"custom"}>
-                                                        <Check
-                                                            className={cn(
-                                                                "mr-2 h-4 w-4",
-                                                                useCustomGender ? "opacity-100" : "opacity-0"
-                                                            )}
-                                                        />
-                                                        <Input
-                                                            className="border-0 p-2"
-                                                            placeholder="Custom gender"
-                                                            onSubmit={(value) => {
-                                                                setUseCustomGender(true)
-                                                                setGenderBoxOpen(false)
-                                                            }}
-                                                            {...field}
-                                                        />
-                                                    </CommandItem>
-                                                </CommandGroup>
-                                            </CommandList>
-                                        </Command>
-                                    </PopoverContent>
-                                </Popover>
+                                <CustomDropdown
+                                    field={field}
+                                    placeholder="Select Gender"
+                                    popoverOptions={ViVoAc_Voice_Talent_Gender_Options}
+                                    allowCustomOption={true}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
