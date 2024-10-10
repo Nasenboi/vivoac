@@ -40,10 +40,12 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                             <List className="mr-2 h-4 w-4" />
                             <span>Voice List</span>
                         </CommandItem>
-                        <CommandItem>
-                            <Speech className="mr-2 h-4 w-4" />
-                            <span>Add Voice</span>
-                        </CommandItem>
+                        <Link href="/voice-talents/add">
+                            <CommandItem>
+                                <Speech className="mr-2 h-4 w-4" />
+                                <span>Add Voice</span>
+                            </CommandItem>
+                        </Link>
                     </CommandGroup>
                     <CommandGroup heading="Settings">
                         <Link href="/settings">
