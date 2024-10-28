@@ -41,7 +41,7 @@ def get_user_from_token(token: str) -> UserInDB:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("username")
         user = DB_COLLECTIONS["users"].find_one({"username": username})
-        user = UserInDB(**user, id=str(user["_id"]))
+        user = UserInDB(**user)
         return user
     except Exception as e:
         LOGGER.error(f"Error decoding token: {e}")
