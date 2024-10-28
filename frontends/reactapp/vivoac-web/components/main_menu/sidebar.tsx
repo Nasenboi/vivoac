@@ -21,7 +21,7 @@ export default function Sidebar({ isFixed = false }: { isFixed: boolean }) {
                 <Map size={32} />
                 <h1 className="font-bold text-3xl">Navigation</h1>
             </div>
-            <Command className="grow max-h-full overflow-y-scroll">
+            <Command className="grow max-h-full overflow-y-scroll scrollbar-hidden">
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList className="max-h-full">
                     <CommandEmpty>No results found.</CommandEmpty>
