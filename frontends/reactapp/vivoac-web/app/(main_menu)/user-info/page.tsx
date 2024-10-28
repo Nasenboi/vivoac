@@ -36,6 +36,13 @@ async function fetchUserInfo(url, api_version): Promise<z.infer<typeof ViVoAc_Us
         //const data = await response.json();
         const data = Backend_Response.parse(await response.json());
         
+        // turn null values into undefined
+        for (const key in data.data) {
+            if (data.data[key] === null) {
+                data.data[key] = undefined;
+            }
+        }
+
         return data.data;
     } catch (error) {
         // Handle errors gracefully
