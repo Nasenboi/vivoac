@@ -7,12 +7,9 @@
 - [Description](#description)
 - [Getting Started](#getting-started)
     - [Dependencies](#dependencies)
-    - [Installing](#installing)
-    - [Deployment](#deployment)
-    - [Testing](#testing)
+    - [Installation and Deployment](#installation)
 - [Help](#help)
 - [Contributors](#contributors)
-- [License](#license)
 - [Acknoledgements](#acknowledgments)
     - [Notes of Thanks](#notes-of-thanks)
     - [Honorable Code(ers)](#honorable-codeers)
@@ -26,8 +23,8 @@ The user has all the power over the API, choosing which AI-Service to use, what 
 ## Getting Started
 In this chapter you will learn how to set up this code, what dependencies you need to install and how to deploy the API-Server.
 ### Dependencies
-Here ist just a fancy list of dependencies, check, if you have everything you need:
-The code is tested using the listed verions, others may work, or not you may dare to try!
+Here is a list of dependencies, check, if you have everything you need:
+The code is tested using the listed verions, others may work.
 
 | Name  | Version | Link |
 | ------------- | ------------- |------------- |
@@ -35,6 +32,12 @@ The code is tested using the listed verions, others may work, or not you may dar
 | Docker  | 24.x | [here](https://docs.docker.com/get-docker/) |
 | Git | 2.44.x | [here](https://git-scm.com/downloads) |
 | GitHub Desktop (recommendation) | 3.3.x | [here](https://desktop.github.com/) |
+
+Clone the repository and get started locally!
+
+## Installation
+
+The installation and deployment is explained in detail in the [documentation](./documentation/installing.md).
 
 ## Help
 
