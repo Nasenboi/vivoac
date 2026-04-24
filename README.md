@@ -35,7 +35,6 @@ The code is tested using the listed verions, others may work, or not you may dar
 | Docker  | 24.x | [here](https://docs.docker.com/get-docker/) |
 | Git | 2.44.x | [here](https://git-scm.com/downloads) |
 | GitHub Desktop (recommendation) | 3.3.x | [here](https://desktop.github.com/) |
-| | | [here]() |
 
 ## Help
 
